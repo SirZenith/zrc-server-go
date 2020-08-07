@@ -1,0 +1,2814 @@
+{
+    "garakuta": {
+        "audio": {
+            "checksum": "2ab2fe2be9aa95fcd9bc246c9c2c051a"
+        },
+        "chart": {
+            "0": {
+                "checksum": "e45497d752ff1b9838b24c4cbf914979"
+            },
+            "1": {
+                "checksum": "c06334e3dab07e3e3daa9ad362a5d24f"
+            },
+            "2": {
+                "checksum": "5ccf978f9628471366c38490936a7441"
+            }
+        }
+    },
+    "suomi": {
+        "audio": {
+            "checksum": "1e947a2c237c959cf2872d9f3887cc39"
+        },
+        "chart": {
+            "0": {
+                "checksum": "0f9d43e5e68292f4a48143a2f83f9aec"
+            },
+            "1": {
+                "checksum": "fe9c0b08b58b36c7f64e380bb39fc34a"
+            },
+            "2": {
+                "checksum": "cc9a38b131cf2f56c2eb7f14d05c8e92"
+            }
+        }
+    },
+    "cyberneciacatharsis": {
+        "audio": {
+            "checksum": "92339b4da74a3978a518e527350f971d"
+        },
+        "chart": {
+            "0": {
+                "checksum": "780734de9b91c780a8b4219f42023521"
+            },
+            "1": {
+                "checksum": "7034bade0a9f4a02a54d070cf86e9728"
+            },
+            "2": {
+                "checksum": "dc8059fa50ced1d41ae35637ae5a1617"
+            }
+        }
+    },
+    "ouroboros": {
+        "audio": {
+            "checksum": "3558efe39421065fe5ad6d58bc804435"
+        },
+        "chart": {
+            "0": {
+                "checksum": "fe2588d8a06781dc62a0bbdf4566bfb4"
+            },
+            "1": {
+                "checksum": "0926e7a3a2e6826d184ae390e5ef32c1"
+            },
+            "2": {
+                "checksum": "4e46831fcb49eaac5d19960466c9cb9f"
+            }
+        }
+    },
+    "silentrush": {
+        "audio": {
+            "checksum": "8555978e40d7b08c3c9633e0257d015a"
+        },
+        "chart": {
+            "0": {
+                "checksum": "34fe07844b21eb0bdc221084f90e0d95"
+            },
+            "1": {
+                "checksum": "bc69d182eb8162836fb3af5d3f542ad1"
+            },
+            "2": {
+                "checksum": "7bd1a2031814c98d8aa8b0fa8da891c2"
+            }
+        }
+    },
+    "syro": {
+        "audio": {
+            "checksum": "82f6e6f6ef39ca75e62c2d31ffe066f8"
+        },
+        "chart": {
+            "0": {
+                "checksum": "66dd2a06478af3fdc9d75c0fd5162c3f"
+            },
+            "1": {
+                "checksum": "915470aa334bdf7d8ee448d8ca9ddafc"
+            },
+            "2": {
+                "checksum": "d9e6a42d1b0c60fa936d5e18843dc613"
+            }
+        }
+    },
+    "etherstrike": {
+        "audio": {
+            "checksum": "d7dd6d7573b4c23ed9a9f1366a1d9734"
+        },
+        "chart": {
+            "0": {
+                "checksum": "25a810a1ad2754191e494a152c58764b"
+            },
+            "1": {
+                "checksum": "79451cc445aa6509e220dd9276c2b008"
+            },
+            "2": {
+                "checksum": "ab57856b1eacb3aff3d914dd21d40726"
+            }
+        }
+    },
+    "vindication": {
+        "audio": {
+            "checksum": "11e8a06d248ee9d3134ffd489d7f7a59"
+        },
+        "chart": {
+            "0": {
+                "checksum": "370df2468b099448db588a4aaded405a"
+            },
+            "1": {
+                "checksum": "5c71bb25538fb0d8532761a455fba793"
+            },
+            "2": {
+                "checksum": "738e3033f29fbe5b57fdeab7da15d218"
+            }
+        }
+    },
+    "trappola": {
+        "audio": {
+            "checksum": "488f01f326567c567018bd600f28ed2c"
+        },
+        "chart": {
+            "0": {
+                "checksum": "5a9d6e4fdccee81a236dc42c144546e1"
+            },
+            "1": {
+                "checksum": "db3500dfd3614505ace4f465b55ac9f3"
+            },
+            "2": {
+                "checksum": "b6cacb2385cc58c1b345d7fb806d8c77"
+            }
+        }
+    },
+    "valhallazero": {
+        "audio": {
+            "checksum": "9496ff9d973976b19dfa716f09522bbb"
+        },
+        "chart": {
+            "0": {
+                "checksum": "ebf8471094ad6ca5a6b1dace4a4ced99"
+            },
+            "1": {
+                "checksum": "48ddadcd120351219d4c450de049a723"
+            },
+            "2": {
+                "checksum": "7069e35eb59b79f24be42850a47a1fd6"
+            }
+        }
+    },
+    "oblivia": {
+        "audio": {
+            "checksum": "36654278eb5fa792ba5fa5c78922b042"
+        },
+        "chart": {
+            "0": {
+                "checksum": "4bc28a0d4f6a41fc18b3b7eb9b3fe00c"
+            },
+            "1": {
+                "checksum": "25f1539a4a3bf1b0121418b9f343701b"
+            },
+            "2": {
+                "checksum": "931898f0a7e6907f474bf187f1af0757"
+            }
+        }
+    },
+    "yourvoiceso": {
+        "audio": {
+            "checksum": "b9e0b656e7972cfae845189f958b4745"
+        },
+        "chart": {
+            "0": {
+                "checksum": "3cab0a7627a72125a71a11950e6cfd78"
+            },
+            "1": {
+                "checksum": "1ccd35ea437bf153bc0f97b8e6ad057e"
+            },
+            "2": {
+                "checksum": "f2c26d87c1d968c4f7702a614e91b90a"
+            }
+        }
+    },
+    "soundwitch": {
+        "audio": {
+            "checksum": "6e4d15c511e2882e5d2d8597dfd15a09"
+        },
+        "chart": {
+            "0": {
+                "checksum": "ad1749a15a730ff00cd7015465ffc3e4"
+            },
+            "1": {
+                "checksum": "691e171428c488f2087db99629481736"
+            },
+            "2": {
+                "checksum": "18f4666dec4b467778c346d497e14af2"
+            }
+        }
+    },
+    "revixy": {
+        "audio": {
+            "checksum": "e027877578a5d5b996c0bd78dbcf3cca"
+        },
+        "chart": {
+            "0": {
+                "checksum": "ffe669908f2e3faeae50161045c6e175"
+            },
+            "1": {
+                "checksum": "aab990f9579eae6ea37b8aa897822666"
+            },
+            "2": {
+                "checksum": "6bf347cece26d3b97e09ba98d71884b9"
+            }
+        }
+    },
+    "chelsea": {
+        "audio": {
+            "checksum": "738e6520477c486b6d563d29a58064ed"
+        },
+        "chart": {
+            "0": {
+                "checksum": "c1ae5ce96f4677ffa0b744b31170452a"
+            },
+            "1": {
+                "checksum": "a60aa3914c6cd38044484bedaac373cb"
+            },
+            "2": {
+                "checksum": "9b00668275e728eb1ad22174afe5a79a"
+            }
+        }
+    },
+    "antagonism": {
+        "audio": {
+            "checksum": "f6fd0d07e05ba76ecddd662ff1b3e671"
+        },
+        "chart": {
+            "0": {
+                "checksum": "160ae65e33238946bbb7d6a88790ee73"
+            },
+            "1": {
+                "checksum": "7f06577df84a68003bd9c5803bb73b8c"
+            },
+            "2": {
+                "checksum": "fac0e28ff958be2cbd163e7bd8a7f1fe"
+            }
+        }
+    },
+    "gekka": {
+        "audio": {
+            "checksum": "5525906b60cd91433c7e45431cb48495"
+        },
+        "chart": {
+            "0": {
+                "checksum": "227619da2e207be117828985fc9b9103"
+            },
+            "1": {
+                "checksum": "49618f90de192bbbfcf4304da7cbf849"
+            },
+            "2": {
+                "checksum": "f2dc6378b322c8418d8952b300df594e"
+            }
+        }
+    },
+    "axiumcrisis": {
+        "audio": {
+            "checksum": "a43e0985aa3846a4de5a9d0b910d2b7a"
+        },
+        "chart": {
+            "0": {
+                "checksum": "ff26d7705a80e935a96c4465e518b1e9"
+            },
+            "1": {
+                "checksum": "9af46cd7c66b7894029895831dcc84af"
+            },
+            "2": {
+                "checksum": "87e10750745d03257b1ce92ca63cb7c9"
+            }
+        }
+    },
+    "freefall": {
+        "audio": {
+            "checksum": "344d96f46bd40b6925bb1c3bf707029e"
+        },
+        "chart": {
+            "0": {
+                "checksum": "7398920cfd770f9297a07b222c47d36a"
+            },
+            "1": {
+                "checksum": "8360759cee1ebf12d01b39d955bbb38e"
+            },
+            "2": {
+                "checksum": "7f01a3d89eb1f06009c56d8708560f09"
+            }
+        }
+    },
+    "metallicpunisher": {
+        "audio": {
+            "checksum": "bb736aee0d3e256af1a43a3909717634"
+        },
+        "chart": {
+            "0": {
+                "checksum": "0b8ebdc94ff27dac4bd6388fc487507a"
+            },
+            "1": {
+                "checksum": "1b8633da98f5e440566b51ee07c1c1e4"
+            },
+            "2": {
+                "checksum": "49fe28644560ff4be61c42d851531211"
+            }
+        }
+    },
+    "memoryfactory": {
+        "audio": {
+            "checksum": "ea2b14e5a110921dcb1caab004dda7f5"
+        },
+        "chart": {
+            "0": {
+                "checksum": "9f9cb059f118269ccc36f128d127e953"
+            },
+            "1": {
+                "checksum": "c7f1432ca849da46a8c555c33f9269e0"
+            },
+            "2": {
+                "checksum": "b6d6a46145e4d0264953d53141e3482c"
+            }
+        }
+    },
+    "sheriruth": {
+        "audio": {
+            "checksum": "37f6e6b93514ad7306ab76f9c2091381"
+        },
+        "chart": {
+            "0": {
+                "checksum": "211e9ab0096300f93aab58675807b316"
+            },
+            "1": {
+                "checksum": "0c10beda63edef623fdae2835ad7b87d"
+            },
+            "2": {
+                "checksum": "0c0eb2214ead88bc693fa109630d8c44"
+            }
+        }
+    },
+    "bookmaker": {
+        "audio": {
+            "checksum": "a8be33d020c11161dc903eef95b617c7"
+        },
+        "chart": {
+            "0": {
+                "checksum": "78571b9cf7da9a67c4134a0f5b558fcb"
+            },
+            "1": {
+                "checksum": "4c9dd8a77281283e1ce925de0fc01f59"
+            },
+            "2": {
+                "checksum": "f8cb3f97e4f07c87349e7eb78d320f53"
+            }
+        }
+    },
+    "tutorial": {
+        "audio": {
+            "checksum": "b5bb479b91db1eabb8e4dbc57641a579"
+        },
+        "chart": {
+            "0": {
+                "checksum": "aac629ba72b74087701b545bc85605c4"
+            },
+            "1": {
+                "checksum": "8838d60a2f023d3c6adba7d09610fe51"
+            }
+        }
+    },
+    "darakunosono": {
+        "audio": {
+            "checksum": "077817882116be2eea67eb7381c8be0b"
+        },
+        "chart": {
+            "0": {
+                "checksum": "e99ada5680fb4234183ca60028c25154"
+            },
+            "1": {
+                "checksum": "ca1d9e2edf5b4975ea3c00433b9951aa"
+            },
+            "2": {
+                "checksum": "33de23ecd9edd7ad156f532c6b319c98"
+            }
+        }
+    },
+    "paradise": {
+        "audio": {
+            "checksum": "6c291892fe4f4665cb8a5d52eaf51846"
+        },
+        "chart": {
+            "0": {
+                "checksum": "3d706d53ea989fa69a020d4ff304d147"
+            },
+            "1": {
+                "checksum": "5ffb2d6357baabb3d9f3ce466d895023"
+            },
+            "2": {
+                "checksum": "a4bc7cd9762bf85d6f6267bf70cdf6f7"
+            }
+        }
+    },
+    "laqryma": {
+        "audio": {
+            "checksum": "dd5d00174780a9e16163e14dc0c44abf"
+        },
+        "chart": {
+            "0": {
+                "checksum": "78aa3b74aee25c29af78117437760ec3"
+            },
+            "1": {
+                "checksum": "a605b1d3d110a07f34da5e149c562d4c"
+            },
+            "2": {
+                "checksum": "c3a060de410fd57f90912fed9e2c1ab2"
+            }
+        }
+    },
+    "scarletlance": {
+        "audio": {
+            "checksum": "5178b18b986aafbc75a3a5e5f5b90dc5"
+        },
+        "chart": {
+            "0": {
+                "checksum": "843f36b4c91882f189781c5faee3ba61"
+            },
+            "1": {
+                "checksum": "e6150ff58d4f7aa56135c8d7e4c9180f"
+            },
+            "2": {
+                "checksum": "9373925925a7175df36e2956fdba01eb"
+            }
+        }
+    },
+    "lostcivilization": {
+        "audio": {
+            "checksum": "c7aab14904c6d65de7396a4fd9af65cb"
+        },
+        "chart": {
+            "0": {
+                "checksum": "e573a3df7b5e4dde138afc4e80062a4b"
+            },
+            "1": {
+                "checksum": "efc592e5a864c4e2e2888c1c51bb1399"
+            },
+            "2": {
+                "checksum": "011092f95b51fcf48892e6e83492fb9c"
+            }
+        }
+    },
+    "shadesoflight": {
+        "audio": {
+            "checksum": "4582ba67897ccc956b4e1495be7e056f"
+        },
+        "chart": {
+            "0": {
+                "checksum": "4d915aba8083edcf7cd69bb94c6b5239"
+            },
+            "1": {
+                "checksum": "e9f1893fa507914506f9653fccde3bfd"
+            },
+            "2": {
+                "checksum": "220ee9ac1d7baaa40982140469d10c81"
+            }
+        }
+    },
+    "lumia": {
+        "audio": {
+            "checksum": "5b7562992a3b21d0f2ba4093ea4a22ec"
+        },
+        "chart": {
+            "0": {
+                "checksum": "c7aef3a73a56a8fa89c3ee47ed34b5fe"
+            },
+            "1": {
+                "checksum": "fa2a0111d7f9a3d623d0e46271f214cf"
+            },
+            "2": {
+                "checksum": "c804d9d415870e401468a394fb89fffa"
+            }
+        }
+    },
+    "amygdata": {
+        "audio": {
+            "checksum": "11eb92c2fe3a045acab42aac18ec60dc"
+        },
+        "chart": {
+            "0": {
+                "checksum": "ade3e37a27eecd9151f79f3d77054985"
+            },
+            "1": {
+                "checksum": "565b30bf8d8efd97f55be9a71cf110a5"
+            },
+            "2": {
+                "checksum": "1976c727490b5cf907972fbfc98efcfb"
+            }
+        }
+    },
+    "merlin": {
+        "audio": {
+            "checksum": "9803455922183fc771dfb424eb8d63f5"
+        },
+        "chart": {
+            "0": {
+                "checksum": "b739e16af3e4560faa29adcd1d147b3a"
+            },
+            "1": {
+                "checksum": "818285c7911faf73d0221e8bcbc7ea9c"
+            },
+            "2": {
+                "checksum": "a1c1ab7a5e0a7b140b054a3893238b11"
+            }
+        }
+    },
+    "blrink": {
+        "audio": {
+            "checksum": "89afb8bd6ffc8fecc3fe24f007f43f7d"
+        },
+        "chart": {
+            "0": {
+                "checksum": "6cf4d4c3e96a790fdac28f363c5ae9cb"
+            },
+            "1": {
+                "checksum": "21d737569ed472fb5ef144aee589046e"
+            },
+            "2": {
+                "checksum": "4779fa3e76b06e4dc46de246bfc44b7e"
+            }
+        }
+    },
+    "crosssoul": {
+        "audio": {
+            "checksum": "46af2e30b5791300248e22aee7941e52"
+        },
+        "chart": {
+            "0": {
+                "checksum": "62fef2520e240ccd98eb5ad7b8104a54"
+            },
+            "1": {
+                "checksum": "59c708b6b96e5138aa32abf2966ee64f"
+            },
+            "2": {
+                "checksum": "71d1bd56fce5c511b29b4fbeacf10a5b"
+            }
+        }
+    },
+    "moonlightofsandcastle": {
+        "audio": {
+            "checksum": "6cd963b427f516ed09bec2e97b111b58"
+        },
+        "chart": {
+            "0": {
+                "checksum": "491e7db73d7c65db7a19b9aff6151ecc"
+            },
+            "1": {
+                "checksum": "17602fbb77803a6af9086468fb6cb924"
+            },
+            "2": {
+                "checksum": "7fbcd4c66599f407ab3821f5c6390f1c"
+            }
+        }
+    },
+    "empireofwinter": {
+        "audio": {
+            "checksum": "14e8bcfe08e3efc105797901ff750dd2"
+        },
+        "chart": {
+            "0": {
+                "checksum": "0c521d698bdf74b2a6c1676c3ce7cc79"
+            },
+            "1": {
+                "checksum": "0a6396dcb454bcc8f0c986aa9678cd62"
+            },
+            "2": {
+                "checksum": "d14fef462926cbfef91e67c86ed18f8b"
+            }
+        }
+    },
+    "hikari": {
+        "audio": {
+            "checksum": "2de71f3174776ee62919311f6367ef72"
+        },
+        "chart": {
+            "0": {
+                "checksum": "e7cea696ba79e3bef7691a6b255e2a9c"
+            },
+            "1": {
+                "checksum": "59e720df6a63e82b26a653e132fbd098"
+            },
+            "2": {
+                "checksum": "72d98ed38c8996d520d49ba5a26298dd"
+            }
+        }
+    },
+    "pragmatism": {
+        "audio": {
+            "checksum": "afc6c60d3da37ed37971480b645b2f3e"
+        },
+        "chart": {
+            "0": {
+                "checksum": "31c0bb80c64d8608d3a2cb15c8e53018"
+            },
+            "1": {
+                "checksum": "6cd47000e30caef5ce38c5b12b0d330c"
+            },
+            "2": {
+                "checksum": "2a26bdc4c1a83d5fff641bd1637dcfb4"
+            }
+        }
+    },
+    "dreadnought": {
+        "audio": {
+            "checksum": "268a52650375cfbcdcd65972d70c2aa2"
+        },
+        "chart": {
+            "0": {
+                "checksum": "dbc15b94aae1877d61fe539135641797"
+            },
+            "1": {
+                "checksum": "342887595377eb2bd49b6236a7603bfa"
+            },
+            "2": {
+                "checksum": "0f6f587b846560a053265e4e718ef041"
+            }
+        }
+    },
+    "libertas": {
+        "audio": {
+            "checksum": "c6171fb619fdb3e12072ead934232632"
+        },
+        "chart": {
+            "0": {
+                "checksum": "9be7e83bc41f1f62ccab42a8668aafd9"
+            },
+            "1": {
+                "checksum": "9ed8eb410c49d15eac94016cb0aa5bbb"
+            },
+            "2": {
+                "checksum": "94d94f660a38a35f825a920ad83fd39c"
+            }
+        }
+    },
+    "rabbitintheblackroom": {
+        "audio": {
+            "checksum": "21e120469608ee0b5c746fac97551c61"
+        },
+        "chart": {
+            "0": {
+                "checksum": "cc5b422ccf40fada725fa08fe9cf80b8"
+            },
+            "1": {
+                "checksum": "2eeff3f9f289dca640f957c8ce4d5105"
+            },
+            "2": {
+                "checksum": "27e0e339705740f7f5be2c3d3ab73c3e"
+            }
+        }
+    },
+    "grievouslady": {
+        "audio": {
+            "checksum": "09f624f20926c33559330068c94642b8"
+        },
+        "chart": {
+            "0": {
+                "checksum": "25f4fe6979f1200083d4f2cc26879421"
+            },
+            "1": {
+                "checksum": "5e62b770704d1a35da4acb175ed6f9e0"
+            },
+            "2": {
+                "checksum": "65208879becbcbe155fba840e571b0ed"
+            }
+        }
+    },
+    "lucifer": {
+        "audio": {
+            "checksum": "5a14d934b28a29f254800f651a71cd06"
+        },
+        "chart": {
+            "0": {
+                "checksum": "530755d099c50252d27bc29c3d84da2f"
+            },
+            "1": {
+                "checksum": "a590796018253e94e2988fa60cc5fc73"
+            },
+            "2": {
+                "checksum": "0dce6092a4da76bd390e9ee905589121"
+            }
+        }
+    },
+    "dreamgoeson": {
+        "audio": {
+            "checksum": "b9b5703ddbb7595048042a5b66811468"
+        },
+        "chart": {
+            "0": {
+                "checksum": "7e2797b265c693e9343eb2abab8fc66e"
+            },
+            "1": {
+                "checksum": "0ca34a99bdc81fd95948f36ac22b555e"
+            },
+            "2": {
+                "checksum": "61af0131705b5af5e7f477ebc05a5cd1"
+            }
+        }
+    },
+    "corpssansorganes": {
+        "audio": {
+            "checksum": "00cf3300cb3092b6aae9efe40854a731"
+        },
+        "chart": {
+            "0": {
+                "checksum": "ef6d7fb1b390c7339196163a8c065d98"
+            },
+            "1": {
+                "checksum": "a6718bea1dfa2806a9de23f9d4f37f9f"
+            },
+            "2": {
+                "checksum": "1c0287a59439190b6a6c61b8cbbd6e25"
+            }
+        }
+    },
+    "phantasia": {
+        "audio": {
+            "checksum": "060320aac1480b9f934674415daabfb2"
+        },
+        "chart": {
+            "0": {
+                "checksum": "7b0aa0ecb239a46cb5c9e1467adef1bb"
+            },
+            "1": {
+                "checksum": "b43842cdafd90ad9da7e23ce748eca44"
+            },
+            "2": {
+                "checksum": "eff54188852cf748eb19656ae2583087"
+            }
+        }
+    },
+    "heavensdoor": {
+        "audio": {
+            "checksum": "40022e8f4a1a1c09648765ce49d0719c"
+        },
+        "chart": {
+            "0": {
+                "checksum": "83526f355b56dc67a61fd79bb2e78e54"
+            },
+            "1": {
+                "checksum": "0b54278a95aac623a3094998f760eb0e"
+            },
+            "2": {
+                "checksum": "e9512f230200f167ed8c1e85f32d34ac"
+            }
+        }
+    },
+    "strongholds": {
+        "audio": {
+            "checksum": "185c0aa9ce3614c7acdc5742a4f6c9fd"
+        },
+        "chart": {
+            "0": {
+                "checksum": "d63f07d8f6963307da805736edad33af"
+            },
+            "1": {
+                "checksum": "0ff4e7d7193d2d7c8ee5f0e0f729a7a6"
+            },
+            "2": {
+                "checksum": "ac3ba2e757bbcf9a9401c8ad634ba356"
+            }
+        }
+    },
+    "omakeno": {
+        "audio": {
+            "checksum": "35b5e0974407fd1aa8f3d741b7a096f2"
+        },
+        "chart": {
+            "0": {
+                "checksum": "ddca85071789a7089275523835397436"
+            },
+            "1": {
+                "checksum": "c570485fc61527ef2bfca6da9c698755"
+            },
+            "2": {
+                "checksum": "df16b809dbd17430e4357f994a440d35"
+            }
+        }
+    },
+    "flyburg": {
+        "audio": {
+            "checksum": "636a75f76b7b0544d132d79b406e029e"
+        },
+        "chart": {
+            "0": {
+                "checksum": "f2686a43c833f4fe5ea0975f6e292e15"
+            },
+            "1": {
+                "checksum": "3f51887016d21f107509b2b849540c89"
+            },
+            "2": {
+                "checksum": "e9216db38dd880283277f78521a15f19"
+            }
+        }
+    },
+    "dantalion": {
+        "audio": {
+            "checksum": "45692d8798a1112a5f9bce89d915fa53"
+        },
+        "chart": {
+            "0": {
+                "checksum": "634876267bf9d19ebb89aa4074b6f4c0"
+            },
+            "1": {
+                "checksum": "10595060e896f4c864a0e28ebec455c8"
+            },
+            "2": {
+                "checksum": "0184659541afc98d5ccab03625a27cbb"
+            }
+        }
+    },
+    "stager": {
+        "audio": {
+            "checksum": "1d7763374a024fdcbede7c7ef62fc634"
+        },
+        "chart": {
+            "0": {
+                "checksum": "adadf1ca27de99737e796c968af05710"
+            },
+            "1": {
+                "checksum": "3a62b885aa124eee85a9d5f82e7ca5f8"
+            },
+            "2": {
+                "checksum": "c691649af872b4744e4cb8039ad01861"
+            }
+        }
+    },
+    "ringedgenesis": {
+        "audio": {
+            "checksum": "01711690174f6b69dc47396e5d8c8c10"
+        },
+        "chart": {
+            "0": {
+                "checksum": "1f6efd52ecde7da80895c27c78129f17"
+            },
+            "1": {
+                "checksum": "908763096835d710a21528eafb6de3d4"
+            },
+            "2": {
+                "checksum": "f2e9cf97662e4f6e139b1967c2da7877"
+            }
+        }
+    },
+    "specta": {
+        "audio": {
+            "checksum": "7640364bacd7e3f87d0ceadb7277e23e"
+        },
+        "chart": {
+            "0": {
+                "checksum": "db527eeba0703fa49436062d5efe2670"
+            },
+            "1": {
+                "checksum": "02b74c7afb9b0fc5fff204c238e80c9b"
+            },
+            "2": {
+                "checksum": "ccc67558e2ee941cfff06c842dd47a6d"
+            }
+        }
+    },
+    "evoltex": {
+        "audio": {
+            "checksum": "b515838bfeeb51f13c573df94bcedfda"
+        },
+        "chart": {
+            "0": {
+                "checksum": "f509ae1e746bdc6d630ac5ec57c09831"
+            },
+            "1": {
+                "checksum": "b3e36798410d0f6b44e0cd18947c7a84"
+            },
+            "2": {
+                "checksum": "01689cb0fa75bd20a0ec635f9ac34316"
+            }
+        }
+    },
+    "blaster": {
+        "audio": {
+            "checksum": "aa9986cf3ddb8c76e6047ed2ed732852"
+        },
+        "chart": {
+            "0": {
+                "checksum": "4df06497158067ed86633dde2c14ed1c"
+            },
+            "1": {
+                "checksum": "032f1661a101ba40785e87037c228c64"
+            },
+            "2": {
+                "checksum": "955ff6a115f59af066adec19adcf49c8"
+            }
+        }
+    },
+    "dement": {
+        "audio": {
+            "checksum": "a08702db094b9b2694fa5a00997e6931"
+        },
+        "chart": {
+            "0": {
+                "checksum": "6dd225ebd0ddd14f1b6e588a0701c977"
+            },
+            "1": {
+                "checksum": "6099fa6611dee161a9c5da9f26d89ddc"
+            },
+            "2": {
+                "checksum": "60993a3835218f7a17339c0ebe58e89c"
+            }
+        }
+    },
+    "guardina": {
+        "audio": {
+            "checksum": "fc1b83ed48f3ebb961f2d93951717e19"
+        },
+        "chart": {
+            "0": {
+                "checksum": "b07611bb9947a36672e9db79e50d703b"
+            },
+            "1": {
+                "checksum": "492a3fbc2cae1c185742590af30e2676"
+            },
+            "2": {
+                "checksum": "4f31cf2422cf291c3c3fe2b30dfe3a7a"
+            }
+        }
+    },
+    "dottodot": {
+        "audio": {
+            "checksum": "1b77e72da11dfd3656e6922049fa6cbb"
+        },
+        "chart": {
+            "0": {
+                "checksum": "dd17a2c01bc5ad659274522bbfef12fb"
+            },
+            "1": {
+                "checksum": "c30ecca7991b3a10640146230851bd47"
+            },
+            "2": {
+                "checksum": "0032199483c02951f1c02d2b240d47d9"
+            }
+        }
+    },
+    "oracle": {
+        "audio": {
+            "checksum": "3bcea56f6204f0c704278b9bbb48e7e1"
+        },
+        "chart": {
+            "0": {
+                "checksum": "3fcbea2a9519763655cc0714de3445d4"
+            },
+            "1": {
+                "checksum": "0a5e778f65501a129b4bdd1eb17d6a42"
+            },
+            "2": {
+                "checksum": "39191a7793824364684c0b6bfc6655a6"
+            }
+        }
+    },
+    "bethere": {
+        "audio": {
+            "checksum": "e64d2a7c0d2b76f7ecdcc99fb8421564"
+        },
+        "chart": {
+            "0": {
+                "checksum": "fd78028ced757a60c912529123623807"
+            },
+            "1": {
+                "checksum": "6b2c9f6edb54b9715d8991895902d182"
+            },
+            "2": {
+                "checksum": "6ebf7ffd933cb76529ddd78ae7e5908b"
+            }
+        }
+    },
+    "onelastdrive": {
+        "audio": {
+            "checksum": "66bea4a1f16e889fe21e4b52145e60ba"
+        },
+        "chart": {
+            "0": {
+                "checksum": "4f470f5e8959b86d548e9b5bca4b5229"
+            },
+            "1": {
+                "checksum": "04e0db41dfc01f0169d516325f996500"
+            },
+            "2": {
+                "checksum": "6f8d820b980312d9a223ade0d52e4138"
+            }
+        }
+    },
+    "hearditsaid": {
+        "audio": {
+            "checksum": "1b9941fe8e5744565c5032471cf72b19"
+        },
+        "chart": {
+            "0": {
+                "checksum": "d88cab9694290f3cbc17f0146858e058"
+            },
+            "1": {
+                "checksum": "b4094ccb7ec05a667c8b37aa7421793b"
+            },
+            "2": {
+                "checksum": "0f34e2c5ecda8e11d4a44e74f0071d75"
+            }
+        }
+    },
+    "purgatorium": {
+        "audio": {
+            "checksum": "bab299eab7030023ded19ae1e1188e0c"
+        },
+        "chart": {
+            "0": {
+                "checksum": "9b59c065a7642eaf5e38614c708b5d60"
+            },
+            "1": {
+                "checksum": "0449203996e5013b17414782f177bd1f"
+            },
+            "2": {
+                "checksum": "a701b4a1f195e2110e16ae99d7d41054"
+            }
+        }
+    },
+    "auxesia": {
+        "audio": {
+            "checksum": "5cfb745c74f4125047054ab744e22762"
+        },
+        "chart": {
+            "0": {
+                "checksum": "c6b55aa22a069938ca0d257ff5795e44"
+            },
+            "1": {
+                "checksum": "e7b8d4ff3e4e42df63a8dc4f933cb951"
+            },
+            "2": {
+                "checksum": "bc35c72d99e3b4ea65f01e81349fab19"
+            }
+        }
+    },
+    "melodyoflove": {
+        "audio": {
+            "checksum": "15e37c03672ba5e3852d26d6bd63cece"
+        },
+        "chart": {
+            "0": {
+                "checksum": "38d1fe061a2fec903eab38d52a050b95"
+            },
+            "1": {
+                "checksum": "27ae64b7fe349e86b7aee2f8dbac12d6"
+            },
+            "2": {
+                "checksum": "26f74697a124426fa8283d27572c0fa0"
+            }
+        }
+    },
+    "harutopia": {
+        "audio": {
+            "checksum": "ea8069542bb00ee4e89cd572fc3a0707"
+        },
+        "chart": {
+            "0": {
+                "checksum": "334ecce32bcb2b39914b08473a278228"
+            },
+            "1": {
+                "checksum": "4782e219ba081550580cee7cc1e3b8a0"
+            },
+            "2": {
+                "checksum": "d5908c268d61077c00ae0ae71de58cad"
+            }
+        }
+    },
+    "rugie": {
+        "audio": {
+            "checksum": "35ce47fb4deea98b07553b4161114497"
+        },
+        "chart": {
+            "0": {
+                "checksum": "5d60e6f1437308967bdefb0e1f2ceeee"
+            },
+            "1": {
+                "checksum": "1354e12cb770b660bea1dfdfaf88124b"
+            },
+            "2": {
+                "checksum": "ca6819a0c565940226953db580acbf73"
+            }
+        }
+    },
+    "brandnewworld": {
+        "audio": {
+            "checksum": "c04000487815376cf5b5735edf7520bb"
+        },
+        "chart": {
+            "0": {
+                "checksum": "d4b5a5aa84409e11b7cd15e45a685cc9"
+            },
+            "1": {
+                "checksum": "01a7a24dbde7d237d67e77809a3f435c"
+            },
+            "2": {
+                "checksum": "75164237049a467e7bf245ea3e4a82fa"
+            }
+        }
+    },
+    "supernova": {
+        "audio": {
+            "checksum": "f98976cc9c37ce03ab8bfd90c3b8f0ee"
+        },
+        "chart": {
+            "0": {
+                "checksum": "aeb9b3b41d357cf835ba3c569097c0f3"
+            },
+            "1": {
+                "checksum": "a1143b8703e146f36fcd5f30ea900d1d"
+            },
+            "2": {
+                "checksum": "08bd0565a0b7758bf544db411b806cf7"
+            }
+        }
+    },
+    "flashback": {
+        "audio": {
+            "checksum": "b4fc996fd8152c0ce04d972e0ebfe5b3"
+        },
+        "chart": {
+            "0": {
+                "checksum": "2ca43c40ea395ec6dac56389d53b7c07"
+            },
+            "1": {
+                "checksum": "d19688178a8dcafd0a4d7c3bf4dc70bc"
+            },
+            "2": {
+                "checksum": "cb0dd1157a6057fc725782129b49bac8"
+            }
+        }
+    },
+    "conflict": {
+        "audio": {
+            "checksum": "6aec65c46aad9225f240b43a121c2e03"
+        },
+        "chart": {
+            "0": {
+                "checksum": "4c196c3513fa6346f1ac4b4079658a57"
+            },
+            "1": {
+                "checksum": "9fe7ce84c85b4ec5791e28f9e2968aaf"
+            },
+            "2": {
+                "checksum": "458f8ffb1353df3cbfb51a8a4b4c72f7"
+            }
+        }
+    },
+    "dreaminattraction": {
+        "audio": {
+            "checksum": "e03b558401e2de980e6506976f720e17"
+        },
+        "chart": {
+            "0": {
+                "checksum": "789441b78d4baef767fcf44e2fa0fc59"
+            },
+            "1": {
+                "checksum": "c569cb9b403455a7671f167bd1fe7f02"
+            },
+            "2": {
+                "checksum": "fb1c9daa0bc9c4863b86c9e1a5464969"
+            }
+        }
+    },
+    "lethaeus": {
+        "audio": {
+            "checksum": "cc6336e2c42a74b8d655bbe8499416ae"
+        },
+        "chart": {
+            "0": {
+                "checksum": "f8c51b1fefeebdd756f6a6f4ea023833"
+            },
+            "1": {
+                "checksum": "b5ac69c77ad02154bd2d0fe7d2cebb72"
+            },
+            "2": {
+                "checksum": "f8b5266308549fffcc436376053b54ca"
+            }
+        }
+    },
+    "modelista": {
+        "audio": {
+            "checksum": "fdeddf16c576f93c2218f58c7a897f9c"
+        },
+        "chart": {
+            "0": {
+                "checksum": "c3736a7583b660ccb5a17210b7d324cb"
+            },
+            "1": {
+                "checksum": "3f12d6a774ef8a3b943cd13d4b4c7cc5"
+            },
+            "2": {
+                "checksum": "02ce3f306547d72a44c77829f36d461a"
+            }
+        }
+    },
+    "altale": {
+        "audio": {
+            "checksum": "4a2dd0b6ec4959bb2f00e9511229220a"
+        },
+        "chart": {
+            "0": {
+                "checksum": "2caea57a26e1a2d2ccf918d2128c1642"
+            },
+            "1": {
+                "checksum": "cab5541852a2f295b99577168186dd32"
+            },
+            "2": {
+                "checksum": "7e9365483177d24fea500d9a1d3add7c"
+            }
+        }
+    },
+    "worldexecuteme": {
+        "audio": {
+            "checksum": "a6d76cd9a732e2ad7d9b146603d33dd1"
+        },
+        "chart": {
+            "0": {
+                "checksum": "5c24b1ad19600d0dcd8e9d23cb47bd29"
+            },
+            "1": {
+                "checksum": "96300eb43837aed989dafcfbdaae04a7"
+            },
+            "2": {
+                "checksum": "bd8c6862fad837992318e8cdbdfbfd5b"
+            }
+        }
+    },
+    "heavenlycaress": {
+        "audio": {
+            "checksum": "32fa26309dc58b168d8271c5aa6fe032"
+        },
+        "chart": {
+            "0": {
+                "checksum": "38afa70ee706c81352be7a885b3adfa8"
+            },
+            "1": {
+                "checksum": "772f2d9b40f6586c83368f04c052ae52"
+            },
+            "2": {
+                "checksum": "9d71d85d25895d3bcccbacc43c294230"
+            }
+        }
+    },
+    "journey": {
+        "audio": {
+            "checksum": "92347115a1e6d3975593a35d6e10d0c8"
+        },
+        "chart": {
+            "0": {
+                "checksum": "cc19907dc30cf60e8cb1d796d553a9cb"
+            },
+            "1": {
+                "checksum": "c07e108bfc0c231721aed8624910b495"
+            },
+            "2": {
+                "checksum": "e24bfa4ef06e1cf341b5f69b8a459999"
+            }
+        }
+    },
+    "einherjar": {
+        "audio": {
+            "checksum": "2dcbe4d31574fa5fa4ba79d4d0566252"
+        },
+        "chart": {
+            "0": {
+                "checksum": "582bccb142468936731165084b1b0b5c"
+            },
+            "1": {
+                "checksum": "fbdebc2915b3bed22afa5e4d1d4d898f"
+            },
+            "2": {
+                "checksum": "1dc4ca92d33bea14a822b2c3c878bf19"
+            }
+        }
+    },
+    "ifi": {
+        "audio": {
+            "checksum": "3d452a4044308208ac6e3fc3d2a46057"
+        },
+        "chart": {
+            "0": {
+                "checksum": "272ebae31f5cb6e2cd41a35f245c2212"
+            },
+            "1": {
+                "checksum": "569bf296b0f2789d944ffc9e0842d88c"
+            },
+            "2": {
+                "checksum": "5da9a32cde0f9b18a33f67288909e1f2"
+            }
+        }
+    },
+    "izana": {
+        "audio": {
+            "checksum": "01d363d3069fbc70f1e28462a5182ef8"
+        },
+        "chart": {
+            "0": {
+                "checksum": "fa907da0852b1801de370204eaa6d9f2"
+            },
+            "1": {
+                "checksum": "1751b007ccb42897a132c181586b128e"
+            },
+            "2": {
+                "checksum": "cc3e7eaa75824b7f0ae9d6c1fb521b5a"
+            }
+        }
+    },
+    "teriqma": {
+        "audio": {
+            "checksum": "6d6e28ef557eccdd2cf7671189afcc52"
+        },
+        "chart": {
+            "0": {
+                "checksum": "d3c273292136679f9614de6aab0204f2"
+            },
+            "1": {
+                "checksum": "9e8cfa310fe1abf32d1ecb17b26fbbff"
+            },
+            "2": {
+                "checksum": "5c25b2b5d02d0143dd36b384f09c8208"
+            }
+        }
+    },
+    "nexttoyou": {
+        "audio": {
+            "checksum": "469ffda7a0840cb1f88ee7719f9fe15c"
+        },
+        "chart": {
+            "0": {
+                "checksum": "d54a1acac6e8d934e68f42d3a70a6d39"
+            },
+            "1": {
+                "checksum": "7d1e0be0c3e5b6ad8da9a6db15ffb991"
+            },
+            "2": {
+                "checksum": "3d8287acce91cb88c7c418ac65086a53"
+            }
+        }
+    },
+    "moonheart": {
+        "audio": {
+            "checksum": "45227883b717673765640ed31fab2eba"
+        },
+        "chart": {
+            "0": {
+                "checksum": "30158faf1c8b1e86ec82e30bbd841ae1"
+            },
+            "1": {
+                "checksum": "b95ccd3701a471954a51126c42136d11"
+            },
+            "2": {
+                "checksum": "61931777e80cc8169e8202e7a50c94d6"
+            }
+        }
+    },
+    "blossoms": {
+        "audio": {
+            "checksum": "eaf7512133036e2c8cd169e7288cfa74"
+        },
+        "chart": {
+            "0": {
+                "checksum": "8e32305a83991a62ce696f97fb44900d"
+            },
+            "1": {
+                "checksum": "c8bc1bed33eb7241fb4038fbc70f85fd"
+            },
+            "2": {
+                "checksum": "f4c8c1b7e754a8325774940af916e3c6"
+            }
+        }
+    },
+    "nhelv": {
+        "audio": {
+            "checksum": "9c99d2795e67d04c6f247c5fa31af276"
+        },
+        "chart": {
+            "0": {
+                "checksum": "2dbc04fe4f567f1ba8aab03aa79fc25c"
+            },
+            "1": {
+                "checksum": "2dc74f6746a7a2ce67b73eb81227b47e"
+            },
+            "2": {
+                "checksum": "7fb05d6c14e8a9e09a12f196ad5873af"
+            }
+        }
+    },
+    "relentless": {
+        "audio": {
+            "checksum": "903539cd104c3ab8b94f1d799324116a"
+        },
+        "chart": {
+            "0": {
+                "checksum": "e5119aa813da5aed3525486051abb993"
+            },
+            "1": {
+                "checksum": "6a57b52e5df36ce89d208beed1771788"
+            },
+            "2": {
+                "checksum": "721b3e9c356e226f93c93bc4acb0746d"
+            }
+        }
+    },
+    "blacklotus": {
+        "audio": {
+            "checksum": "cb0f48e5739f4c5b6d3cf7b3bba4ec70"
+        },
+        "chart": {
+            "0": {
+                "checksum": "f55523732e807d9838c1d887d0e97be6"
+            },
+            "1": {
+                "checksum": "5bf7b313cb118e28c20b7fbccc41bd56"
+            },
+            "2": {
+                "checksum": "49b4a542a28207dc761e2325b0b1dd95"
+            }
+        }
+    },
+    "senkyou": {
+        "audio": {
+            "checksum": "50f4f20c737673d5ded10f228cf860ab"
+        },
+        "chart": {
+            "0": {
+                "checksum": "1dc723043c4a33529e1575e5d6cca067"
+            },
+            "1": {
+                "checksum": "c40b34e9b379d83bf7607df5e4fd74a4"
+            },
+            "2": {
+                "checksum": "0e28cf9ba5e69c602826a6864180309b"
+            }
+        }
+    },
+    "infinityheaven": {
+        "audio": {
+            "checksum": "a4f742a4d970186a0511377d47cf3de5"
+        },
+        "chart": {
+            "0": {
+                "checksum": "74f911fb65cc2249db8909a89340584d"
+            },
+            "1": {
+                "checksum": "7faa6dc7efd5158380651d811cd95a0a"
+            },
+            "3": {
+                "checksum": "ffcb171d8157c6c80993bc7408d80c0b"
+            },
+            "2": {
+                "checksum": "258487f844a212682716f022fc06a620"
+            }
+        }
+    },
+    "mirzam": {
+        "audio": {
+            "checksum": "593fe9c3f777c873463fda603f9dc838"
+        },
+        "chart": {
+            "0": {
+                "checksum": "fdf99cc40f40f5aa946214a82d548023"
+            },
+            "1": {
+                "checksum": "a80c138b247a54e9ecaf52f5888e8579"
+            },
+            "2": {
+                "checksum": "6415347b6b82643ee7cf1d88409b1b83"
+            }
+        }
+    },
+    "monochromeprincess": {
+        "audio": {
+            "checksum": "5455f99fb3c2ff234c90c32fade1981c"
+        },
+        "chart": {
+            "0": {
+                "checksum": "442ea42ee0271a8253fd7a2042cdccac"
+            },
+            "1": {
+                "checksum": "a542de586198f306419e858412c20bd0"
+            },
+            "2": {
+                "checksum": "071c80348cdd626297482f8c2f39ac50"
+            }
+        }
+    },
+    "dxfullmetal": {
+        "audio": {
+            "checksum": "5974a9f66be93496cf72d37e8fda3ad7"
+        },
+        "chart": {
+            "0": {
+                "checksum": "8bdb0fc98a56e24cb61eebc425a8c09b"
+            },
+            "1": {
+                "checksum": "b680a869e31d9d6d071c314d2cd78219"
+            },
+            "2": {
+                "checksum": "c739f6ab3d3fe3b424e52c7ac5814e44"
+            }
+        }
+    },
+    "mahoroba": {
+        "audio": {
+            "checksum": "12413f521b8917ea56be6277ce3cb4fc"
+        },
+        "chart": {
+            "0": {
+                "checksum": "60aebe7efcb80a58d0fa4eb3fcc84f69"
+            },
+            "1": {
+                "checksum": "6524e17c45568f4a6d67d02dd7dbdd41"
+            },
+            "2": {
+                "checksum": "de96c21d2a1fae447688eb7d4b6eead9"
+            }
+        }
+    },
+    "viciousheroism": {
+        "audio": {
+            "checksum": "ddeec38dbe570cb263502731f2316b4d"
+        },
+        "chart": {
+            "0": {
+                "checksum": "06f32a032bab56321b7504c39e5018bd"
+            },
+            "1": {
+                "checksum": "f254020b681050be24d1b420b52300c9"
+            },
+            "2": {
+                "checksum": "b3dfaaaf48eb9523c9bc08fd167df935"
+            }
+        }
+    },
+    "faintlight": {
+        "audio": {
+            "checksum": "cd66439bfb7f1b39fec5f458c6913eba"
+        },
+        "chart": {
+            "0": {
+                "checksum": "2ffa1f38a95d2bda353d7a1ab08d4684"
+            },
+            "1": {
+                "checksum": "acf791ba95c27ab80eba0483ecdba500"
+            },
+            "2": {
+                "checksum": "61c759e4a4ace035e0cafd03c8781f4d"
+            }
+        }
+    },
+    "filament": {
+        "audio": {
+            "checksum": "1a7072cbc9040d985dedbe3319d3c273"
+        },
+        "chart": {
+            "0": {
+                "checksum": "de3a141c58e1a3a508f68c52894d3c02"
+            },
+            "1": {
+                "checksum": "5f4a4e8c307a4f68c9c3e39063924467"
+            },
+            "2": {
+                "checksum": "52d7bb7cc0238087d9adbfb3115ac065"
+            }
+        }
+    },
+    "halcyon": {
+        "audio": {
+            "checksum": "424d1c1dea3517a9c22fc7c032d69f97"
+        },
+        "chart": {
+            "0": {
+                "checksum": "661e8dabe5694cceaf0756b8a7457913"
+            },
+            "1": {
+                "checksum": "e1ca06debeda7090ef77c680a13f0070"
+            },
+            "2": {
+                "checksum": "6d37ae122b053ce9cfbb0ed910399515"
+            }
+        }
+    },
+    "dataerror": {
+        "audio": {
+            "checksum": "8d38cfde3f351d4bc6cb312b4448ff98"
+        },
+        "chart": {
+            "0": {
+                "checksum": "6fdf67cde92b7e3ff3a3731472155ed2"
+            },
+            "1": {
+                "checksum": "b08a3da6e8015b0cabf75c7542aaff7d"
+            },
+            "2": {
+                "checksum": "a27cb90d580dae0adca63790751c7225"
+            }
+        }
+    },
+    "antithese": {
+        "audio": {
+            "checksum": "6bb57b6251f2229c490f0fd2568eb5b8"
+        },
+        "chart": {
+            "0": {
+                "checksum": "7aa662bddba1a58c9393c45df5074cc8"
+            },
+            "1": {
+                "checksum": "6a382b2c81e78713ce95883ba80a90d4"
+            },
+            "2": {
+                "checksum": "00f68013fc2a69036a99267067b6257c"
+            }
+        }
+    },
+    "aiueoon": {
+        "audio": {
+            "checksum": "d3c2edd16002c2a27438acbf793f688f"
+        },
+        "chart": {
+            "0": {
+                "checksum": "ba4a0000084f590cad4d3145ecdb1d8e"
+            },
+            "1": {
+                "checksum": "6f1096d235bf2cce7f709458daee031f"
+            },
+            "2": {
+                "checksum": "e24bc3da26c19df7fab7fbffcc6080e3"
+            }
+        }
+    },
+    "impurebird": {
+        "audio": {
+            "checksum": "53839dfdcfac0d9e34e0fe3d1ca56cb2"
+        },
+        "chart": {
+            "0": {
+                "checksum": "97ec90b16f43a9819755a481e9ab00ab"
+            },
+            "1": {
+                "checksum": "94d1eefcb13a918eb4cae93c23990494"
+            },
+            "2": {
+                "checksum": "0df84bf65e51c4382a8a5dd956175ac2"
+            }
+        }
+    },
+    "kanagawa": {
+        "audio": {
+            "checksum": "7cba99db01ff6d46caf03d9377860cad"
+        },
+        "chart": {
+            "0": {
+                "checksum": "a04ab178e42007898de36335428b62bf"
+            },
+            "1": {
+                "checksum": "114b153317889f3611c9353f1bdb17ee"
+            },
+            "2": {
+                "checksum": "abde5b9e03682b25760105607c276a58"
+            }
+        }
+    },
+    "ignotus": {
+        "audio": {
+            "checksum": "e29162733e16618be979f81458960217"
+        },
+        "chart": {
+            "0": {
+                "checksum": "5b5c9408be5382b0756f080432e5399d"
+            },
+            "1": {
+                "checksum": "89e2d9c05e6de611993f618288d6ef97"
+            },
+            "2": {
+                "checksum": "bf6f6e5cbd1d40d64bb865d0389327e1"
+            }
+        }
+    },
+    "diode": {
+        "audio": {
+            "checksum": "d837befe6f72429613909c7be7a508a2"
+        },
+        "chart": {
+            "0": {
+                "checksum": "95a1a9133d3122fb2ace65a2c86eb463"
+            },
+            "1": {
+                "checksum": "ed5f5dd53db16442c86badebdbcd55af"
+            },
+            "2": {
+                "checksum": "11aedfeab20bdb0b8510d6e6b1813978"
+            }
+        }
+    },
+    "snowwhite": {
+        "audio": {
+            "checksum": "6cb86b5f17d63a1be00fa25e7b4fb64b"
+        },
+        "chart": {
+            "0": {
+                "checksum": "595b9f720f6a1f95833ac24575ced8d2"
+            },
+            "1": {
+                "checksum": "ca39b6afed2d17fdadbf724dfaa5c43d"
+            },
+            "2": {
+                "checksum": "66110d5cd1227ece1b809da27f14d359"
+            }
+        }
+    },
+    "saikyostronger": {
+        "audio": {
+            "checksum": "6dddececf55662d0877c39992038a73e"
+        },
+        "chart": {
+            "0": {
+                "checksum": "e9ecbfb3f17d25c42c89a5875ebe2980"
+            },
+            "1": {
+                "checksum": "a44d91fad3fdfa46413b16f6956decc7"
+            },
+            "2": {
+                "checksum": "63e7cf32a05886256b0d42894dfddba5"
+            }
+        }
+    },
+    "themessage": {
+        "audio": {
+            "checksum": "62e6f7a9814fd4985d20276917a7e007"
+        },
+        "chart": {
+            "0": {
+                "checksum": "fe138bfbef402bfa2af6ef6d5e26f194"
+            },
+            "1": {
+                "checksum": "05a64699156556e05495a66bd16e58d9"
+            },
+            "2": {
+                "checksum": "b3391aebe55cf71ba6670949c35bb8c9"
+            }
+        }
+    },
+    "lostdesire": {
+        "audio": {
+            "checksum": "d86df463c3f62cd08a981f10258ae41e"
+        },
+        "chart": {
+            "0": {
+                "checksum": "d6ee1cdf7fce67c5659761479ce3d586"
+            },
+            "1": {
+                "checksum": "b77f48abf34087ca59d0348d19d3f024"
+            },
+            "2": {
+                "checksum": "09d1d7fbf3ee3dd8126179e432f0a9ed"
+            }
+        }
+    },
+    "chronostasis": {
+        "audio": {
+            "checksum": "669e451703bc1ec6bba3068d00cfca63"
+        },
+        "chart": {
+            "0": {
+                "checksum": "eadcfffbdd41093a14d41ce60967dabc"
+            },
+            "1": {
+                "checksum": "6953930f600164214ed0ccddd528c1ba"
+            },
+            "2": {
+                "checksum": "bed78e739015a28a7bbf90d510476f58"
+            }
+        }
+    },
+    "particlearts": {
+        "audio": {
+            "checksum": "695ef9f2c0c7a7e011e23b0aa52d8caf"
+        },
+        "chart": {
+            "0": {
+                "checksum": "610ff789bb4eb6456a76009a93be096d"
+            },
+            "1": {
+                "checksum": "6f9778bc40922d223a70863142a95f50"
+            },
+            "2": {
+                "checksum": "0c70abafc64cc8cdd5b70796b8a00588"
+            }
+        }
+    },
+    "carminescythe": {
+        "audio": {
+            "checksum": "f1ef45012e5b47917c586bad4c2e2903"
+        },
+        "chart": {
+            "0": {
+                "checksum": "483e1843dde3bf0096e227447796c921"
+            },
+            "1": {
+                "checksum": "244d0a2c6ddba3aadb2d84a35bc40c95"
+            },
+            "2": {
+                "checksum": "3047d75c0f37600bd496a118079ef9c1"
+            }
+        }
+    },
+    "astraltale": {
+        "audio": {
+            "checksum": "dcecd6520737a22ecbd8801ebf1caec1"
+        },
+        "chart": {
+            "0": {
+                "checksum": "7519b5ed15bb94b27526760f3b983dcc"
+            },
+            "1": {
+                "checksum": "da95f9a556aae0ba2f5ffd9d1105af2e"
+            },
+            "2": {
+                "checksum": "e8f22b0393faf517e3f4956abafaf13f"
+            }
+        }
+    },
+    "mazenine": {
+        "audio": {
+            "checksum": "454441e81839511329ab7c22a9f83985"
+        },
+        "chart": {
+            "0": {
+                "checksum": "18905b584c81066e322991e3bbec00e2"
+            },
+            "1": {
+                "checksum": "8a656601245fa4fa05b76d52da95d558"
+            },
+            "2": {
+                "checksum": "39fb1de031da29af505857c3c9d00d4d"
+            }
+        }
+    },
+    "singularity": {
+        "audio": {
+            "checksum": "c555676179bda3f64afffe6d27bb990b"
+        },
+        "chart": {
+            "0": {
+                "checksum": "18970e0eb936eb0530ea9e96cddce3cb"
+            },
+            "1": {
+                "checksum": "3f6a4662d99025ff62d28245afc09e6a"
+            },
+            "2": {
+                "checksum": "0a7f8d8f52799a8c266edc8281c7df75"
+            }
+        }
+    },
+    "surrender": {
+        "audio": {
+            "checksum": "a3aa95c047746693a1b87e21e1b94e68"
+        },
+        "chart": {
+            "0": {
+                "checksum": "a5efdbded5e3ee61b051cd0d6cb63835"
+            },
+            "1": {
+                "checksum": "1e25165bf323397df19f81805be9e960"
+            },
+            "2": {
+                "checksum": "4281d38d5cfe9ff058d5d331c0397c2c"
+            }
+        }
+    },
+    "tiferet": {
+        "audio": {
+            "checksum": "3478fc54b2e09f55030c873de2fe8b99"
+        },
+        "chart": {
+            "0": {
+                "checksum": "615b032f814612f641126375d4fd0d2a"
+            },
+            "1": {
+                "checksum": "e2bfa92d33f0f5d501459e68b84ed12f"
+            },
+            "2": {
+                "checksum": "3d9e9f1f42f24fedee6073825e696072"
+            }
+        }
+    },
+    "espebranch": {
+        "audio": {
+            "checksum": "e4d5068686ed9192096d48550b2498a9"
+        },
+        "chart": {
+            "0": {
+                "checksum": "83af0e921fd763c68192b2bab18482fa"
+            },
+            "1": {
+                "checksum": "56f6282726cae8225baeef80be2d7584"
+            },
+            "2": {
+                "checksum": "3eb4d6b52db459a96b614cf8977edda6"
+            }
+        }
+    },
+    "corruption": {
+        "audio": {
+            "checksum": "f38d6142d251da66745e3e899fe9f71d"
+        },
+        "chart": {
+            "0": {
+                "checksum": "e80ed4c2905fd8237068a9b07eeea209"
+            },
+            "1": {
+                "checksum": "e726c46b4a80c198ab43436eea13bfe0"
+            },
+            "2": {
+                "checksum": "db84c562d959dc1d4a346dcd1d092a55"
+            }
+        }
+    },
+    "babaroque": {
+        "audio": {
+            "checksum": "fbba6c06b5bbdca4348d25649934e0a6"
+        },
+        "chart": {
+            "0": {
+                "checksum": "59fa8350f1cbc386eb40214169d1afba"
+            },
+            "1": {
+                "checksum": "02c9d47d738873e7d38db7d9994ff6c3"
+            },
+            "2": {
+                "checksum": "89fbfdc47d7d6dc4109035491002500c"
+            }
+        }
+    },
+    "fractureray": {
+        "audio": {
+            "checksum": "fedb6a109ed927c382c8da5a85ee745b"
+        },
+        "chart": {
+            "0": {
+                "checksum": "ba67e46abe72d4162ae39ae1f0c72b72"
+            },
+            "1": {
+                "checksum": "682866d67b534bf80ea73e58486f23bb"
+            },
+            "2": {
+                "checksum": "b1b23dba67b0ba0d05a1e0aa7a6ad068"
+            }
+        }
+    },
+    "arcahv": {
+        "audio": {
+            "checksum": "8c2ddf9cb03373339cfb903292e575a2"
+        },
+        "chart": {
+            "0": {
+                "checksum": "fbd66aee7dad3ed0afee5818d982ca67"
+            },
+            "1": {
+                "checksum": "1d7c78257902178c6248871d4fabfa92"
+            },
+            "2": {
+                "checksum": "b6718426b22bff982a3d0225bfa4022b"
+            }
+        }
+    },
+    "cyanine": {
+        "audio": {
+            "checksum": "131638a467ba77b6da9e1189806df10d"
+        },
+        "chart": {
+            "0": {
+                "checksum": "20ce8591c14cc17f6fd6f749f873604d"
+            },
+            "1": {
+                "checksum": "6ee3e9c23074bc548f37807aeda7ded0"
+            },
+            "2": {
+                "checksum": "3b0f4d22c3c560203e40e02d371b2b5a"
+            }
+        }
+    },
+    "aterlbus": {
+        "audio": {
+            "checksum": "2e7b1ff38cac8c786a1058a538d87421"
+        },
+        "chart": {
+            "0": {
+                "checksum": "a7ebf288b3d03be3950e919dd30f6c63"
+            },
+            "1": {
+                "checksum": "74078cad6e12cc39940dcfe46686feb1"
+            },
+            "2": {
+                "checksum": "db548051a5bac7ed7a005750bb952d9e"
+            }
+        }
+    },
+    "feelssoright": {
+        "audio": {
+            "checksum": "051931c48f9af7d0d4f7363cce3a4373"
+        },
+        "chart": {
+            "0": {
+                "checksum": "e857e4a1dd0c85d7cf5ef21a0d5afa02"
+            },
+            "1": {
+                "checksum": "52209c0052c8510e428309bbbc2df790"
+            },
+            "2": {
+                "checksum": "b84a5ae450e3adae85baaa15cb5e7e65"
+            }
+        }
+    },
+    "anokumene": {
+        "audio": {
+            "checksum": "78093277e6d26fea93889a6f63b12d7e"
+        },
+        "chart": {
+            "0": {
+                "checksum": "27210a07fb818df7b0f94c05ddf6503d"
+            },
+            "1": {
+                "checksum": "f72d1f8d19021e1bf092c1775a364b4b"
+            },
+            "2": {
+                "checksum": "cf32868ff90e5c0b00af308b0cb42e15"
+            }
+        }
+    },
+    "onefr": {
+        "audio": {
+            "checksum": "6a01814780fed708b99a13e09d511cf0"
+        },
+        "chart": {
+            "0": {
+                "checksum": "d955c5e93ce8893b77eb52f2bf6df8c7"
+            },
+            "1": {
+                "checksum": "b54602e5ada2b94747be9a5dd867c161"
+            },
+            "2": {
+                "checksum": "099e2367fd7583197f6bcbb9d8943ba8"
+            }
+        }
+    },
+    "equilibrium": {
+        "audio": {
+            "checksum": "f63238b05da87d3a2e84e3f4dd911837"
+        },
+        "chart": {
+            "0": {
+                "checksum": "ef09f1e041d7b87e6743bd96121219ed"
+            },
+            "1": {
+                "checksum": "03f65744f4e188009a44aebdcbb88a2f"
+            },
+            "2": {
+                "checksum": "89a9ddccad9e9d973da4204454a3063a"
+            }
+        }
+    },
+    "reconstruction": {
+        "audio": {
+            "checksum": "33003d41777723dee2ca536a90d0ffb6"
+        },
+        "chart": {
+            "0": {
+                "checksum": "c2502bada2903328ad89d4b4c441b132"
+            },
+            "1": {
+                "checksum": "0ed868a11696a4d381c67d5579e769cb"
+            },
+            "2": {
+                "checksum": "73ed184f0a0a56d4c3194b0598a913fe"
+            }
+        }
+    },
+    "dandelion": {
+        "audio": {
+            "checksum": "3df3797341539880ddde86f827ef692c"
+        },
+        "chart": {
+            "0": {
+                "checksum": "a24541d0eeef310291e2ea1fb373d76a"
+            },
+            "1": {
+                "checksum": "595b494277d9d21c7d87bd203b2c0300"
+            },
+            "2": {
+                "checksum": "030ed16c0ed14d18191db446048848bb"
+            }
+        }
+    },
+    "scarletcage": {
+        "audio": {
+            "checksum": "366b35c8301041f1595cf7833fa227ee"
+        },
+        "chart": {
+            "0": {
+                "checksum": "3cc0c654484a4ae2ceb81af4bf68c61f"
+            },
+            "1": {
+                "checksum": "1a6e9f646bb120fec107c8de0479e0e7"
+            },
+            "2": {
+                "checksum": "924dac5ce92498d3fe6beda723461523"
+            }
+        }
+    },
+    "callmyname": {
+        "audio": {
+            "checksum": "8c220f44e17ac6bd1ce7a0ed4286a3ba"
+        },
+        "chart": {
+            "0": {
+                "checksum": "2c570ed1c08c1ace79d7c07f221256d4"
+            },
+            "1": {
+                "checksum": "16c98fd1393252c2b92c579e1dbf9e6c"
+            },
+            "2": {
+                "checksum": "c7f0a095bd3f426e414be7de3aceb224"
+            }
+        }
+    },
+    "reinvent": {
+        "audio": {
+            "checksum": "014553dcb4f9c84620e9fcaf1567375e"
+        },
+        "chart": {
+            "0": {
+                "checksum": "b86285299ef23404c83f8101f4da6058"
+            },
+            "1": {
+                "checksum": "a40c98bff6e148a71274c4b05addca7f"
+            },
+            "2": {
+                "checksum": "c311b642e0c4f484650903377df4627a"
+            }
+        }
+    },
+    "dropdead": {
+        "audio": {
+            "checksum": "80255b334f118a8b758df76a929e3a99"
+        },
+        "chart": {
+            "0": {
+                "checksum": "ade5c0c8aa37e6786d9a605dc578e2a7"
+            },
+            "1": {
+                "checksum": "75fe739cfd526af8b957ce7c03d50d43"
+            },
+            "2": {
+                "checksum": "794829f11947c4b959b330719d3516ab"
+            }
+        }
+    },
+    "cyaegha": {
+        "audio": {
+            "checksum": "fb155c5cc4dd12984f7f007be1f71457"
+        },
+        "chart": {
+            "0": {
+                "checksum": "bb395c1cc49392dc4211abe2e1897ac6"
+            },
+            "1": {
+                "checksum": "f803f33c0e158f7bfcfc636a7c4545f7"
+            },
+            "2": {
+                "checksum": "6beb51117cfba1ecbd02e119aeef980d"
+            }
+        }
+    },
+    "hallofmirrors": {
+        "audio": {
+            "checksum": "94544f96850dac7119a9caf2ca7cce3b"
+        },
+        "chart": {
+            "0": {
+                "checksum": "3448f53a950979a9901d9c1c72cf6ec2"
+            },
+            "1": {
+                "checksum": "0cd12430c58543e748b9eeab2f12f09e"
+            },
+            "2": {
+                "checksum": "1769e7f1d3300445416d0581b4e61b8d"
+            }
+        }
+    },
+    "partyvinyl": {
+        "audio": {
+            "checksum": "1f9c3f0e0145362dd859813a67db05ad"
+        },
+        "chart": {
+            "0": {
+                "checksum": "68aa6a49de9b1e102c99582bf74431f8"
+            },
+            "1": {
+                "checksum": "15ffaf10c4be4814d80bbf6896006909"
+            },
+            "2": {
+                "checksum": "150f20ad00ae154be97195210af00637"
+            }
+        }
+    },
+    "avantraze": {
+        "audio": {
+            "checksum": "c46d211b86ecee967b742ce388d8fefb"
+        },
+        "chart": {
+            "0": {
+                "checksum": "6c7b913a435b4ea35ed597d6f2120f50"
+            },
+            "1": {
+                "checksum": "2c4ce6cec9a0e17402222375def0f6be"
+            },
+            "2": {
+                "checksum": "cfdf5d1b189cea14b8745e0459fff48d"
+            }
+        }
+    },
+    "iconoclast": {
+        "audio": {
+            "checksum": "2efb8391b8832e22056ed72a55e653fa"
+        },
+        "chart": {
+            "0": {
+                "checksum": "a715c977aea8bde44fa27c73a99ebc00"
+            },
+            "1": {
+                "checksum": "3690f5ac6b9d4ee3e75d1e78c8075461"
+            },
+            "2": {
+                "checksum": "03ca0734dd7ca7e9eeea24975d2780cd"
+            }
+        }
+    },
+    "inkarusi": {
+        "audio": {
+            "checksum": "374240d141360500da4ae1eb1eab7d07"
+        },
+        "chart": {
+            "0": {
+                "checksum": "6518644b61f2dac7ccbf4083039b09a9"
+            },
+            "1": {
+                "checksum": "361230684ca65691594164388c7978a1"
+            },
+            "2": {
+                "checksum": "605663acbe6dfb3c2fc9d59c141920b5"
+            }
+        }
+    },
+    "gloryroad": {
+        "audio": {
+            "checksum": "1d2c13007733e551b37708df0dcffbec"
+        },
+        "chart": {
+            "0": {
+                "checksum": "049eea3a24c6079570b2ab55be3adfa5"
+            },
+            "1": {
+                "checksum": "06c3d510b04514e23c10552ba2c7634b"
+            },
+            "2": {
+                "checksum": "12ba0efaa38a5dc909e258f3ee750b72"
+            }
+        }
+    },
+    "tiemedowngently": {
+        "audio": {
+            "checksum": "a3969e32119d42cee09e726fe2bfca7b"
+        },
+        "chart": {
+            "0": {
+                "checksum": "122158d7b60b90c84f814d6aa6110373"
+            },
+            "1": {
+                "checksum": "50f8b8cd8f9b4b12d255ac420473fff6"
+            },
+            "2": {
+                "checksum": "60917a68b3711a1ab41c6efdb2b5a8be"
+            }
+        }
+    },
+    "viyella": {
+        "audio": {
+            "checksum": "961f0e6390be9b62123d48fc16417272"
+        },
+        "chart": {
+            "0": {
+                "checksum": "c77acc84018f7a6e187c568f4ffdade2"
+            },
+            "1": {
+                "checksum": "e9ad99c7ebbc813bd12d55ccd780c508"
+            },
+            "2": {
+                "checksum": "1179bf21b31264788002fdb75c2249d7"
+            }
+        }
+    },
+    "qualia": {
+        "audio": {
+            "checksum": "3d96a12e081667e45c4a8e5213c0e80b"
+        },
+        "chart": {
+            "0": {
+                "checksum": "140bb7fcf7bd8691cb0d47f08760cd95"
+            },
+            "1": {
+                "checksum": "881b7c724f6877daca599cf60ffbf6bd"
+            },
+            "2": {
+                "checksum": "969f0b3adf72b3a5324eb4058b3c1d40"
+            }
+        }
+    },
+    "fallensquare": {
+        "audio": {
+            "checksum": "e56d9f382a22cd833557e7b43adb1a1a"
+        },
+        "chart": {
+            "0": {
+                "checksum": "439571f6be9add26eda860b7dfcf6729"
+            },
+            "1": {
+                "checksum": "a0c3c08914ca2731123aa9d070824125"
+            },
+            "2": {
+                "checksum": "b277fe11f302ead08cf9204dd5018aee"
+            }
+        }
+    },
+    "clotho": {
+        "audio": {
+            "checksum": "d2e173755380fdcdb25bbfbffe183ec3"
+        },
+        "chart": {
+            "0": {
+                "checksum": "c8f727cb4d7771826e729b7e934eef31"
+            },
+            "1": {
+                "checksum": "c94bd19b4598defddcfd4750f871be55"
+            },
+            "2": {
+                "checksum": "7401c92561d277851a1117141748aaf5"
+            }
+        }
+    },
+    "goodtek": {
+        "audio": {
+            "checksum": "ef6ebf67acc66be54357864cafa6164a"
+        },
+        "chart": {
+            "0": {
+                "checksum": "db688a63e3cb2fe5d547203f6c707cd3"
+            },
+            "1": {
+                "checksum": "3641be1f593e4500a744a22012faedf0"
+            },
+            "3": {
+                "checksum": "45486cb29633e987eaf9bb01f655c7c9"
+            },
+            "2": {
+                "checksum": "5a8158ea48bb8ae30e22d32681dfc422"
+            }
+        }
+    },
+    "tempestissimo": {
+        "audio": {
+            "checksum": "9315f3ddfa0ef375d50706bbb1089164"
+        },
+        "chart": {
+            "0": {
+                "checksum": "8ba9f48d8448133ba259d5c9927c93e7"
+            },
+            "1": {
+                "checksum": "76595a8259fe6bf360f91d33fe24d271"
+            },
+            "3": {
+                "checksum": "cbd203ba3ad3db30439b25fbfbaede01"
+            },
+            "2": {
+                "checksum": "5b396d00a1cadf138fc825d918522ded"
+            }
+        }
+    },
+    "linearaccelerator": {
+        "audio": {
+            "checksum": "9c5b681f3b16f2d5c1fd1675f48f48de"
+        },
+        "chart": {
+            "0": {
+                "checksum": "a17d33d8d03aabe034b38550240f90a5"
+            },
+            "1": {
+                "checksum": "36e82398d158697557ea153736519ace"
+            },
+            "2": {
+                "checksum": "8b6aff1b4b289bca9cf36c0848f1f972"
+            }
+        }
+    },
+    "memoryforest": {
+        "audio": {
+            "checksum": "8aaebff898381e42d3c7faf468b317bd"
+        },
+        "chart": {
+            "0": {
+                "checksum": "0417d9b349f6062ce437c10ba3ace4b4"
+            },
+            "1": {
+                "checksum": "3f244a815b73981b0d4e1790d045d4eb"
+            },
+            "2": {
+                "checksum": "5e5b6be69c02b6eaef6127e28ef5f695"
+            }
+        }
+    },
+    "romancewars": {
+        "audio": {
+            "checksum": "b39958c43cfcbb18cbcf7ae11d275cd1"
+        },
+        "chart": {
+            "0": {
+                "checksum": "65169585fce174c28c1b931045461729"
+            },
+            "1": {
+                "checksum": "812807d143ba1c1382bd2b3437d622b5"
+            },
+            "2": {
+                "checksum": "595ed52de8590f55dbf712b8e3305c4d"
+            }
+        }
+    },
+    "givemeanightmare": {
+        "audio": {
+            "checksum": "9969283e1b6c74257ce83be5c9108540"
+        },
+        "chart": {
+            "0": {
+                "checksum": "5256a8a4da6d25dd2bc1514ebdd6cfc5"
+            },
+            "1": {
+                "checksum": "5ea1754c2db8dde96a9b8e10bb682552"
+            },
+            "2": {
+                "checksum": "050ab342a0e8125458c1ac74f019a6bb"
+            }
+        }
+    },
+    "rise": {
+        "audio": {
+            "checksum": "37ab1624dd3282e1474e3a177570ff26"
+        },
+        "chart": {
+            "0": {
+                "checksum": "108dd3c500e810d9c96e4101b66b0dac"
+            },
+            "1": {
+                "checksum": "6b2c30117b66d7391d47ab41613eba84"
+            },
+            "2": {
+                "checksum": "10d509bc00c59a0c480fda2474bf1197"
+            }
+        }
+    },
+    "vector": {
+        "audio": {
+            "checksum": "c1f3ed74ddc1a2f3e195b65d3c088cf4"
+        },
+        "chart": {
+            "0": {
+                "checksum": "6d18cf7918c5ea93d86ff9f1a429dbcb"
+            },
+            "1": {
+                "checksum": "cf614e8ad0ab16f0d6c93419eba60393"
+            },
+            "2": {
+                "checksum": "d521e8db074621bbbe69bc321c83a7ae"
+            }
+        }
+    },
+    "grimheart": {
+        "audio": {
+            "checksum": "a6ddcbbfb7e1ae1c31a00e2320fdfd66"
+        },
+        "chart": {
+            "0": {
+                "checksum": "500bc0106411427f01ad87d5dfff08f4"
+            },
+            "1": {
+                "checksum": "ecc667046e21edf83e3ec4da679d1d34"
+            },
+            "2": {
+                "checksum": "e37285ae61230542e77df78a086397ab"
+            }
+        }
+    },
+    "vexaria": {
+        "audio": {
+            "checksum": "857b65a9515ff30c0e5a3f48fd3bcc0f"
+        },
+        "chart": {
+            "0": {
+                "checksum": "09e0ee174a727575a14515b785876a64"
+            },
+            "1": {
+                "checksum": "b886828e709de2aab10803fdf3dde31f"
+            },
+            "3": {
+                "checksum": "8810ceb343784729db0b0a27d1903e5b"
+            },
+            "2": {
+                "checksum": "80ca637d5689e80f84ee809320d9eb0d"
+            }
+        }
+    },
+    "solitarydream": {
+        "audio": {
+            "checksum": "7079165d31e3d8acbc3d1e9670bbca7d"
+        },
+        "chart": {
+            "0": {
+                "checksum": "10632c43c5be5e88bc7c2a5d01c3bae2"
+            },
+            "1": {
+                "checksum": "29af75bc9cd23454abacc565924450b1"
+            },
+            "2": {
+                "checksum": "2d6802f6b414030f1347f66a09107ace"
+            }
+        }
+    },
+    "genesis": {
+        "audio": {
+            "checksum": "3f3c7a017b1bbc965d4839c7ecf7e71b"
+        },
+        "chart": {
+            "0": {
+                "checksum": "e644c8661c5bccf3118c73626a123b97"
+            },
+            "1": {
+                "checksum": "61f815a2960618a5b32e488a0f1a6b3e"
+            },
+            "2": {
+                "checksum": "39313df60fcfdd201fce3fcf0fef9bdc"
+            }
+        }
+    },
+    "worldvanquisher": {
+        "audio": {
+            "checksum": "fd50cc8c11c0a60f805d6445c69a489e"
+        },
+        "chart": {
+            "0": {
+                "checksum": "3c826c62d960522e333d98408d474005"
+            },
+            "1": {
+                "checksum": "34d8a05469bd19e61380e80b81de19c1"
+            },
+            "2": {
+                "checksum": "6e21c36837982fcc96af5eda9ef0063a"
+            }
+        }
+    },
+    "quon": {
+        "audio": {
+            "checksum": "7b59b9f4b125c5e35429907d83505f72"
+        },
+        "chart": {
+            "0": {
+                "checksum": "9b375408d78544f4a5fcd167a94761e0"
+            },
+            "1": {
+                "checksum": "4e9b4907aa28e09e866cdd75b84627ce"
+            },
+            "2": {
+                "checksum": "de3a232a8db38e8099afde174a788cdf"
+            }
+        }
+    },
+    "alexandrite": {
+        "audio": {
+            "checksum": "a850dc4181b43cdd9c6b98537840c02a"
+        },
+        "chart": {
+            "0": {
+                "checksum": "1702cca869b993ba4bada5686ffff933"
+            },
+            "1": {
+                "checksum": "3e01f8a1f493ff0be41d173be07b1dab"
+            },
+            "2": {
+                "checksum": "d8bbf28c18141d842d1c761bf8de8e56"
+            }
+        }
+    },
+    "twisteddropparty": {
+        "audio": {
+            "checksum": "ab412cab89d65dea6723f0c469d5be53"
+        },
+        "chart": {
+            "0": {
+                "checksum": "d411140374a62cf07f1f8084e97f84bc"
+            },
+            "1": {
+                "checksum": "d411140374a62cf07f1f8084e97f84bc"
+            },
+            "2": {
+                "checksum": "9e00986abff808d27e579a0781ef15e4"
+            }
+        }
+    },
+    "ikazuchi": {
+        "audio": {
+            "checksum": "81160b8257d20d3b7521c77e8d98bb87"
+        },
+        "chart": {
+            "0": {
+                "checksum": "5e5beec4466265103c1b229eb3d735d2"
+            },
+            "1": {
+                "checksum": "e687bb6dbc1205b2e912a7159ae14e53"
+            },
+            "2": {
+                "checksum": "572098c7ee676591bf5a7c6a467f1838"
+            }
+        }
+    },
+    "sayonarahatsukoi": {
+        "audio": {
+            "checksum": "6c06556d3928fb54bb67e3fc7a442960"
+        },
+        "chart": {
+            "0": {
+                "checksum": "f83b60b8c79b0bf5864f22238585363e"
+            },
+            "1": {
+                "checksum": "50079d71acd1bab578c09e16b86c32c1"
+            },
+            "2": {
+                "checksum": "fa5c2affbc37dc254abee1dd221b3548"
+            }
+        }
+    },
+    "sulfur": {
+        "audio": {
+            "checksum": "63bb7d3aabfc094722e37e1fd24b56de"
+        },
+        "chart": {
+            "0": {
+                "checksum": "ffcf26c1b15650ff293b33fb2f089d19"
+            },
+            "1": {
+                "checksum": "0edce5ed76dbbaaf447ebb155b985166"
+            },
+            "2": {
+                "checksum": "e9e1309d8cb43d6a0202642e5d1c4f70"
+            }
+        }
+    },
+    "battlenoone": {
+        "audio": {
+            "checksum": "8fd074e578fdc231d956a17487e002eb"
+        },
+        "chart": {
+            "0": {
+                "checksum": "6a9359429646a7d138e4dd7444d40274"
+            },
+            "1": {
+                "checksum": "96c0f334d59a365dbb517ca80a08423f"
+            },
+            "2": {
+                "checksum": "2eba9e710027d2172ae3273d1f80802c"
+            }
+        }
+    },
+    "nirvluce": {
+        "audio": {
+            "checksum": "658356308852c5831f27ce398e3b5e05"
+        },
+        "chart": {
+            "0": {
+                "checksum": "c9c748f3eb855375963ea7a996f29e33"
+            },
+            "1": {
+                "checksum": "12b4421b5931cc518ce7df472f8abdef"
+            },
+            "2": {
+                "checksum": "ae50915c25b6250f4b05505ef8e607a9"
+            }
+        }
+    },
+    "essenceoftwilight": {
+        "audio": {
+            "checksum": "a6be84b943648d44ced1269a9acc9dd9"
+        },
+        "chart": {
+            "0": {
+                "checksum": "edd963854a9264bbde974fc272c84c9b"
+            },
+            "1": {
+                "checksum": "8a3c95f63393af1c2aff31e378bdfca1"
+            },
+            "2": {
+                "checksum": "691f82a844b6aff868023ca2c80d22ff"
+            }
+        }
+    },
+    "blackterritory": {
+        "audio": {
+            "checksum": "8dfa9b02debc6c45066e1f5e1896d0d9"
+        },
+        "chart": {
+            "0": {
+                "checksum": "41178b67ab15efbfeafa9967cb81e082"
+            },
+            "1": {
+                "checksum": "41648ca4b8ccf6cfcc83d4f40d6a0444"
+            },
+            "2": {
+                "checksum": "1e950959491132353e6d591e5010d93a"
+            }
+        }
+    },
+    "vividtheory": {
+        "audio": {
+            "checksum": "97d517b1f262a0b8e6962dd34343b640"
+        },
+        "chart": {
+            "0": {
+                "checksum": "d33d4c047d250db7709492e47ddcd860"
+            },
+            "1": {
+                "checksum": "b220e2fa6d05fe3791385102302bd6a5"
+            },
+            "2": {
+                "checksum": "6884ae26686bf9c66b1e5beb362c75cd"
+            }
+        }
+    },
+    "redandblue": {
+        "audio": {
+            "checksum": "34e75d0fc03a5e3077a4fca4581429f3"
+        },
+        "chart": {
+            "0": {
+                "checksum": "c9f1210476c3c689827f978b9b0223e9"
+            },
+            "1": {
+                "checksum": "72437c95a1dd82d3882919e956705fb8"
+            },
+            "2": {
+                "checksum": "218c6bd3fec609cc011820a2b8394a82"
+            }
+        }
+    },
+    "yozakurafubuki": {
+        "audio": {
+            "checksum": "6f51eefc4c396b61203a39da8299b5fe"
+        },
+        "chart": {
+            "0": {
+                "checksum": "dd67f6a5d8ab6f040d7f0fc8166ab57e"
+            },
+            "1": {
+                "checksum": "e4ce851284a4685cf047a2c5921a2153"
+            },
+            "2": {
+                "checksum": "492ef03603c1373f138ac66d9aa46c6c"
+            }
+        }
+    },
+    "fairytale": {
+        "audio": {
+            "checksum": "2a2d7dd2a441f7d2aa999e6574ab6811"
+        },
+        "chart": {
+            "0": {
+                "checksum": "92e686d88ca2ff47cb2ef4798caffe83"
+            },
+            "1": {
+                "checksum": "fccd6143fb0ed01c69c018c9923362b5"
+            },
+            "3": {
+                "checksum": "15855c23558ca8b9e848dcacbbaf72e2"
+            },
+            "2": {
+                "checksum": "410a626480b844ef2b155a7ade9d1915"
+            }
+        }
+    }
+}
