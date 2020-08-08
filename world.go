@@ -154,7 +154,7 @@ func getMapAffinity(mapID string) ([]int8, []float64, error) {
 
 func getRewards(mapID string) ([]Reward, error) {
 	rows, err := db.Query(
-		"select reward_id, type, amount, position from map_reward where map_id = :1",
+		"select reward_id, item_type, amount, position from map_reward where map_id = :1",
 		mapID,
 	)
 	if err != nil {

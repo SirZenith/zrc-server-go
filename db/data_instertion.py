@@ -1,4 +1,5 @@
 import json
+import re
 
 import cx_Oracle
 
@@ -15,6 +16,7 @@ def player_insertion():
         )
         values(:1, :2, :3, :4, :5, :6, :7)
     ''', (static_user_id, 'sirzenith@163.com', 'this', '陆离', 1, 2000, 1565785560581))
+    # cur.execute('''update player set user_name = '陆离' where user_id = 1''')
     cur.execute('select user_name from player')
     for (user_name,) in cur:
         print(user_name)
@@ -293,18 +295,29 @@ def socre_insertion():
                         (int(score['time_played'] / 1000),))
 
 
+def backup_insertion():
+    with open('./json_files/backup_data.json', 'r', encoding='utf8') as f:
+        data = f.read().strip('{}')
+    data = re.sub('\s', '', data)
+    cur.execute(
+        'insert into data_backup(user_id, backup_data) values(:1, :2)',
+        (static_user_id, data)
+    )
+
+
 if __name__ == '__main__':
-    player_insertion()
-    level_exp_insertion()
-    partner_insertion()
-    partner_stats_insertion()
-    chart_info_insertion()
-    byd_song_insertion()
-    game_info_insertion()
-    map_data_insertion()
-    world_item_insertion()
-    core_insertion()
-    socre_insertion()
+    # player_insertion()
+    # level_exp_insertion()
+    # partner_insertion()
+    # partner_stats_insertion()
+    # chart_info_insertion()
+    # byd_song_insertion()
+    # game_info_insertion()
+    # map_data_insertion()
+    # world_item_insertion()
+    # core_insertion()
+    # socre_insertion()
+    backup_insertion()
     conn.commit()
     cur.close()
     conn.close()

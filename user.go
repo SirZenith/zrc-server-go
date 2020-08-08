@@ -186,6 +186,7 @@ func getCoreInfo(userID int) ([]CoreInfo, error) {
 
 func getRecentScore(userID int) (ScoreRecord, error) {
 	record := ScoreRecord{}
+	var modifier sql.NullInt32
 	err := db.QueryRow(`select
 			s.song_id, s.difficulty, s.score,
 			s.shiny_pure, s.pure, s.far, s.lost,
@@ -201,12 +202,18 @@ func getRecentScore(userID int) (ScoreRecord, error) {
 			s2.song_id = b.song_id`).Scan(
 		&record.SongID, &record.Difficulty, &record.Score,
 		&record.Shiny, &record.Pure, &record.Far, &record.Lost,
-		&record.Health, &record.Modifier,
+		&record.Health, &modifier,
 		&record.ClearType, &record.BestClearType,
 	)
 	if err != nil {
 		log.Println("Error occured while querying most recent score from SCORE")
 		return record, err
+	}
+
+	if modifier.Valid {
+		record.Modifier = int(modifier.Int32)
+	} else {
+		record.Modifier = 0
 	}
 
 	return record, nil

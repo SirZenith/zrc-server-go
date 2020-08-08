@@ -18,8 +18,8 @@ func init() {
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	token := LoginToken{
-		"",
-		"",
+		"this",
+		"Bearer",
 		true,
 	}
 	res, err := json.Marshal(token)
@@ -48,8 +48,8 @@ func aggregateHandler(w http.ResponseWriter, r *http.Request) {
 		handler, ok := InsideHandler[path.Join(
 			APIRoot, APIVer, strings.Split(call.EndPoint, "?")[0])]
 		if !ok {
-			fmt.Println("Unknow request endpoint ", call.EndPoint)
-			results = append(results, AggResult{call.ID, &EmptyContainer{}})
+			log.Println("Unknow request endpoint ", call.EndPoint)
+			results = append(results, AggResult{call.ID, &EmptyList{}})
 			continue
 		}
 		tojson, err := handler(userID)

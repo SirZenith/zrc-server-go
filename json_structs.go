@@ -10,10 +10,23 @@ type ToJSON interface {
 	toJSON() string
 }
 
-// EmptyContainer is completely empty
-type EmptyContainer []struct{}
+// EmptyList type define
+type EmptyList []struct{}
 
-func (c *EmptyContainer) toJSON() string {
+func (c *EmptyList) toJSON() string {
+	res, err := json.Marshal(c)
+	if err != nil {
+		log.Println(err)
+		return ""
+	}
+
+	return string(res)
+}
+
+// EmptyMap type define
+type EmptyMap []struct{}
+
+func (c *EmptyMap) toJSON() string {
 	res, err := json.Marshal(c)
 	if err != nil {
 		log.Println(err)

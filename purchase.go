@@ -44,7 +44,7 @@ func getPackInfo(_ int) (ToJSON, error) {
 		rows.Scan(&name, &price, &origPrice, &disCountFrom, &disCountTo)
 		items := []PackItem{}
 		itemRows, err := db.Query(`select 
-				item_id, type, is_available
+				item_id, item_type, is_available
 			from
 				pack_item
 			where

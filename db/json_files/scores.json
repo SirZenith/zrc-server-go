@@ -14,6 +14,20 @@
         "modifier": 0
     },
     {
+        "song_id": "mahoroba",
+        "difficulty": 2,
+        "score": 9946409,
+        "rating": 11.232045,
+        "shiny_perfect_count": 757,
+        "perfect_count": 820,
+        "near_count": 7,
+        "miss_count": 1,
+        "health": 100,
+        "modifier": 0,
+        "time_played": 1596863425,
+        "clear_type": 1
+    },
+    {
         "song_id": "equilibrium",
         "difficulty": 2,
         "score": 9953524,
@@ -3906,20 +3920,6 @@
         "modifier": 0
     },
     {
-        "song_id": "mahoroba",
-        "difficulty": 2,
-        "score": 9910177,
-        "rating": 11.050885,
-        "shiny_perfect_count": 757,
-        "perfect_count": 816,
-        "near_count": 9,
-        "miss_count": 3,
-        "health": 100,
-        "modifier": 0,
-        "time_played": 1596772290956,
-        "clear_type": 1
-    },
-    {
         "song_id": "moonlightofsandcastle",
         "difficulty": 2,
         "score": 10000623,
@@ -3931,6 +3931,6 @@
         "health": 100,
         "modifier": 0,
         "time_played": 1596772000000,
-        "clear_type": 0
+        "clear_type": 3
     }
 ]

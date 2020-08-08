@@ -156,7 +156,7 @@ func updateRating(tx *sql.Tx, userID int, newPlayedDate int64, newRating float64
 		return rating, err
 	} else if err = updateBestScore(tx, userID, newPlayedDate, songID, newRating); err != nil {
 		return rating, err
-	} else if err = updateRatingBest(tx, userID, newPlayedDate, newRating); err != nil {
+	} else if err = updateRatingBest(tx, userID, newPlayedDate, songID, newRating); err != nil {
 		return rating, err
 	}
 	err = tx.QueryRow(`
@@ -355,8 +355,8 @@ func updateBestScore(tx *sql.Tx, userID int, newPlayedDate int64, songID string,
 			s.song_id = :2`, userID, songID).Scan(&rating, &playedDate)
 	if err == sql.ErrNoRows {
 		_, err = tx.Exec(
-			"insert into best_score(user_id, played_date) values(:1, :2)",
-			userID, newPlayedDate,
+			"insert into best_score(user_id, played_date, song_id) values(:1, :2, :3)",
+			userID, newPlayedDate, songID,
 		)
 		if err != nil {
 			log.Println("Error occured while insert into BEST_SCORE")
@@ -367,8 +367,8 @@ func updateBestScore(tx *sql.Tx, userID int, newPlayedDate int64, songID string,
 		return err
 	} else if newRating > rating {
 		_, err = tx.Exec(
-			"update best_score set played_date = :1 where played_date = :2",
-			newPlayedDate, playedDate,
+			"update best_score set played_date = :1, song_id = :2 where played_date = :3",
+			newPlayedDate, songID, playedDate,
 		)
 		if err != nil {
 			log.Println("Error occured while modifying table BEST_SCORE")
@@ -378,17 +378,25 @@ func updateBestScore(tx *sql.Tx, userID int, newPlayedDate int64, songID string,
 	return nil
 }
 
-func updateRatingBest(tx *sql.Tx, userID int, newPlayedDate int64, newRating float64) error {
+// Best30Info recording best-30 items' info
+type Best30Info struct {
+	songID     string
+	rating     float64
+	playedDate int64
+}
+
+func updateRatingBest(tx *sql.Tx, userID int, newPlayedDate int64, songID string, newRating float64) error {
 	var (
+		id         string
 		rating     float64
 		playedDate int64
 		b30Count   int
 	)
-	err := tx.QueryRow(`
+	rows, err := tx.Query(`
 	with
 		b30 as (
 			select
-					s.rating, s.played_date
+					s.song_id, s.rating, s.played_date
 			from
 				best_30, score s
 			where
@@ -399,13 +407,12 @@ func updateRatingBest(tx *sql.Tx, userID int, newPlayedDate int64, newRating flo
 				best_30.played_date = s.played_date
 		)
 	select
-		rating, played_date, b30_count
+		song_id, rating, played_date, b30_count
 	from
-		b30, (select count(*) b30_count from b30)
+		b30,
+		(select count(*) b30_count from b30)
 	where
-		rating = (select min(rating) from b30)
-	and
-		rownum = 1`, userID).Scan(&rating, &playedDate, &b30Count)
+		song_id = :2 or rating = (select min(rating) from b30)`, userID, songID)
 	if err == sql.ErrNoRows {
 		_, err = tx.Exec(
 			"insert into best_30(user_id, played_date) values(:1, :2)",
@@ -418,7 +425,38 @@ func updateRatingBest(tx *sql.Tx, userID int, newPlayedDate int64, newRating flo
 	} else if err != nil {
 		log.Println("Error occured while querying table BEST_30")
 		return err
+	}
+	defer rows.Close()
+
+	infoes := []Best30Info{}
+	index := -1 // index of item which has the same song id as param songID
+	curr := 0
+	for rows.Next() {
+		rows.Scan(&id, &rating, &playedDate, &b30Count)
+		infoes = append(infoes, Best30Info{id, rating, playedDate})
+		if id == songID {
+			index = curr
+		}
+		curr++
+	}
+	if err = rows.Err(); err != nil {
+		log.Println("Error occured while reading rows queried from table BEST_30")
+		return err
+	}
+
+	if index != -1 {
+		if newRating > infoes[index].rating {
+			_, err = tx.Exec(
+				"update best_30 set played_date = :1 where played_date = :2",
+				newPlayedDate, infoes[index].playedDate,
+			)
+			if err != nil {
+				log.Println("Error occured while modifying record table BEST_30")
+				return err
+			}
+		}
 	} else if b30Count < 30 {
+		fmt.Println(index)
 		_, err = tx.Exec(
 			"insert into best_30(user_id, played_date) values(:1, :2)",
 			userID, newPlayedDate,
@@ -427,10 +465,10 @@ func updateRatingBest(tx *sql.Tx, userID int, newPlayedDate int64, newRating flo
 			log.Println("Error occured while inserting new record to table BEST_30")
 			return err
 		}
-	} else if newRating > rating {
+	} else if newRating > infoes[0].rating {
 		_, err = tx.Exec(
 			"update best_30 set played_date = :1 where played_date = :2",
-			newPlayedDate, playedDate,
+			newPlayedDate, infoes[0].playedDate,
 		)
 		if err != nil {
 			log.Println("Error occured while modifying record table BEST_30")
