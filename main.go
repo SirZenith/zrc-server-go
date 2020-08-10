@@ -7,7 +7,11 @@ import (
 	"net/http"
 
 	_ "github.com/godror/godror"
+	"github.com/gorilla/mux"
 )
+
+// HostName is server address
+var HostName = "http://192.168.124.2:8080"
 
 // APIRoot is leading path of all request URL
 var APIRoot = "/coffee"
@@ -15,11 +19,11 @@ var APIRoot = "/coffee"
 // APIVer is version number appear in all request URL
 var APIVer = "12"
 
-// HandlerMap recording request URLs and handler corresponding
-var HandlerMap = map[string]func(w http.ResponseWriter, r *http.Request){}
+// R router used globally
+var R = mux.NewRouter()
 
 // InsideHandler recording internal func inside info getting purpose handler
-var InsideHandler = map[string]func(userID int) (ToJSON, error){}
+var InsideHandler = map[string]func(userID int, r *http.Request) (ToJSON, error){}
 var db *sql.DB
 
 func init() {
@@ -37,18 +41,8 @@ func init() {
 
 func main() {
 	defer db.Close()
-	for url, handler := range HandlerMap {
-		http.HandleFunc(url, handler)
-	}
 	fmt.Println("Starting a server at port 8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(":8080", R); err != nil {
 		log.Fatal(err)
 	}
-
-	// tojson, err := getMyMapInfo(1)
-	// if err != nil {
-	// 	log.Print(err)
-	// 	return
-	// }
-	// fmt.Println(tojson.toJSON())
 }

@@ -8,19 +8,27 @@ import (
 )
 
 func init() {
-	HandlerMap[path.Join(APIRoot, APIVer, "purchase/bundle/pack")] = packInfoHandler
+	R.Handle(
+		path.Join(APIRoot, APIVer, "purchase/bundle/pack"),
+		http.HandlerFunc(packInfoHandler),
+	)
 	InsideHandler[path.Join(APIRoot, APIVer, "purchase/bundle/pack")] = getPackInfo
 }
 
 func packInfoHandler(w http.ResponseWriter, r *http.Request) {
-	tojson, err := getPackInfo(0)
+	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
+	if err != nil {
+		c := Container{false, nil, 203}
+		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+	}
+	tojson, err := getPackInfo(userID, r)
 	if err != nil {
 		log.Println(err)
 	}
 	fmt.Fprint(w, tojson.toJSON())
 }
 
-func getPackInfo(_ int) (ToJSON, error) {
+func getPackInfo(_ int, _ *http.Request) (ToJSON, error) {
 	container := []PackInfo{}
 	var (
 		name         string

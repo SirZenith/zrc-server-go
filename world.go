@@ -9,13 +9,20 @@ import (
 )
 
 func init() {
-	HandlerMap[path.Join(APIRoot, APIVer, "world/map/me")] = myMapInfoHandler
+	R.Handle(
+		path.Join(APIRoot, APIVer, "world/map/me"),
+		http.HandlerFunc(myMapInfoHandler),
+	)
 	InsideHandler[path.Join(APIRoot, APIVer, "world/map/me")] = getMyMapInfo
 }
 
 func myMapInfoHandler(w http.ResponseWriter, r *http.Request) {
-	userID := 1
-	tojson, err := getMyMapInfo(userID)
+	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
+	if err != nil {
+		c := Container{false, nil, 203}
+		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+	}
+	tojson, err := getMyMapInfo(userID, r)
 	if err != nil {
 		log.Println(err)
 	} else {
@@ -23,7 +30,7 @@ func myMapInfoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getMyMapInfo(userID int) (ToJSON, error) {
+func getMyMapInfo(userID int, _ *http.Request) (ToJSON, error) {
 	var (
 		affMultiplier []float64
 		availableFrom int64

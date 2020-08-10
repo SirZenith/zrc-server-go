@@ -1,6 +1,7 @@
 .DS_Store
 samples/*
-resource/**
+resource/*
+static/songs
 *.pdf
 server
 test.sql

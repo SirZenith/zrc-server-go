@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"path"
-	"strconv"
 	"strings"
 
 	"github.com/albrow/forms"
@@ -16,30 +15,23 @@ import (
 var DataAndChecksumKeys []string
 
 func init() {
-	HandlerMap[path.Join(APIRoot, APIVer, "user/me/save")] = backupHandler
+	R.Path(path.Join(APIRoot, APIVer, "user/me/save")).Methods("GET").Handler(
+		http.HandlerFunc(returnBackup),
+	)
+	R.Path(path.Join(APIRoot, APIVer, "user/me/save")).Methods("POST").Handler(
+		http.HandlerFunc(receiveBackup),
+	)
 	DataAndChecksumKeys = []string{
 		"scores", "clearlamps", "clearedsongs", "unlocklist",
 		"installid", "devicemodelname", "story", "version",
 	}
 }
 
-func backupHandler(w http.ResponseWriter, r *http.Request) {
-	var err error
-	if r.Method == "GET" {
-		err = returnBackup(w, r)
-	} else if r.Method == "POST" {
-		err = receiveBackup(w, r)
-	}
+func returnBackup(w http.ResponseWriter, r *http.Request) {
+	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
 	if err != nil {
-		log.Println(err)
-	}
-}
-
-func returnBackup(w http.ResponseWriter, r *http.Request) error {
-	userID, err := strconv.Atoi(r.Header.Get("i"))
-	if err != nil {
-		log.Println("Failed to read user id from header when downloading backup")
-		return err
+		c := Container{false, nil, 203}
+		http.Error(w, c.toJSON(), http.StatusUnauthorized)
 	}
 	var data string
 	err = db.QueryRow(
@@ -47,25 +39,24 @@ func returnBackup(w http.ResponseWriter, r *http.Request) error {
 	).Scan(&data)
 	if err != nil {
 		log.Println("Error occured while querying table DATA_BACKUP for downloading data")
-		return err
+		log.Println(err)
 	} else if data == "" {
 		http.Error(w, `{"success":false,"error_code":402}`, http.StatusNotFound)
 	} else {
 		fmt.Fprintf(w, `{"success":true,"value":{"user_id":%d,%s}}`, userID, data)
 	}
-	return nil
 }
 
-func receiveBackup(w http.ResponseWriter, r *http.Request) error {
-	userID, err := strconv.Atoi(r.Header.Get("i"))
+func receiveBackup(w http.ResponseWriter, r *http.Request) {
+	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
 	if err != nil {
-		log.Println("Failed to read user id from header when uploading backup")
-		return err
+		c := Container{false, nil, 203}
+		http.Error(w, c.toJSON(), http.StatusUnauthorized)
 	}
 	data, err := forms.Parse(r)
 	if err != nil {
 		log.Printf("%s: Error occured while parsing form\n", r.URL.Path)
-		return err
+		log.Println(err)
 	}
 	val := data.Validator()
 	for _, key := range DataAndChecksumKeys {
@@ -77,7 +68,7 @@ func receiveBackup(w http.ResponseWriter, r *http.Request) error {
 		for k, v := range val.ErrorMap() {
 			log.Printf("%s: %s", k, v)
 		}
-		return err
+		log.Println(err)
 	}
 	results := []string{}
 	for _, key := range DataAndChecksumKeys {
@@ -85,10 +76,11 @@ func receiveBackup(w http.ResponseWriter, r *http.Request) error {
 		checksum := data.Get(key + "_checksum")
 		sum := fmt.Sprintf("%x", md5.Sum([]byte(content)))
 		if string(sum) != checksum {
-			return fmt.Errorf(
+			log.Printf(
 				"Checksum check failed for key `%s` with checksum: %s",
 				key, string(sum),
 			)
+			return
 		}
 		results = append(results, fmt.Sprintf(`"%s":%s`, key, content))
 	}
@@ -99,8 +91,7 @@ func receiveBackup(w http.ResponseWriter, r *http.Request) error {
 	)
 	if err != nil {
 		log.Println("Error occured while updating table DATA_BACKUP")
-		return err
+		log.Println(err)
 	}
 	fmt.Fprintf(w, `{"success":true,"value":{"user_id":%d}}`, userID)
-	return nil
 }

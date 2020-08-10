@@ -12,21 +12,29 @@ import (
 )
 
 // SettingMap mapping request URL into column in PLAYER table
-var SettingMap map[string]string
+var SettingMap = map[string]string{}
 
 func init() {
-	HandlerMap[path.Join(APIRoot, APIVer, "user/me")] = userInfoHandler
-	HandlerMap[path.Join(APIRoot, APIVer, "user/me/setting")+"/"] = userSettingHandler
+	R.Handle(
+		path.Join(APIRoot, APIVer, "user/me"),
+		http.HandlerFunc(userInfoHandler),
+	)
+	R.PathPrefix(path.Join(APIRoot, APIVer, "user/me/setting")).Handler(
+		http.HandlerFunc(userSettingHandler),
+	)
 	InsideHandler[path.Join(APIRoot, APIVer, "user/me")] = getUserInfo
 
-	SettingMap = map[string]string{}
 	SettingMap["is_hide_rating"] = "is_hide_rating"
 	SettingMap["max_stamina_notification_enabled"] = "max_stamina_notification"
 }
 
 func userInfoHandler(w http.ResponseWriter, r *http.Request) {
-	userID := 1
-	tojson, err := getUserInfo(userID)
+	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
+	if err != nil {
+		c := Container{false, nil, 203}
+		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+	}
+	tojson, err := getUserInfo(userID, r)
 	if err != nil {
 		log.Println(err)
 	} else {
@@ -34,7 +42,7 @@ func userInfoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getUserInfo(userID int) (ToJSON, error) {
+func getUserInfo(userID int, _ *http.Request) (ToJSON, error) {
 	var (
 		userName              string
 		displayName           string
@@ -118,8 +126,14 @@ func getUserInfo(userID int) (ToJSON, error) {
 	if displayName == "" {
 		displayName = userName
 	}
+	var isAprilFools string
+	err = db.QueryRow(`select is_aprilfools from game_info`).Scan(&isAprilFools)
+	if err != nil {
+		log.Println("Error occured while reading April Fools info.")
+		return nil, err
+	}
 	info := UserInfo{
-		true,
+		isAprilFools == "t",
 		[]string{},
 		charStatuses,
 		[]string{},
@@ -252,10 +266,10 @@ func userSettingHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	userID, err := strconv.Atoi(r.Header.Get("i"))
+	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
 	if err != nil {
-		log.Println("Wrong userID: ", userID, " to do setting for.")
-		return
+		c := Container{false, nil, 203}
+		http.Error(w, c.toJSON(), http.StatusUnauthorized)
 	}
 
 	val := data.Validator()
@@ -281,7 +295,7 @@ func userSettingHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	tojson, err := getUserInfo(userID)
+	tojson, err := getUserInfo(userID, r)
 	if err != nil {
 		log.Println(err)
 	} else {

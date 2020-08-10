@@ -8,12 +8,20 @@ import (
 )
 
 func init() {
-	HandlerMap[path.Join(APIRoot, APIVer, "game/info")] = gameInfoHandler
+	R.Handle(
+		path.Join(APIRoot, APIVer, "game/info"),
+		http.HandlerFunc(gameInfoHandler),
+	)
 	InsideHandler[path.Join(APIRoot, APIVer, "game/info")] = getGameInfo
 }
 
 func gameInfoHandler(w http.ResponseWriter, r *http.Request) {
-	tojson, err := getGameInfo(0)
+	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
+	if err != nil {
+		c := Container{false, nil, 203}
+		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+	}
+	tojson, err := getGameInfo(userID, r)
 	if err != nil {
 		log.Println(err)
 	} else {
@@ -21,7 +29,7 @@ func gameInfoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getGameInfo(_ int) (ToJSON, error) {
+func getGameInfo(_ int, _ *http.Request) (ToJSON, error) {
 	var (
 		now                  int64
 		maxStam              int8

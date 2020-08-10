@@ -11,8 +11,13 @@ import (
 )
 
 func init() {
-	HandlerMap[path.Join(APIRoot, APIVer, "user/me/character")] = changeCharacter
-	HandlerMap[path.Join(APIRoot, APIVer, "user/me/character")+"/"] = toggleUncap
+	R.Handle(
+		path.Join(APIRoot, APIVer, "user/me/character"),
+		http.HandlerFunc(changeCharacter),
+	)
+	R.PathPrefix(path.Join(APIRoot, APIVer, "user/me/character")).Handler(
+		http.HandlerFunc(toggleUncap),
+	)
 }
 
 func getCharacterStats(userID int) ([]CharacterStats, error) {
@@ -196,14 +201,10 @@ func getSingleCharacterStats(userID int, partID int8) (*CharacterStats, error) {
 }
 
 func changeCharacter(w http.ResponseWriter, r *http.Request) {
-	log.Println("character setting")
-	userID, err := strconv.Atoi(r.Header.Get("i"))
+	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
 	if err != nil {
-		log.Println(
-			"Error occured while reading user ID while changing character with user ID = ",
-			userID,
-		)
-		return
+		c := Container{false, nil, 203}
+		http.Error(w, c.toJSON(), http.StatusUnauthorized)
 	}
 	data, err := forms.Parse(r)
 	if err != nil {
@@ -240,14 +241,10 @@ func changeCharacter(w http.ResponseWriter, r *http.Request) {
 }
 
 func toggleUncap(w http.ResponseWriter, r *http.Request) {
-	log.Println("toggle uncap")
-	userID, err := strconv.Atoi(r.Header.Get("i"))
+	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
 	if err != nil {
-		log.Println(
-			"Error occured while reading user ID while changing character with user ID = ",
-			userID,
-		)
-		return
+		c := Container{false, nil, 203}
+		http.Error(w, c.toJSON(), http.StatusUnauthorized)
 	}
 
 	container := Container{true, nil, 0}

@@ -1,5 +1,7 @@
+#! /usr/bin/env python3
 import json
 import re
+from sys import argv
 
 import cx_Oracle
 
@@ -15,7 +17,7 @@ def player_insertion():
             user_id, email, pwdhash, user_name, user_code, ticket, join_date
         )
         values(:1, :2, :3, :4, :5, :6, :7)
-    ''', (static_user_id, 'sirzenith@163.com', 'this', '陆离', 1, 2000, 1565785560581))
+    ''', (static_user_id, 'sirzenith@163.com', '222eaf3c32e3665168317399a01af6ef', '陆离', 1, 2000, 1565785560581))
     # cur.execute('''update player set user_name = '陆离' where user_id = 1''')
     cur.execute('select user_name from player')
     for (user_name,) in cur:
@@ -92,18 +94,11 @@ def partner_stats_insertion():
     print()
 
 
-def chart_info_insertion():
-    with open('./json_files/rating_info.json', 'r', encoding='utf8') as f:
-        rating_info = json.load(f)
-    with open('./json_files/song_info.json', 'r', encoding='utf8') as f:
-        song_info = json.load(f)
+def pack_info_insertion():
     with open('./json_files/pack_info.json', 'r', encoding='utf8') as f:
         pack_infoes = json.load(f)
-    with open('./json_files/checksums.json', 'r', encoding='utf8') as f:
-        checksums = json.load(f)
-
-    for pack in song_info['packs']:
-        pack_info = pack_infoes[pack]
+    for pack in pack_infoes['packs']:
+        pack_info = pack_infoes['detail'][pack]
         cur.execute(
             'insert into pack values(:1, :2, :3, :4, :5)',
             (
@@ -120,10 +115,20 @@ def chart_info_insertion():
                     't' if item['is_available'] else ''
                 )
             )
-        cur.execute(
-            'insert into pack_purchase_info values(:u, :p)',
-            u=static_user_id, p=pack
-        )
+        if pack not in ('base', 'single'):
+            cur.execute(
+                'insert into pack_purchase_info values(:u, :p)',
+                u=static_user_id, p=pack
+            )
+
+
+def song_info_insertion():
+    with open('./json_files/rating_info.json', 'r', encoding='utf8') as f:
+        rating_info = json.load(f)
+    with open('../static/songs/songlist', 'r', encoding='utf8') as f:
+        song_info = json.load(f)
+    with open('../static/songs/checksums.json', 'r', encoding='utf8') as f:
+        checksums = json.load(f)
 
     for song in song_info['songs']:
         song_id = song['id']
@@ -143,7 +148,7 @@ def chart_info_insertion():
             song['audioPreviewEnd'], song['side'],
             't' if song.get('world_unlock', False) else '',
             song['bg'], song['date'], song['version'],
-            't' if song.get('remote_dl') else '',
+            't' if song.get('remote_dl', False) else '',
             checksum
         ))
         if song['set'] == 'single':
@@ -167,27 +172,27 @@ def chart_info_insertion():
                     song_id, diff,
                     item['chartDesigner'], item.get('jackerDesigner', ''),
                     rating_info[song_id][diff],
-                    't' if diff == 3 else '',
+                    't' if diff == 3 or song.get('remote_dl', False) else '',
                     checksum
                 )
             )
+            if diff == 3:
+                byd_song_insertion(song_id)
 
 
-def byd_song_insertion():
-    with open('./json_files/byd_song.json', 'r', encoding='utf8') as f:
-        songs = json.load(f)
-    for song in songs:
-        print(song)
-        cur.execute('insert into world_song(item_name) values(:1)', (song,))
-        cur.execute(
-            'insert into world_song_unlock(user_id, item_name) values(:1, :2)',
-            (static_user_id, song)
-        )
+def byd_song_insertion(song_id: str):
+    print(song_id)
+    song_id += '3'
+    cur.execute('insert into world_song(item_name) values(:1)', (song_id,))
+    cur.execute(
+        'insert into world_song_unlock(user_id, item_name) values(:1, :2)',
+        (static_user_id, song_id)
+    )
 
 
 def game_info_insertion():
-    cur.execute('insert into game_info values(:1, :2, :3, :4, :5)',
-                (12, 1800000, 250, '', 't'))
+    cur.execute('insert into game_info values(:1, :2, :3, :4, :5, :6)',
+                ('', 12, 1800000, 250, '', 't'))
 
 
 def map_data_insertion():
@@ -270,6 +275,7 @@ def core_insertion():
 def socre_insertion():
     with open('./json_files/scores.json', 'r', encoding='utf8') as f:
         scores = json.load(f)
+    scores.sort(key=lambda x: x['rating'], reverse=True)
     for i, score in enumerate(scores):
         print(score['song_id'], score['difficulty'])
         cur.execute(
@@ -306,17 +312,17 @@ def backup_insertion():
 
 
 if __name__ == '__main__':
-    # player_insertion()
-    # level_exp_insertion()
-    # partner_insertion()
-    # partner_stats_insertion()
-    # chart_info_insertion()
-    # byd_song_insertion()
-    # game_info_insertion()
-    # map_data_insertion()
-    # world_item_insertion()
-    # core_insertion()
-    # socre_insertion()
+    player_insertion()
+    level_exp_insertion()
+    partner_insertion()
+    partner_stats_insertion()
+    pack_info_insertion()
+    song_info_insertion()
+    game_info_insertion()
+    map_data_insertion()
+    world_item_insertion()
+    core_insertion()
+    socre_insertion()
     backup_insertion()
     conn.commit()
     cur.close()

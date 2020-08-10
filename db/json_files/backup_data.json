@@ -1077,6 +1077,11 @@
         "": [
             {
                 "grade": 6,
+                "difficulty": 3,
+                "song_id": "geivemeanightmare"
+            },
+            {
+                "grade": 6,
                 "difficulty": 2,
                 "song_id": "mahoroba"
             },
@@ -2469,6 +2474,12 @@
     },
     "clearlamps": {
         "": [
+            {
+                "ct": 0,
+                "clear_type": 1,
+                "difficulty": 3,
+                "song_id": "givenmeanightmare"
+            },
             {
                 "ct": 0,
                 "clear_type": 1,
@@ -4171,6 +4182,20 @@
     },
     "scores": {
         "": [
+            {
+                "ct": 0,
+                "time_played": 1596864425,
+                "modifier": 0,
+                "health": 100,
+                "miss_count": 5,
+                "near_count": 11,
+                "perfect_count": 1136,
+                "shiny_perfect_count": 1088,
+                "score": 9909942,
+                "difficulty": 3,
+                "version": 1,
+                "song_id": "givemeanightmare"
+            },
             {
                 "ct": 0,
                 "time_played": 1596863425,

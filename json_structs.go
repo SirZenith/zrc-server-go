@@ -58,9 +58,10 @@ func (c *Container) toJSON() string {
 
 // LoginToken contain token for login
 type LoginToken struct {
-	Token   string `json:"access_token"`
-	Type    string `json:"token_type"`
-	Success bool   `json:"success"`
+	Token     string `json:"access_token"`
+	Type      string `json:"token_type"`
+	Success   bool   `json:"success"`
+	ErrorCode int    `json:"error_code,omitempty"`
 }
 
 // AggCall represent a call pass to /compose/aggregate
@@ -235,8 +236,8 @@ func (c *CheckSumContainer) toJSON() string {
 
 // Checksum record checksum of a song and its
 type Checksum struct {
-	AudioSum map[string]string            `json:"audio,omitempty"`
-	ChartSum map[string]map[string]string `json:"chart,omitempty"`
+	Audio map[string]string            `json:"audio,omitempty"`
+	Chart map[string]map[string]string `json:"chart,omitempty"`
 }
 
 // Seciton: Game Info

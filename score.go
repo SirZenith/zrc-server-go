@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"path"
-	"strconv"
 	"time"
 
 	"github.com/albrow/forms"
@@ -21,11 +20,22 @@ var ScoreKeys = []string{
 }
 
 func init() {
-	HandlerMap[path.Join(APIRoot, APIVer, "score", "token")] = scoreTokenHandler
-	HandlerMap[path.Join(APIRoot, APIVer, "score", "song")] = scoreUploadHandler
+	R.Handle(
+		path.Join(APIRoot, APIVer, "score", "token"),
+		http.HandlerFunc(scoreTokenHandler),
+	)
+	R.Handle(
+		path.Join(APIRoot, APIVer, "score", "song"),
+		http.HandlerFunc(scoreUploadHandler),
+	)
 }
 
 func scoreTokenHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := verifyBearerAuth(r.Header.Get("Authorization"))
+	if err != nil {
+		c := Container{false, nil, 203}
+		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+	}
 	token := new(ScoreToken)
 	container := Container{true, token, 0}
 	fmt.Fprint(w, container.toJSON())
@@ -33,11 +43,10 @@ func scoreTokenHandler(w http.ResponseWriter, r *http.Request) {
 
 func scoreUploadHandler(w http.ResponseWriter, r *http.Request) {
 	result := ScoreUploadResult{true, map[string]int{"user_rating": 0}}
-	userID, err := strconv.Atoi(r.Header.Get("i"))
+	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
 	if err != nil {
-		log.Println(r.URL.Path, ": Error occur while reading user id from header")
-		log.Println(err)
-		return
+		c := Container{false, nil, 203}
+		http.Error(w, c.toJSON(), http.StatusUnauthorized)
 	}
 	data, err := forms.Parse(r)
 	if err != nil {

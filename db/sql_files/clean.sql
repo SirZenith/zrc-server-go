@@ -1,42 +1,41 @@
-drop table recent_10;
-drop table best_30;
-drop table recent_played;
-drop table best_score;
-alter table player drop constraint FK_PLAYER_SCORE;
-drop table score;
+delete from recent_10;
+delete from best_30;
+delete from recent_played;
+delete from best_score;
+delete from score;
 
-drop table world_song_unlock;
-drop table world_song;
+delete from world_song_unlock;
+delete from world_song;
 
-drop table world_unlock;
-drop table world_item;
+delete from world_unlock;
+delete from world_item;
 
-drop table core_possess_info;
-drop table core;
+delete from core_possess_info;
+delete from core;
 
-drop table part_stats;
-drop table level_exp;
+delete from part_stats;
+delete from level_exp;
 
-drop table single_purchase_info;
-drop table single;
-drop table chart_info;
-drop table song;
-drop table pack_purchase_info;
-drop table pack_item;
-drop table pack;
+delete from single_purchase_info;
+delete from single;
+delete from chart_info;
+delete from song;
+delete from pack_purchase_info;
+delete from pack_item;
+delete from pack;
 
-drop table data_back_up;
+delete from data_backup;
 
-drop table player_map_prog;
+delete from player_map_prog;
 
-drop table friend_list;
-drop table player;
+delete from friend_list;
+delete from player;
 
-drop table map_affinity;
-drop table map_reward;
+delete from map_affinity;
+delete from map_reward;
 
-drop table partner;
+delete from partner;
 
-drop table world_map;
+delete from world_map;
 
-drop table game_info;
+delete from game_info;

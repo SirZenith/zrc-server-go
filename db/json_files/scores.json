@@ -504,6 +504,20 @@
         "modifier": 0
     },
     {
+        "song_id": "givemeanightmare",
+        "difficulty": 3,
+        "score": 9909942,
+        "rating": 10.649709999999999,
+        "shiny_perfect_count": 1088,
+        "health": 100,
+        "near_count": 11,
+        "miss_count": 5,
+        "perfect_count": 1136,
+        "modifier": 0,
+        "time_played": 1596864425,
+        "clear_type": 0
+    },
+    {
         "song_id": "ignotus",
         "difficulty": 2,
         "score": 9862303,

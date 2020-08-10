@@ -12,26 +12,18 @@ import (
 )
 
 func init() {
-	HandlerMap[path.Join(APIRoot, APIVer, "auth/login")] = loginHandler
-	HandlerMap[path.Join(APIRoot, APIVer, "compose/aggregate")] = aggregateHandler
-}
-
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-	token := LoginToken{
-		"this",
-		"Bearer",
-		true,
-	}
-	res, err := json.Marshal(token)
-	if err != nil {
-		log.Println("Error occured while generating JSON for login token.")
-		log.Println(err)
-	}
-	fmt.Fprint(w, string(res))
+	R.Handle(
+		path.Join(APIRoot, APIVer, "compose/aggregate"),
+		http.HandlerFunc(aggregateHandler),
+	)
 }
 
 func aggregateHandler(w http.ResponseWriter, r *http.Request) {
-	userID := 1
+	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
+	if err != nil {
+		c := Container{false, nil, 203}
+		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+	}
 	data, err := forms.Parse(r)
 	if err != nil {
 		log.Println(err)
@@ -39,6 +31,13 @@ func aggregateHandler(w http.ResponseWriter, r *http.Request) {
 
 	val := data.Validator()
 	val.Require("calls")
+	if val.HasErrors() {
+		log.Printf("%s: Form passed lacks of necessary key(s).", r.URL.Path)
+		for k, v := range val.ErrorMap() {
+			log.Printf("%s: %s\n", k, v)
+		}
+		return
+	}
 
 	var calls []AggCall
 	container := Container{true, nil, 0}
@@ -52,7 +51,7 @@ func aggregateHandler(w http.ResponseWriter, r *http.Request) {
 			results = append(results, AggResult{call.ID, &EmptyList{}})
 			continue
 		}
-		tojson, err := handler(userID)
+		tojson, err := handler(userID, r)
 		if err != nil {
 			container.Success = false
 			log.Println(err)
