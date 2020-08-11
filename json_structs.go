@@ -342,19 +342,20 @@ func (t *ScoreToken) toJSON() string {
 
 // ScoreRecord represent score of a paly result
 type ScoreRecord struct {
-	SongID        string `json:"song_id"`
-	Difficulty    int8   `json:"difficulty"`
-	Score         int    `json:"score"`
-	Shiny         int    `json:"shiny_perfect_count"`
-	Pure          int    `json:"perfect_count"`
-	Far           int    `json:"near_count"`
-	Lost          int    `json:"miss_count"`
-	Health        int8   `json:"health"`
-	TimePlayed    int64  `json:"time_played"`
-	Modifier      int    `json:"modifier"`
-	BeyondGague   int8   `json:"beyond_gague,omitempty"`
-	ClearType     int8   `json:"clear_type"`
-	BestClearType int8   `json:"best_clear_type,omitempty"`
+	SongID        string  `json:"song_id"`
+	Difficulty    int8    `json:"difficulty"`
+	Rating        float64 `json:"rating.omitempty"`
+	Score         int     `json:"score"`
+	Shiny         int     `json:"shiny_perfect_count"`
+	Pure          int     `json:"perfect_count"`
+	Far           int     `json:"near_count"`
+	Lost          int     `json:"miss_count"`
+	Health        int8    `json:"health"`
+	TimePlayed    int64   `json:"time_played"`
+	Modifier      int     `json:"modifier"`
+	BeyondGague   int8    `json:"beyond_gague,omitempty"`
+	ClearType     int8    `json:"clear_type"`
+	BestClearType int8    `json:"best_clear_type,omitempty"`
 }
 
 // ScoreUploadResult is resut return from server

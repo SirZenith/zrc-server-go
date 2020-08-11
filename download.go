@@ -43,9 +43,9 @@ func init() {
 		http.HandlerFunc(songDownloadHandler),
 	)
 	InsideHandler[path.Join(APIRoot, APIVer, "serve/download/me/song")] = getDownloadList
-	R.PathPrefix("/static/").Handler(
+	R.PathPrefix("/static/songs").Handler(
 		fileServerWithAuth(
-			http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))),
+			http.StripPrefix("/static/songs", http.FileServer(http.Dir("./static/songs"))),
 		),
 	)
 }

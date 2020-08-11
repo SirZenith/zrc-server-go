@@ -20,12 +20,10 @@ var ScoreKeys = []string{
 }
 
 func init() {
-	R.Handle(
-		path.Join(APIRoot, APIVer, "score", "token"),
+	R.Path(path.Join(APIRoot, APIVer, "score", "token")).Handler(
 		http.HandlerFunc(scoreTokenHandler),
 	)
-	R.Handle(
-		path.Join(APIRoot, APIVer, "score", "song"),
+	R.Path(path.Join(APIRoot, APIVer, "score", "song")).Handler(
 		http.HandlerFunc(scoreUploadHandler),
 	)
 }
