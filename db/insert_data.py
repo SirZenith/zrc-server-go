@@ -272,9 +272,19 @@ def core_insertion():
         )
 
 
-def socre_insertion():
-    with open('./json_files/scores.json', 'r', encoding='utf8') as f:
-        scores = json.load(f)
+def score2rating(base_ptt: float, score: int):
+    if score > 10000000:
+        return base_ptt + 2
+    elif score > 9800000:
+        return base_ptt + 1 + (score - 9800000) / 200000
+    else:
+        return max(base_ptt + (score - 9500000) / 300000, 0)
+
+
+def socre_insertion(scores=None):
+    if not scores:
+        with open('./json_files/scores.json', 'r', encoding='utf8') as f:
+            scores = json.load(f)
     scores.sort(key=lambda x: x['rating'], reverse=True)
     for i, score in enumerate(scores):
         print(score['song_id'], score['difficulty'])
@@ -282,33 +292,50 @@ def socre_insertion():
             '''insert into score values(
             1, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13)''',
             (
-                int(score['time_played'] / 1000),
+                int(score['time_played']),
                 score['song_id'], score['difficulty'], score['score'],
                 score['shiny_perfect_count'], score['perfect_count'],
                 score['near_count'], score['miss_count'],
                 score['rating'], 100, 0, 0, score['clear_type']
             )
         )
-        cur.execute('insert into best_score values(1, :1, :2)',
-                    (int(score['time_played'] / 1000), score['song_id']))
+        cur.execute('insert into best_score values(1, :1)',
+                    (int(score['time_played']),))
         if i < 30:
-            cur.execute('insert into recent_played values(1, :1)',
-                        (int(score['time_played'] / 1000),))
-            cur.execute('insert into best_30 values(1, :1)',
-                        (int(score['time_played'] / 1000),))
-        if i < 10:
-            cur.execute('insert into recent_10 values(1, :1)',
-                        (int(score['time_played'] / 1000),))
+            cur.execute('insert into recent_score values(1, :1, :2)',
+                        (int(score['time_played']), 't' if i < 10 else ''))
 
 
 def backup_insertion():
+    with open('./json_files/rating_info.json', 'r', encoding='utf8') as f:
+        rating_info = json.load(f)
     with open('./json_files/backup_data.json', 'r', encoding='utf8') as f:
-        data = f.read().strip('{}')
+        data = f.read()
     data = re.sub('\s', '', data)
     cur.execute(
         'insert into data_backup(user_id, backup_data) values(:1, :2)',
         (static_user_id, data)
     )
+    data = json.loads(data)
+    temp_scores = {}
+    for score in data['scores_data']['']:
+        diff = score['difficulty']
+        song_id = score['song_id']
+        iden = song_id + str(diff)
+        score['rating'] = score2rating(
+            rating_info[song_id][diff], score['score']
+        )
+        score.pop('ct')
+        temp_scores[iden] = score
+    for lamp in data['clearlamps_data']['']:
+        diff = lamp['difficulty']
+        song_id = lamp['song_id']
+        iden = song_id + str(diff)
+        temp_scores[iden]['clear_type'] = lamp['clear_type']
+    scores = []
+    for score in temp_scores.values():
+        scores.append(score)
+    return scores
 
 
 if __name__ == '__main__':
@@ -322,8 +349,8 @@ if __name__ == '__main__':
     map_data_insertion()
     world_item_insertion()
     core_insertion()
-    socre_insertion()
-    backup_insertion()
+    scores = backup_insertion()
+    socre_insertion(scores)
     conn.commit()
     cur.close()
     conn.close()

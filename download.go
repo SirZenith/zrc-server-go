@@ -224,7 +224,7 @@ func authenAndClean(w http.ResponseWriter, r *http.Request) bool {
 	var now time.Time
 	if now = time.Now(); now.Sub(LastDlListCheck).Seconds() > DlExpiresTime {
 		_, err := db.Exec(
-			`delete from dl_request where requet_time < :1`,
+			`delete from dl_request where request_time < :1`,
 			now.Unix()-int64(DlExpiresTime),
 		)
 		if err != nil {

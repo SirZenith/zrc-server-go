@@ -2,24 +2,11 @@
 <project name="Arcaea" id="Project_254b" database="Oracle" >
 	<schema name="ARCAEA" >
 		<comment><![CDATA[Data for Arcaea game play infomation.]]></comment>
-		<table name="BEST_30" >
-			<column name="USER_ID" type="number" length="9" jt="2" mandatory="y" />
-			<column name="PLAYED_DATE" type="number" length="10" jt="2" mandatory="y" />
-			<index name="IDX_BEST_30" unique="PRIMARY_KEY" >
-				<column name="USER_ID" />
-				<column name="PLAYED_DATE" />
-			</index>
-			<fk name="FK_BEST_30_BEST_SCORE" to_schema="ARCAEA" to_table="BEST_SCORE" >
-				<fk_column name="USER_ID" pk="USER_ID" />
-				<fk_column name="PLAYED_DATE" pk="PLAYED_DATE" />
-			</fk>
-		</table>
 		<table name="BEST_SCORE" >
 			<column name="USER_ID" type="number" length="9" jt="2" mandatory="y" />
 			<column name="PLAYED_DATE" type="number" length="10" jt="2" mandatory="y" >
 				<defo>1491868801</defo>
 			</column>
-			<column name="SONG_ID" type="varchar2" length="30" jt="12" mandatory="y" />
 			<index name="IDX_BEST_SCORE" unique="PRIMARY_KEY" >
 				<column name="USER_ID" />
 				<column name="PLAYED_DATE" />
@@ -27,9 +14,6 @@
 			<fk name="FK_BEST_SCORE_SCORE" to_schema="ARCAEA" to_table="SCORE" >
 				<fk_column name="USER_ID" pk="USER_ID" />
 				<fk_column name="PLAYED_DATE" pk="PLAYED_DATE" />
-			</fk>
-			<fk name="FK_BEST_SCORE_SONG" to_schema="ARCAEA" to_table="SONG" >
-				<fk_column name="SONG_ID" pk="SONG_ID" />
 			</fk>
 		</table>
 		<table name="CHART_INFO" >
@@ -101,6 +85,7 @@
 			</fk>
 		</table>
 		<table name="GAME_INFO" >
+			<column name="IS_APRILFOOLS" type="char" length="1" jt="1" />
 			<column name="MAX_STAMINA" type="number" length="2" jt="2" mandatory="y" />
 			<column name="STAMINA_RECOVER_TICK" type="number" length="7" jt="2" mandatory="y" />
 			<column name="CORE_EXP" type="number" length="5" jt="2" mandatory="y" />
@@ -339,21 +324,10 @@
 				<fk_column name="MAP_ID" pk="MAP_ID" />
 			</fk>
 		</table>
-		<table name="RECENT_10" >
+		<table name="RECENT_SCORE" >
 			<column name="USER_ID" type="number" length="9" jt="2" mandatory="y" />
 			<column name="PLAYED_DATE" type="number" length="10" jt="2" mandatory="y" />
-			<index name="IDX_RECENT_10" unique="PRIMARY_KEY" >
-				<column name="USER_ID" />
-				<column name="PLAYED_DATE" />
-			</index>
-			<fk name="FK_RECENT_10_RECENT_PLAYED" to_schema="ARCAEA" to_table="RECENT_PLAYED" >
-				<fk_column name="USER_ID" pk="USER_ID" />
-				<fk_column name="PLAYED_DATE" pk="PLAYED_DATE" />
-			</fk>
-		</table>
-		<table name="RECENT_PLAYED" >
-			<column name="USER_ID" type="number" length="9" jt="2" mandatory="y" />
-			<column name="PLAYED_DATE" type="number" length="10" jt="2" mandatory="y" />
+			<column name="IS_RECENT_10" type="char" length="1" jt="1" />
 			<index name="IDX_RECENT_PLAYE" unique="PRIMARY_KEY" >
 				<column name="USER_ID" />
 				<column name="PLAYED_DATE" />
@@ -528,7 +502,6 @@
 	</schema>
 	<layout name="Default Layout" id="Layout_d58" show_relation="columns" >
 		<comment><![CDATA[Arcaea]]></comment>
-		<entity schema="ARCAEA" name="BEST_30" color="3986C1" x="1440" y="704" />
 		<entity schema="ARCAEA" name="BEST_SCORE" color="C1D8EE" x="1216" y="704" />
 		<entity schema="ARCAEA" name="CHART_INFO" color="C1D8EE" x="1696" y="240" />
 		<entity schema="ARCAEA" name="CORE" color="C1D8EE" x="1232" y="1136" />
@@ -546,8 +519,7 @@
 		<entity schema="ARCAEA" name="PART_STATS" color="C1D8EE" x="304" y="240" />
 		<entity schema="ARCAEA" name="PLAYER" color="C1D8EE" x="576" y="624" />
 		<entity schema="ARCAEA" name="PLAYER_MAP_PROG" color="C1D8EE" x="336" y="944" />
-		<entity schema="ARCAEA" name="RECENT_10" color="C1D8EE" x="1440" y="880" />
-		<entity schema="ARCAEA" name="RECENT_PLAYED" color="3986C1" x="1216" y="880" />
+		<entity schema="ARCAEA" name="RECENT_SCORE" color="3986C1" x="1216" y="880" />
 		<entity schema="ARCAEA" name="SCORE" color="C1D8EE" x="944" y="704" />
 		<entity schema="ARCAEA" name="SINGLE" color="C1D8EE" x="1232" y="240" />
 		<entity schema="ARCAEA" name="SINGLE_PURCHASE_INFO" color="C1D8EE" x="1232" y="432" />

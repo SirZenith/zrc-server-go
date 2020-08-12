@@ -1,6 +1,4 @@
-delete from recent_10;
-delete from best_30;
-delete from recent_played;
+delete from recent_score;
 delete from best_score;
 delete from score;
 

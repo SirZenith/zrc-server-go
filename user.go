@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"path"
-	"strconv"
 
 	"github.com/albrow/forms"
 )
@@ -19,13 +18,14 @@ func init() {
 		path.Join(APIRoot, APIVer, "user/me"),
 		http.HandlerFunc(userInfoHandler),
 	)
-	R.PathPrefix(path.Join(APIRoot, APIVer, "user/me/setting")).Handler(
+	R.PathPrefix(path.Join(APIRoot, APIVer, "user/me/setting")).Methods("POST").Handler(
 		http.HandlerFunc(userSettingHandler),
 	)
 	InsideHandler[path.Join(APIRoot, APIVer, "user/me")] = getUserInfo
 
 	SettingMap["is_hide_rating"] = "is_hide_rating"
 	SettingMap["max_stamina_notification_enabled"] = "max_stamina_notification"
+	SettingMap["favorite_character"] = "favorite_partner"
 }
 
 func userInfoHandler(w http.ResponseWriter, r *http.Request) {
@@ -209,11 +209,11 @@ func getRecentScore(userID int) (ScoreRecord, error) {
 		from
 			score s, best_score b, score s2
 		where
-			s.played_date = (select max(played_date) from score)
-		and
-			s.song_id = b.song_id
-		and
-			s2.song_id = b.song_id`).Scan(
+			s.user_id = :1
+			and s.played_date = (select max(played_date) from score)
+			and s.song_id = s2.song_id
+			and b.user_id = :1
+			and b.played_date = s2.played_date`, userID).Scan(
 		&record.SongID, &record.Difficulty, &record.Score,
 		&record.Shiny, &record.Pure, &record.Far, &record.Lost,
 		&record.Health, &modifier,
@@ -260,7 +260,8 @@ func getItemList(userID int, tableName string, targetName string) ([]string, err
 }
 
 func userSettingHandler(w http.ResponseWriter, r *http.Request) {
-	target := path.Base(r.URL.Path)
+	fmt.Println(r.URL.Path)
+	targetPath := path.Base(r.URL.Path)
 	data, err := forms.Parse(r)
 	if err != nil {
 		log.Println(err)
@@ -276,14 +277,13 @@ func userSettingHandler(w http.ResponseWriter, r *http.Request) {
 	val.Require("value")
 	if val.HasErrors() {
 		log.Println("Immproper setting request with no field in form")
+		for k, v := range val.ErrorMap() {
+			log.Println(k, v)
+		}
 		return
 	}
-	value, err := strconv.ParseBool(data.Get("value"))
-	if err != nil {
-		log.Println("Illegal value for making user setting: ", data.Get("value"))
-		return
-	}
-	target, ok := SettingMap[target]
+	value := data.GetBool("value")
+	target, ok := SettingMap[targetPath]
 	if !ok {
 		log.Printf(
 			"Unknow setting option: `%s`\n been passed to /user/me/setting",

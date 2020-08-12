@@ -170,26 +170,31 @@ func genScoreHTML(userCode string, results []string) string {
 		output string
 	)
 	err := db.QueryRow(`
-	select b30, r10 from (
-		select
-			sum(s.rating) / count(s.rating) b30
-		from 
-			best_30 b, score s, player p
-		where
-			p.user_code = :1
-			and b.user_id = p.user_id
+	with
+    best as (
+		select rating
+		from  best_score b, score s
+		where b.user_id = :1
 			and b.user_id = s.user_id
 			and b.played_date = s.played_date
-	), (
-		select
-			sum(s.rating) / count(s.rating) r10
-		from 
-			recent_10 r, score s, player p
-		where
-			p.user_code = :1
-			and r.user_id = p.user_id
+		order by rating desc
+	),
+	recent as (
+		select rating
+		from  recent_score r, score s
+		where r.user_id = :1
+			and r.is_recent_10 = 't'
 			and r.user_id = s.user_id
 			and r.played_date = s.played_date
+	)
+	select b30, r10
+	from (
+		select sum(rating) / count(rating) b30
+		from best
+		where rownum <= 30
+	), (
+		select sum(rating) / count(rating) r10
+		from recent
 	)`, userCode).Scan(&b30, &r10)
 	if err != nil {
 		log.Println("Error occured while getting r10 and b30 data")

@@ -1,6 +1,4 @@
-drop table recent_10;
-drop table best_30;
-drop table recent_played;
+drop table recent_score;
 drop table best_score;
 alter table player drop constraint FK_PLAYER_SCORE;
 drop table score;

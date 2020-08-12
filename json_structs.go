@@ -344,7 +344,7 @@ func (t *ScoreToken) toJSON() string {
 type ScoreRecord struct {
 	SongID        string  `json:"song_id"`
 	Difficulty    int8    `json:"difficulty"`
-	Rating        float64 `json:"rating.omitempty"`
+	Rating        float64 `json:"rating,omitempty"`
 	Score         int     `json:"score"`
 	Shiny         int     `json:"shiny_perfect_count"`
 	Pure          int     `json:"perfect_count"`
