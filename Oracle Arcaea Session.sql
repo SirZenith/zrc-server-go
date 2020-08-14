@@ -1,1 +1,1 @@
-select * from score where user_id = 1 order by PLAYED_DATE desc;
+select * from DATA_BACKUP;

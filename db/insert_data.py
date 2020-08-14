@@ -310,15 +310,16 @@ def backup_insertion():
     with open('./json_files/rating_info.json', 'r', encoding='utf8') as f:
         rating_info = json.load(f)
     with open('./json_files/backup_data.json', 'r', encoding='utf8') as f:
-        data = f.read()
-    data = re.sub('\s', '', data)
+        raw_data = f.read()
+    data = json.loads(raw_data)
+    raw_data = raw_data.strip('{}')
+    raw_data = re.sub('\s', '', raw_data)
     cur.execute(
         'insert into data_backup(user_id, backup_data) values(:1, :2)',
-        (static_user_id, data)
+        (static_user_id, raw_data)
     )
-    data = json.loads(data)
     temp_scores = {}
-    for score in data['scores_data']['']:
+    for score in data['scores']['']:
         diff = score['difficulty']
         song_id = score['song_id']
         iden = song_id + str(diff)
@@ -327,7 +328,7 @@ def backup_insertion():
         )
         score.pop('ct')
         temp_scores[iden] = score
-    for lamp in data['clearlamps_data']['']:
+    for lamp in data['clearlamps']['']:
         diff = lamp['difficulty']
         song_id = lamp['song_id']
         iden = song_id + str(diff)
@@ -339,18 +340,18 @@ def backup_insertion():
 
 
 if __name__ == '__main__':
-    player_insertion()
-    level_exp_insertion()
-    partner_insertion()
-    partner_stats_insertion()
-    pack_info_insertion()
-    song_info_insertion()
-    game_info_insertion()
-    map_data_insertion()
-    world_item_insertion()
-    core_insertion()
+    # player_insertion()
+    # level_exp_insertion()
+    # partner_insertion()
+    # partner_stats_insertion()
+    # pack_info_insertion()
+    # song_info_insertion()
+    # game_info_insertion()
+    # map_data_insertion()
+    # world_item_insertion()
+    # core_insertion()
     scores = backup_insertion()
-    socre_insertion(scores)
+    # socre_insertion(scores)
     conn.commit()
     cur.close()
     conn.close()

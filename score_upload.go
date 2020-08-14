@@ -210,7 +210,7 @@ func updateRating(tx *sql.Tx, userID int, newPlayedDate int64, newRating float64
 func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, newRating float64, clearType int) error {
 	rows, err := tx.Query(`
 	with
-		r30 as (select s.played_date, (s.song_id || s.difficulty) as ident, s.rating
+		r30 as (select s.played_date, (s.song_id || s.difficulty) iden, s.rating
 			from
 				recent_score r, score s
 			where
@@ -218,13 +218,13 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 				and r.user_id = s.user_id
 				and r.played_date = s.played_date
 		),
-		repeat_table as (select ident, count(*) as repeat_times from r30 group by ident)
+		repeat_table as (select iden, count(*) as repeat_count from r30 group by iden)
 	select
-		played_date, repeat_times, rating, (select count(*) as diff_count from repeat_table)
+		played_date, repeat_count, rating, (select count(*) as diff_count from repeat_table)
 	from
 		r30, repeat_table
 	where
-		r30.ident = repeat_table.ident
+		r30.iden = repeat_table.iden
 	order by
 		rating desc`, userID)
 	if err == sql.ErrNoRows {

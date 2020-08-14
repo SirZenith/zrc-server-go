@@ -1,8 +1,8 @@
 {
-    "version_data": {
+    "version": {
         "val": 1
     },
-    "scores_data": {
+    "scores": {
         "": [
             {
                 "song_id": "givemeanightmare",
@@ -4080,7 +4080,7 @@
             }
         ]
     },
-    "clearlamps_data": {
+    "clearlamps": {
         "": [
             {
                 "song_id": "givemeanightmare",
@@ -5830,7 +5830,7 @@
             }
         ]
     },
-    "clearedsongs_data": {
+    "clearedsongs": {
         "": [
             {
                 "song_id": "anokumene",
@@ -7269,7 +7269,7 @@
             }
         ]
     },
-    "unlocklist_data": {
+    "unlocklist": {
         "": [
             {
                 "unlock_key": "worldvanquisher|2|0",
@@ -8009,13 +8009,13 @@
             }
         ]
     },
-    "installid_data": {
+    "installid": {
         "val": "9D13A478-7254-449C-BAB9-C25C8600E690"
     },
-    "devicemodelname_data": {
+    "devicemodelname": {
         "val": "iPad"
     },
-    "story_data": {
+    "story": {
         "": [
             {
                 "ma": 1,
