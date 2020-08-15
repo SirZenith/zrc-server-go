@@ -161,7 +161,7 @@ func updateRating(tx *sql.Tx, userID int, newPlayedDate int64, newRating float64
 	err = updateRatingRecent(tx, userID, newPlayedDate, score, newRating, clearType)
 	if err != nil {
 		return rating, err
-	} else if err := updateBestScore(tx, userID, newPlayedDate, songID, newRating, difficulty); err != nil {
+	} else if err := updateBestScore(tx, userID, newPlayedDate, songID, score, difficulty); err != nil {
 		return rating, err
 	}
 	err = tx.QueryRow(`
@@ -348,13 +348,13 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 	return nil
 }
 
-func updateBestScore(tx *sql.Tx, userID int, newPlayedDate int64, songID string, newRating float64, difficulty int) error {
+func updateBestScore(tx *sql.Tx, userID int, newPlayedDate int64, songID string, newScore int, difficulty int) error {
 	var (
-		rating     float64
+		score      int
 		playedDate int64
 	)
 	err := tx.QueryRow(`select
-			s.rating, s.played_date
+			s.score, s.played_date
 		from
 			best_score b, score s
 		where
@@ -363,7 +363,7 @@ func updateBestScore(tx *sql.Tx, userID int, newPlayedDate int64, songID string,
 			and b.played_date = s.played_date
 			and s.song_id = :2
 			and s.difficulty = :3`,
-		userID, songID, difficulty).Scan(&rating, &playedDate)
+		userID, songID, difficulty).Scan(&score, &playedDate)
 	if err == sql.ErrNoRows {
 		_, err = tx.Exec(
 			"insert into best_score(user_id, played_date) values(:1, :2)",
@@ -376,7 +376,7 @@ func updateBestScore(tx *sql.Tx, userID int, newPlayedDate int64, songID string,
 	} else if err != nil {
 		log.Println("Error occured while querying table BEST_SCORE")
 		return err
-	} else if newRating > rating {
+	} else if newScore > score {
 		_, err = tx.Exec(
 			`update best_score set played_date = :1 where played_date = :2`,
 			newPlayedDate, playedDate,
