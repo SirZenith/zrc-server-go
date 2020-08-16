@@ -11,11 +11,10 @@ import (
 )
 
 func init() {
-	R.Handle(
-		path.Join(APIRoot, APIVer, "user/me/character"),
+	R.Path(path.Join(APIRoot, APIVer, "user/me/character")).Handler(
 		http.HandlerFunc(changeCharacter),
 	)
-	R.PathPrefix(path.Join(APIRoot, APIVer, "user/me/character")).Handler(
+	R.PathPrefix(path.Join(APIRoot, APIVer, "user/me/character") + "/").Methods("POST").Handler(
 		http.HandlerFunc(toggleUncap),
 	)
 }
@@ -174,6 +173,7 @@ func getSingleCharacterStats(userID int, partID int8) (*CharacterStats, error) {
 	)
 	if err != nil {
 		log.Println("Error occured while querying table PART_STATS for single character")
+		log.Printf("userID = %d, partID = %d", userID, partID)
 		return nil, err
 	}
 
@@ -205,6 +205,7 @@ func changeCharacter(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		c := Container{false, nil, 203}
 		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+		return
 	}
 	data, err := forms.Parse(r)
 	if err != nil {
@@ -245,6 +246,7 @@ func toggleUncap(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		c := Container{false, nil, 203}
 		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+		return
 	}
 
 	container := Container{true, nil, 0}
@@ -269,6 +271,7 @@ func toggleUncap(w http.ResponseWriter, r *http.Request) {
 		container.Value = &ToggleResult{
 			userID, []*CharacterStats{stats},
 		}
+		fmt.Println(container)
 	}
 	fmt.Fprint(w, container.toJSON())
 }

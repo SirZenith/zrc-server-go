@@ -1,3 +1,5 @@
+delete from dl_request;
+
 delete from recent_score;
 delete from best_score;
 delete from score;

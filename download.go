@@ -55,6 +55,7 @@ func songDownloadHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		c := Container{false, nil, 203}
 		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+		return
 	}
 	tojson, err := getDownloadList(userID, r)
 	container := Container{false, nil, 0}

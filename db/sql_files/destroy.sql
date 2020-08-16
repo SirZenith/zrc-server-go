@@ -1,3 +1,5 @@
+drop table dl_request;
+
 drop table recent_score;
 drop table best_score;
 alter table player drop constraint FK_PLAYER_SCORE;

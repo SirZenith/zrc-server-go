@@ -45,6 +45,7 @@ func scoreUploadHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		c := Container{false, nil, 203}
 		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+		return
 	}
 	data, err := forms.Parse(r)
 	if err != nil {

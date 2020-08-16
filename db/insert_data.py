@@ -115,7 +115,7 @@ def pack_info_insertion():
                     't' if item['is_available'] else ''
                 )
             )
-        if pack not in ('base', 'single'):
+        if pack != 'single':
             cur.execute(
                 'insert into pack_purchase_info values(:u, :p)',
                 u=static_user_id, p=pack

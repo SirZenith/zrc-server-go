@@ -20,6 +20,7 @@ func packInfoHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		c := Container{false, nil, 203}
 		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+		return
 	}
 	tojson, err := getPackInfo(userID, r)
 	if err != nil {

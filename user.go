@@ -33,6 +33,7 @@ func userInfoHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		c := Container{false, nil, 203}
 		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+		return
 	}
 	tojson, err := getUserInfo(userID, r)
 	if err != nil {
@@ -271,6 +272,7 @@ func userSettingHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		c := Container{false, nil, 203}
 		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+		return
 	}
 
 	val := data.Validator()
