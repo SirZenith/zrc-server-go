@@ -261,7 +261,6 @@ func getItemList(userID int, tableName string, targetName string) ([]string, err
 }
 
 func userSettingHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.URL.Path)
 	targetPath := path.Base(r.URL.Path)
 	data, err := forms.Parse(r)
 	if err != nil {
@@ -284,7 +283,6 @@ func userSettingHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	value := data.GetBool("value")
 	target, ok := SettingMap[targetPath]
 	if !ok {
 		log.Printf(
@@ -293,7 +291,13 @@ func userSettingHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
-	err = changeSetting(userID, target, value)
+	if target == "favorite_partner" {
+		partID := data.GetInt("value")
+		err = changeFavouritePartner(userID, partID)
+	} else {
+		value := data.GetBool("value")
+		err = changeSetting(userID, target, value)
+	}
 	if err != nil {
 		log.Println(err)
 	}
@@ -321,6 +325,22 @@ func changeSetting(userID int, target string, isOn bool) error {
 		log.Printf(
 			"Error occured while modifying PLAYER for setting `%s` to `%v` with userID = %d",
 			target, value, userID,
+		)
+		return err
+	}
+
+	return nil
+}
+
+func changeFavouritePartner(userID int, partID int) error {
+	_, err := db.Exec(
+		fmt.Sprintf("update player set favorite_partner = '%d' where user_id = %d",
+			partID, userID,
+		))
+	if err != nil {
+		log.Printf(
+			"Error occured while modifying PLAYER for setting `favorite_partner` to `%v` with userID = %d",
+			partID, userID,
 		)
 		return err
 	}

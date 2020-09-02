@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -18,6 +19,8 @@ var ScoreKeys = []string{
 	"shiny_perfect_count", "perfect_count", "near_count", "miss_count",
 	"health", "modifier", "beyond_gauge", "clear_type",
 }
+
+var errorZeroRating = errors.New("Rating for this chart is 0")
 
 func init() {
 	R.Path(path.Join(APIRoot, APIVer, "score", "token")).Handler(
@@ -126,6 +129,9 @@ func scoreToRating(songID string, difficulty int, score float64) (float64, error
 	if err != nil {
 		log.Printf("Error while querying base rating for `%s`\n", songID)
 		return 0, err
+	} else if baseRating == 0 {
+		log.Printf("Zero Rating for `%s %d`\n", songID, difficulty)
+		return 0, errorZeroRating
 	}
 
 	rating := 0.0

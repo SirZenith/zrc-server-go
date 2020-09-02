@@ -14,7 +14,7 @@ func init() {
 	R.Path(path.Join(APIRoot, APIVer, "user/me/character")).Handler(
 		http.HandlerFunc(changeCharacter),
 	)
-	R.PathPrefix(path.Join(APIRoot, APIVer, "user/me/character") + "/").Methods("POST").Handler(
+	R.PathPrefix(path.Join(APIRoot, APIVer, "user/me/characters/{partID}/toggle_uncap")).Methods("POST").Handler(
 		http.HandlerFunc(toggleUncap),
 	)
 }
@@ -271,7 +271,6 @@ func toggleUncap(w http.ResponseWriter, r *http.Request) {
 		container.Value = &ToggleResult{
 			userID, []*CharacterStats{stats},
 		}
-		fmt.Println(container)
 	}
 	fmt.Fprint(w, container.toJSON())
 }

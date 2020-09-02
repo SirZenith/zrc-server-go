@@ -11,6 +11,11 @@ cur = conn.cursor()
 
 static_user_id = 1
 
+with open('../static/songs/checksums.json', 'r', encoding='utf8') as f:
+    checksums = json.load(f)
+with open('./json_files/rating_info.json', 'r', encoding='utf8') as f:
+    rating_info = json.load(f)
+
 
 def player_insertion():
     cur.execute('''insert into player(
@@ -122,66 +127,77 @@ def pack_info_insertion():
             )
 
 
-def song_info_insertion():
-    with open('./json_files/rating_info.json', 'r', encoding='utf8') as f:
-        rating_info = json.load(f)
-    with open('../static/songs/songlist', 'r', encoding='utf8') as f:
+def songlist_insertion(songlist_path: str=None, chart_only:bool =False):
+    global checksums, rating_info
+    if not songlist_path:
+        songlist_path = '../static/songs/songlist'
+    with open(songlist_path, 'r', encoding='utf8') as f:
         song_info = json.load(f)
-    with open('../static/songs/checksums.json', 'r', encoding='utf8') as f:
-        checksums = json.load(f)
 
-    for song in song_info['songs']:
-        song_id = song['id']
-        statement = 'insert into song values(%s)' % ', '.join(
-            ':' + str(i) for i in range(1, 21))
-        print(song_id)
-        checksum = checksums[song_id]['audio']['checksum']
-        cur.execute(statement, (
-            song_id,
-            song['title_localized'].get('en', ''),
-            song['title_localized'].get('ko', ''),
-            song['title_localized'].get('jp', ''),
-            song['title_localized'].get('zh-Hant', ''),
-            song['title_localized'].get('zh-Hans', ''),
-            song['artist'], song['bpm'], song['bpm_base'],
-            song['set'], song['purchase'], song['audioPreview'],
-            song['audioPreviewEnd'], song['side'],
-            't' if song.get('world_unlock', False) else '',
-            song['bg'], song['date'], song['version'],
-            't' if song.get('remote_dl', False) else '',
+    for song_info in song_info['songs']:
+        print(song_info['id'])
+        if not chart_only:
+            song_info_insertion(song_info)
+        
+        for item in song_info['difficulties']:
+            song_dl = song_info.get('remote_dl', False)
+            chart_info_insertion(item, song_dl, song_info['id'])
+
+
+def song_info_insertion(info: dict):
+    song_id = info['id']
+    statement = 'insert into song values(%s)' % ', '.join(
+        ':' + str(i) for i in range(1, 21))
+    checksum = checksums[song_id]['audio']['checksum']
+    cur.execute(statement, (
+        song_id,
+        info['title_localized'].get('en', ''),
+        info['title_localized'].get('ko', ''),
+        info['title_localized'].get('jp', ''),
+        info['title_localized'].get('zh-Hant', ''),
+        info['title_localized'].get('zh-Hans', ''),
+        info['artist'], info['bpm'], info['bpm_base'],
+        info['set'], info['purchase'], info['audioPreview'],
+        info['audioPreviewEnd'], info['side'],
+        't' if info.get('world_unlock', False) else '',
+        info['bg'], info['date'], info['version'],
+        't' if info.get('remote_dl', False) else '',
+        checksum
+    ))
+    if info['set'] == 'single':
+        cur.execute('insert into single values(:song_id)', song_id=song_id)
+        cur.execute(
+            'insert into single_purchase_info values(:u, :s)',
+            u=static_user_id, s=song_id
+        )
+    if info.get('world_unlock', False):
+        cur.execute('insert into world_song values(:item)', item=song_id)
+        cur.execute(
+            'insert into world_song_unlock values(:1, :2)',
+            (static_user_id, song_id)
+        )
+
+
+def chart_info_insertion(info: dict, song_dl: bool, song_id: str):
+    global checksums, rating_info
+    diff = info['ratingClass']
+    checksum = checksums[song_id]['chart'][str(diff)]['checksum']
+    cur.execute(
+        'insert into chart_info values(:1, :2, :3, :4, :5, :6, :7)',
+        (
+            song_id, diff,
+            info['chartDesigner'], info.get('jackerDesigner', ''),
+            rating_info[song_id][diff],
+            't' if diff == 3 or song_dl else '',
             checksum
-        ))
-        if song['set'] == 'single':
-            cur.execute('insert into single values(:song_id)', song_id=song_id)
-            cur.execute(
-                'insert into single_purchase_info values(:u, :s)',
-                u=static_user_id, s=song_id
-            )
-        if song.get('world_unlock', False):
-            cur.execute('insert into world_song values(:item)', item=song_id)
-            cur.execute(
-                'insert into world_song_unlock values(:1, :2)',
-                (static_user_id, song_id)
-            )
-        for item in song['difficulties']:
-            diff = item['ratingClass']
-            checksum = checksums[song_id]['chart'][str(diff)]['checksum']
-            cur.execute(
-                'insert into chart_info values(:1, :2, :3, :4, :5, :6, :7)',
-                (
-                    song_id, diff,
-                    item['chartDesigner'], item.get('jackerDesigner', ''),
-                    rating_info[song_id][diff],
-                    't' if diff == 3 or song.get('remote_dl', False) else '',
-                    checksum
-                )
-            )
-            if diff == 3:
-                byd_song_insertion(song_id)
+        )
+    )
+    if diff == 3:
+        byd_song_insertion(song_id)
 
 
 def byd_song_insertion(song_id: str):
-    print(song_id)
+    print('byd:', song_id)
     song_id += '3'
     cur.execute('insert into world_song(item_name) values(:1)', (song_id,))
     cur.execute(
@@ -345,13 +361,15 @@ if __name__ == '__main__':
     # partner_insertion()
     # partner_stats_insertion()
     # pack_info_insertion()
-    # song_info_insertion()
+    # songlist_insertion()
     # game_info_insertion()
     # map_data_insertion()
     # world_item_insertion()
     # core_insertion()
-    scores = backup_insertion()
+    # scores = backup_insertion()
     # socre_insertion(scores)
+    songlist_insertion('./json_files/new_songs.json')
+    # songlist_insertion('./json_files/new_charts.json', chart_only=True)
     conn.commit()
     cur.close()
     conn.close()
