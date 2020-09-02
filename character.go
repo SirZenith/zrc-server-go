@@ -256,15 +256,15 @@ func toggleUncap(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error character ID for toggle uncap partID = ", partID)
 		log.Println(err)
 		container.Success = false
-	} else if stats, err := getSingleCharacterStats(userID, int8(partID)); err != nil {
+	} else if _, err = db.Exec(`update part_stats set is_uncapped_override =
+	case when is_uncapped_override = 't' then 'f'
+		  else 't'
+	end
+	where part_id = :1`, partID); err != nil {
+		log.Println("Error occured while modifying uncap toggle state in table.")
 		log.Println(err)
 		container.Success = false
-	} else if _, err = db.Exec(`update part_stats set is_uncapped_override =
-		case when is_uncapped_override = 't' then 'f'
-			  else 't'
-		end
-		where part_id = :1`, partID); err != nil {
-		log.Println("Error occured while modifying uncap toggle state in table.")
+	} else if stats, err := getSingleCharacterStats(userID, int8(partID)); err != nil {
 		log.Println(err)
 		container.Success = false
 	} else {
