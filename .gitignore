@@ -6,4 +6,4 @@ static/songs
 *.pdf
 server
 test.sql
-
+ArcaeaDB.db
