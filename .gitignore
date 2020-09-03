@@ -1,9 +1,6 @@
 .DS_Store
-Oracle Arcaea Session.sql
-samples/*
-resource/*
-static/songs
-*.pdf
+static/songs/*
 arc_server
 test.sql
+db/*
 ArcaeaDB.db

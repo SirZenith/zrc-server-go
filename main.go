@@ -31,7 +31,7 @@ var db *sql.DB
 func init() {
 	var err error
 	exePath, _ := osext.ExecutableFolder()
-	db, err = sql.Open("sqlite3", path.Join(exePath, "db", "ArcaeaDB.db"))
+	db, err = sql.Open("sqlite3", path.Join(exePath, "ArcaeaDB.db"))
 	if err != nil {
 		log.Fatal(err)
 	}

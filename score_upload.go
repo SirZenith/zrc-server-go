@@ -192,13 +192,13 @@ func updateRating(tx *sql.Tx, userID int, newPlayedDate int64, newRating float64
 			and r.user_id = s.user_id
 			and r.played_date = s.played_date
 	)
-	select round((b30 + r10) / 40 * 100)
+	select round((b30 + r10) / (b30_count + r10_count) * 100)
 	from (
-		select sum(rating) b30
+		select sum(rating) b30, count(rating) b30_count
 		from best
 		where row_num <= 30
 	), (
-		select sum(rating) r10
+		select sum(rating) r10, count(rating) r10_count
 		from recent
 	)`, userID).Scan(&rating)
 	if err != nil {
@@ -307,16 +307,14 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 		isEx := score >= 9_800_000
 		noMoreThan10 := diffCount < 10
 		isHardClear := clearType == 5
-		targetInd := 0
+		targetInd := -1
 		for i, result := range results {
 			if (isEx || isHardClear) && i < 10 && newRating < result.rating {
 				continue
-			} else if noMoreThan10 {
-				if result.repeatTimes == 1 {
-					continue
-				} else if results[targetInd].repeatTimes == 1 {
-					targetInd = i
-				}
+			} else if noMoreThan10 && result.repeatTimes == 1 {
+				continue
+			} else if targetInd == -1 {
+				targetInd = i
 			} else if result.playedDate < results[targetInd].playedDate {
 				targetInd = i
 			}
