@@ -46,7 +46,7 @@ func getCharacterStats(userID int) ([]CharacterStats, error) {
 	)
 	rows, err := db.Query(`select
 			part_id,
-			is_uncapped_override, is_uncapped,
+			ifnull(is_uncapped_override, ''), ifnull(is_uncapped, ''),
 			overdrive, prog, frag, prog_tempest,
 			part_stats.lv,
 			part_stats.exp_val,
@@ -54,7 +54,7 @@ func getCharacterStats(userID int) ([]CharacterStats, error) {
 		from
 			part_stats, level_exp
 		where
-			part_stats.user_id = :1
+			part_stats.user_id = ?
 			and part_stats.lv = level_exp.lv`,
 		userID,
 	)
@@ -65,11 +65,11 @@ func getCharacterStats(userID int) ([]CharacterStats, error) {
 	defer rows.Close()
 
 	stmtStr := `select 
-			skill_id, skill_id_uncap, char_type, 
-			skill_requires_uncap, skill_unlock_level, part_name,
+			ifnull(skill_id, ''), ifnull(skill_id_uncap, ''), char_type, 
+			ifnull(skill_requires_uncap, ''), skill_unlock_level, part_name,
 			frag_1, frag_20, prog_1, prog_20, overdrive_1, overdrive_20
 		from partner
-		where part_id = :1`
+		where part_id = ?`
 	stmt, err := db.Prepare(stmtStr)
 	if err != nil {
 		log.Println("Error occured while preparing statement ", stmtStr)
@@ -143,13 +143,13 @@ func getSingleCharacterStats(userID int, partID int8) (*CharacterStats, error) {
 		overdrive20        float64
 	)
 	err := db.QueryRow(`select
-			is_uncapped_override, is_uncapped,
+			ifnull(is_uncapped_override, ''), ifnull(is_uncapped, ''),
 			overdrive, prog, frag, prog_tempest,
 			part_stats.lv, part_stats.exp_val,
 			level_exp.exp_val as "Level Exp",
 			partner.part_id, partner.skill_id,
-			partner.skill_id_uncap, partner.char_type,
-			partner.skill_requires_uncap,
+			ifnull(partner.skill_id_uncap, ''), partner.char_type,
+			ifnull(partner.skill_requires_uncap, ''),
 			partner.skill_unlock_level,
 			partner.part_name,
 			partner.frag_1, partner.frag_20,
@@ -158,9 +158,9 @@ func getSingleCharacterStats(userID int, partID int8) (*CharacterStats, error) {
 		from
 			part_stats, level_exp, partner
 		where
-			part_stats.user_id = :1
-			and part_stats.part_id = :2
-			and partner.part_id = :2
+			part_stats.user_id = ?1
+			and part_stats.part_id = ?2
+			and partner.part_id = ?2
 			and part_stats.lv = level_exp.lv`,
 		userID, partID,
 	).Scan(
@@ -229,8 +229,8 @@ func changeCharacter(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = db.Exec(`update player
-		set partner = :1, is_skill_sealed = :2
-		where user_id = :3`, character, skillSealed, userID)
+		set partner = ?1, is_skill_sealed = ?2
+		where user_id = ?3`, character, skillSealed, userID)
 	if err != nil {
 		log.Println(err)
 	}
@@ -260,7 +260,7 @@ func toggleUncap(w http.ResponseWriter, r *http.Request) {
 	case when is_uncapped_override = 't' then 'f'
 		  else 't'
 	end
-	where part_id = :1`, partID); err != nil {
+	where part_id = ?`, partID); err != nil {
 		log.Println("Error occured while modifying uncap toggle state in table.")
 		log.Println(err)
 		container.Success = false

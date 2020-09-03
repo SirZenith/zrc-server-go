@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path"
 
-	_ "github.com/godror/godror"
 	"github.com/gorilla/mux"
+	"github.com/kardianos/osext"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // HostName is server address
@@ -28,7 +30,8 @@ var db *sql.DB
 
 func init() {
 	var err error
-	db, err = sql.Open("godror", "ARCAEA/ARCAEA@localhost:1521/xe")
+	exePath, _ := osext.ExecutableFolder()
+	db, err = sql.Open("sqlite3", path.Join(exePath, "db", "ArcaeaDB.db"))
 	if err != nil {
 		log.Fatal(err)
 	}

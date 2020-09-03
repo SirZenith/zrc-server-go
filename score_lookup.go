@@ -60,7 +60,7 @@ func scoreLookupHandler(w http.ResponseWriter, r *http.Request) {
 		from
 			player p, best_score b, score sc, song so, chart_info c
 		where
-			p.user_code = :1
+			p.user_code = ?
 			and p.user_id = b.user_id
 			and p.user_id = sc.user_id
 			and sc.played_date = b.played_date
@@ -172,17 +172,19 @@ func genScoreHTML(userCode string, results []string) string {
 	err := db.QueryRow(`
 	with
     best as (
-		select rating
+		select ROW_NUMBER () OVER ( 
+			order by rating desc
+		) row_num,
+		  rating
 		from  best_score b, score s
-		where b.user_id = :1
+		where b.user_id = ?1
 			and b.user_id = s.user_id
 			and b.played_date = s.played_date
-		order by rating desc
 	),
 	recent as (
 		select rating
 		from  recent_score r, score s
-		where r.user_id = :1
+		where r.user_id = ?1
 			and r.is_recent_10 = 't'
 			and r.user_id = s.user_id
 			and r.played_date = s.played_date
@@ -191,7 +193,7 @@ func genScoreHTML(userCode string, results []string) string {
 	from (
 		select sum(rating) / count(rating) b30
 		from best
-		where rownum <= 30
+		where row_num <= 30
 	), (
 		select sum(rating) / count(rating) r10
 		from recent

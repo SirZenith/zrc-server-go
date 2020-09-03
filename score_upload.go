@@ -86,7 +86,7 @@ func scoreUploadHandler(w http.ResponseWriter, r *http.Request) {
 		user_id, played_date, song_id, difficulty, score,
 		shiny_pure, pure, far, lost, rating,
 		health, clear_type
-		) values(:1, :2, :3, :4, :5, :6,:7, :8, :9, :10, :11, :12)`,
+		) values(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)`,
 		userID, playedDate, data.Get("song_id"),
 		data.GetInt("difficulty"), data.GetInt("score"),
 		data.GetInt("shiny_perfect_count"), data.GetInt("perfect_count"),
@@ -94,6 +94,7 @@ func scoreUploadHandler(w http.ResponseWriter, r *http.Request) {
 		data.GetInt("health"), data.GetInt("clear_type"),
 	)
 	if err != nil {
+		tx.Rollback()
 		log.Printf("%s: Error occured while inserting to SCORE", r.URL.Path)
 		log.Println(err)
 		return
@@ -104,8 +105,8 @@ func scoreUploadHandler(w http.ResponseWriter, r *http.Request) {
 		data.GetInt("score"), data.Get("song_id"), data.GetInt("clear_type"), data.GetInt("difficulty"),
 	)
 	if err != nil {
-		log.Println(err)
 		tx.Rollback()
+		log.Println(err)
 		return
 	}
 	tx.Commit()
@@ -123,7 +124,7 @@ func scoreUploadHandler(w http.ResponseWriter, r *http.Request) {
 func scoreToRating(songID string, difficulty int, score float64) (float64, error) {
 	var baseRating float64
 	err := db.QueryRow(
-		"select rating from chart_info where song_id = :1 and difficulty = :2",
+		"select rating from chart_info where song_id = ?1 and difficulty = ?2",
 		songID, difficulty,
 	).Scan(&baseRating)
 	if err != nil {
@@ -155,7 +156,7 @@ type RecentScoreItem struct {
 func updateRating(tx *sql.Tx, userID int, newPlayedDate int64, newRating float64, score int, songID string, clearType int, difficulty int) (int, error) {
 	var rating int = 0
 	err := tx.QueryRow(
-		"select rating from player where user_id = :1",
+		"select rating from player where user_id = ?",
 		userID,
 	).Scan(&rating)
 	if err != nil {
@@ -174,17 +175,19 @@ func updateRating(tx *sql.Tx, userID int, newPlayedDate int64, newRating float64
 	err = tx.QueryRow(`
 	with
     best as (
-		select rating
+		select ROW_NUMBER () OVER ( 
+			order by rating desc
+		) row_num,
+		  rating
 		from  best_score b, score s
-		where b.user_id = :1
+		where b.user_id = ?1
 			and b.user_id = s.user_id
 			and b.played_date = s.played_date
-		order by rating desc
 	),
 	recent as (
 		select rating
 		from  recent_score r, score s
-		where r.user_id = :1
+		where r.user_id = ?1
 			and r.is_recent_10 = 't'
 			and r.user_id = s.user_id
 			and r.played_date = s.played_date
@@ -193,7 +196,7 @@ func updateRating(tx *sql.Tx, userID int, newPlayedDate int64, newRating float64
 	from (
 		select sum(rating) b30
 		from best
-		where rownum <= 30
+		where row_num <= 30
 	), (
 		select sum(rating) r10
 		from recent
@@ -204,7 +207,7 @@ func updateRating(tx *sql.Tx, userID int, newPlayedDate int64, newRating float64
 	}
 
 	_, err = tx.Exec(
-		"update player set rating = :1 where user_id = :2",
+		"update player set rating = ?1 where user_id = ?2",
 		rating, userID,
 	)
 	if err != nil {
@@ -221,7 +224,7 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 			from
 				recent_score r, score s
 			where
-				r.user_id = :1
+				r.user_id = ?
 				and r.user_id = s.user_id
 				and r.played_date = s.played_date
 		),
@@ -237,7 +240,7 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 	if err == sql.ErrNoRows {
 		_, err := tx.Exec(
 			`insert into recent_score(user_id, played_date, is_recent_10)
-			values(:1, :2, 't')`,
+			values(?1, ?2, 't')`,
 			userID, newPlayedDate,
 		)
 		if err != nil {
@@ -269,7 +272,7 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 	if len(results) < 10 {
 		_, err := tx.Exec(
 			`insert into recent_score(user_id, played_date, is_recent_10)
-			values(:1, :2, 't')`,
+			values(?1, ?2, 't')`,
 			userID, newPlayedDate,
 		)
 		if err != nil {
@@ -283,7 +286,7 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 			inR10 = "t"
 			_, err = tx.Exec(
 				`update recent_score set is_recent_10 = ''
-				where user_id = :1 and played_date = :2`,
+				where user_id = ?1 and played_date = ?2`,
 				userID, results[9].playedDate,
 			)
 			if err != nil {
@@ -293,7 +296,7 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 		}
 		_, err := tx.Exec(
 			`insert into recent_score(user_id, played_date, is_recent_10)
-			values(:1, :2, :3)`,
+			values(?1, ?2, ?3)`,
 			userID, newPlayedDate, inR10,
 		)
 		if err != nil {
@@ -305,31 +308,31 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 		noMoreThan10 := diffCount < 10
 		isHardClear := clearType == 5
 		targetInd := 0
+		fmt.Print("\n--------------------------\n")
+		fmt.Println("Diff count:", diffCount)
 		for i, result := range results {
+			fmt.Println(result.playedDate, result.repeatTimes)
 			if (isEx || isHardClear) && i < 10 && newRating < result.rating {
 				continue
-			} else if noMoreThan10 && result.repeatTimes < 2 {
-				continue
+			} else if noMoreThan10 {
+				if result.repeatTimes == 1 {
+					continue
+				} else if results[targetInd].repeatTimes == 1 {
+					targetInd = i
+				}
 			} else if result.playedDate < results[targetInd].playedDate {
 				targetInd = i
 			}
 		}
 
 		_, err = tx.Exec(
-			`delete from recent_score where user_id = :1 and played_date = :2`,
-			userID, results[targetInd].playedDate,
+			`update recent_score
+			set played_date = ?2, is_recent_10 = ''
+			where user_id = ?1 and played_date = ?3`,
+			userID, newPlayedDate, results[targetInd].playedDate,
 		)
 		if err != nil {
-			log.Println("Error occured while unset recent 10 state for old record")
-			return err
-		}
-		_, err = tx.Exec(
-			`insert into recent_score(user_id, played_date, is_recent_10)
-			values(:1, :2, '')`,
-			userID, results[targetInd].playedDate,
-		)
-		if err != nil {
-			log.Println("Error occured while inserting replacement record into RECENT_SCORE")
+			log.Println("Error occured while replacing record in RECENT_SCORE")
 			return err
 		}
 
@@ -342,7 +345,7 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 			}
 			_, err = tx.Exec(
 				`update recent_score set is_recent_10 = 't'
-				where user_id = :1 and played_date = :2`,
+				where user_id = ?1 and played_date = ?2`,
 				userID, replacement,
 			)
 			if err != nil {
@@ -365,15 +368,15 @@ func updateBestScore(tx *sql.Tx, userID int, newPlayedDate int64, songID string,
 		from
 			best_score b, score s
 		where
-			b.user_id = :1
+			b.user_id = ?1
 			and b.user_id = s.user_id
 			and b.played_date = s.played_date
-			and s.song_id = :2
-			and s.difficulty = :3`,
+			and s.song_id = ?2
+			and s.difficulty = ?3`,
 		userID, songID, difficulty).Scan(&score, &playedDate)
 	if err == sql.ErrNoRows {
 		_, err = tx.Exec(
-			"insert into best_score(user_id, played_date) values(:1, :2)",
+			"insert into best_score(user_id, played_date) values(?1, ?2)",
 			userID, newPlayedDate,
 		)
 		if err != nil {
@@ -385,7 +388,7 @@ func updateBestScore(tx *sql.Tx, userID int, newPlayedDate int64, songID string,
 		return err
 	} else if newScore > score {
 		_, err = tx.Exec(
-			`update best_score set played_date = :1 where played_date = :2`,
+			`update best_score set played_date = ?1 where played_date = ?2`,
 			newPlayedDate, playedDate,
 		)
 		if err != nil {

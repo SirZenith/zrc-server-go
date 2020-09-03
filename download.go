@@ -117,14 +117,14 @@ func getPurchasedDL(userID int, purchaseTable string, condition string, containe
 	stmt := fmt.Sprintf(`select
 		song.song_id,
 		song.checksum as "Audio Checksum",
-		song.remote_dl as "Song DL",
-		to_char(difficulty),
+		ifnull(song.remote_dl, '') as "Song DL",
+		cast(difficulty as text),
 		chart_info.checksum as "Chart Checksum",
-		chart_info.remote_dl as "Chart DL"
+		ifnull(chart_info.remote_dl, '') as "Chart DL"
 	from
 		%s, song, chart_info
 	where
-		pur.user_id = :1
+		pur.user_id = ?
 		and %s
 		and song.song_id = chart_info.song_id
 		and (song.remote_dl = 't' or chart_info.remote_dl = 't')`, purchaseTable, condition)
@@ -170,7 +170,7 @@ func getPurchasedDL(userID int, purchaseTable string, condition string, containe
 					)
 					tempMap["url"] = path.Join(HostName, "/static/songs", songID, query)
 					_, err := db.Exec(
-						`insert into dl_request(user_id, song_id, request_time) values(:1, :2, :3)`,
+						`insert into dl_request(user_id, song_id, request_time) values(?, ?, ?)`,
 						userID, songID, requestTime,
 					)
 					if err != nil {
@@ -196,7 +196,7 @@ func getPurchasedDL(userID int, purchaseTable string, condition string, containe
 				"url":      path.Join(HostName, "/static/songs", songID, query),
 			}
 			_, err := db.Exec(
-				`insert into dl_request(user_id, song_id, request_time)  values(:1, :2, :3)`,
+				`insert into dl_request(user_id, song_id, request_time)  values(?, ?, ?)`,
 				userID, songID, requestTime,
 			)
 			if err != nil {
@@ -225,7 +225,7 @@ func authenAndClean(w http.ResponseWriter, r *http.Request) bool {
 	var now time.Time
 	if now = time.Now(); now.Sub(LastDlListCheck).Seconds() > DlExpiresTime {
 		_, err := db.Exec(
-			`delete from dl_request where request_time < :1`,
+			`delete from dl_request where request_time < ?`,
 			now.Unix()-int64(DlExpiresTime),
 		)
 		if err != nil {
@@ -265,7 +265,7 @@ func authenAndClean(w http.ResponseWriter, r *http.Request) bool {
 		from
 			dl_request
 		where
-			user_id = :1 and song_id = :2 and request_time = :3`,
+			user_id = ?1 and song_id = ?2 and request_time = ?3`,
 		userID, songID, requestTime,
 	).Scan(&userID)
 	if err != nil {
@@ -276,7 +276,7 @@ func authenAndClean(w http.ResponseWriter, r *http.Request) bool {
 
 	_, err = db.Exec(`delete from dl_request
 		where
-			user_id = :1 and song_id = :2 and request_time = :3`,
+			user_id = ?1 and song_id = ?2 and request_time = ?3`,
 		userID, songID, requestTime,
 	)
 	if err != nil {

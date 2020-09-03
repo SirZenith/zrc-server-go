@@ -5,7 +5,7 @@
 		<table name="BEST_SCORE" >
 			<column name="USER_ID" type="number" length="9" jt="2" mandatory="y" />
 			<column name="PLAYED_DATE" type="number" length="10" jt="2" mandatory="y" >
-				<defo>1491868801</defo>
+				<defo><![CDATA[1491868801]]></defo>
 			</column>
 			<index name="IDX_BEST_SCORE" unique="PRIMARY_KEY" >
 				<column name="USER_ID" />
@@ -22,7 +22,7 @@
 			<column name="CHART_DESIGNER" type="varchar2" length="50" jt="12" />
 			<column name="JACKET_DESIGNER" type="varchar2" length="50" jt="12" />
 			<column name="RATING" type="number" length="3" decimal="1" jt="2" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="REMOTE_DL" type="char" length="1" jt="1" />
 			<column name="CHECKSUM" type="char" length="32" jt="1" />
@@ -46,7 +46,7 @@
 			<column name="CORE_ID" type="number" length="2" jt="2" mandatory="y" />
 			<column name="USER_ID" type="number" length="9" jt="2" mandatory="y" />
 			<column name="AMOUNT" type="number" length="2" jt="2" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<index name="IDX_CORE_POESS_I" unique="PRIMARY_KEY" >
 				<column name="CORE_ID" />
@@ -73,7 +73,7 @@
 			<column name="USER_ID" type="number" length="9" jt="2" mandatory="y" />
 			<column name="SONG_ID" type="varchar2" length="50" jt="12" mandatory="y" />
 			<column name="REQUEST_TIME" type="number" length="10" jt="2" mandatory="y" />
-			<index name="IDX_DL_REQUEST" unique="UNIQUE" >
+			<index name="IDX_DL_REQUEST" unique="UNIQUE_KEY" >
 				<column name="USER_ID" />
 				<column name="SONG_ID" />
 				<column name="REQUEST_TIME" />
@@ -135,10 +135,10 @@
 			<column name="REWARD_ID" type="varchar2" length="50" jt="12" />
 			<column name="ITEM_TYPE" type="varchar2" length="20" jt="12" mandatory="y" />
 			<column name="AMOUNT" type="number" length="4" jt="2" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="POSITION" type="number" length="4" jt="2" mandatory="y" >
-				<defo>1</defo>
+				<defo><![CDATA[1]]></defo>
 			</column>
 			<index name="IDX_MAP_REWARD" unique="NORMAL" >
 				<column name="MAP_ID" />
@@ -150,16 +150,16 @@
 		<table name="PACK" >
 			<column name="PACK_NAME" type="varchar2" length="20" jt="12" mandatory="y" />
 			<column name="PRICE" type="number" length="4" jt="2" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="ORIG_PRICE" type="number" length="4" jt="2" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="DISCOUNT_FROM" type="number" length="13" jt="2" >
-				<defo>1491868801000</defo>
+				<defo><![CDATA[1491868801000]]></defo>
 			</column>
 			<column name="DISCOUNT_TO" type="number" length="13" jt="2" >
-				<defo>1491868801000</defo>
+				<defo><![CDATA[1491868801000]]></defo>
 			</column>
 			<index name="PK_PACKS_NAME" unique="PRIMARY_KEY" >
 				<column name="PACK_NAME" />
@@ -192,28 +192,28 @@
 			<column name="SKILL_ID" type="varchar2" length="40" jt="12" />
 			<column name="SKILL_ID_UNCAP" type="varchar2" length="40" jt="12" />
 			<column name="CHAR_TYPE" type="number" length="1" jt="2" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="SKILL_REQUIRES_UNCAP" type="char" length="1" jt="1" />
 			<column name="SKILL_UNLOCK_LEVEL" type="number" length="2" jt="2" />
 			<column name="PART_NAME" type="varchar2" length="50" jt="12" mandatory="y" />
 			<column name="FRAG_1" type="float" length="8" jt="6" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="FRAG_20" type="float" length="8" jt="6" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="PROG_1" type="float" length="8" jt="6" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="PROG_20" type="float" length="8" jt="6" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="OVERDRIVE_1" type="float" length="8" jt="6" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="OVERDRIVE_20" type="float" length="8" jt="6" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<index name="PK_PARTNER_PAT_ID" unique="PRIMARY_KEY" >
 				<column name="PART_ID" />
@@ -225,22 +225,22 @@
 			<column name="IS_UNCAPPED_OVERRIDE" type="char" length="1" jt="1" />
 			<column name="IS_UNCAPPED" type="char" length="1" jt="1" />
 			<column name="EXP_VAL" type="float" length="11" jt="6" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="OVERDRIVE" type="float" length="8" jt="6" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="PROG" type="float" length="8" jt="6" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="FRAG" type="float" length="8" jt="6" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="LV" type="number" length="2" jt="2" mandatory="y" >
-				<defo>1</defo>
+				<defo><![CDATA[1]]></defo>
 			</column>
 			<column name="PROG_TEMPEST" type="number" length="2" jt="2" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<index name="IDX_PART_STATUS" unique="PRIMARY_KEY" >
 				<column name="USER_ID" />
@@ -270,7 +270,7 @@
 			</column>
 			<column name="DISPLAY_NAME" type="varchar2" length="20" jt="12" />
 			<column name="TICKET" type="integer" jt="4" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 				<comment><![CDATA[ticket for buying songs in game.]]></comment>
 			</column>
 			<column name="PARTNER" type="number" length="2" jt="2" />
@@ -280,18 +280,18 @@
 				<comment><![CDATA[map that player is currently working on.]]></comment>
 			</column>
 			<column name="PROG_BOOST" type="number" length="1" jt="2" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="STAMINA" type="number" length="2" jt="2" mandatory="y" >
-				<defo>12</defo>
+				<defo><![CDATA[12]]></defo>
 				<comment><![CDATA[stamina for play in world mode.]]></comment>
 			</column>
 			<column name="NEXT_FRAGSTAM_TS" type="number" length="10" jt="2" mandatory="y" >
-				<defo>-1</defo>
+				<defo><![CDATA[-1]]></defo>
 				<comment><![CDATA[time in second left until next frage-to-stamina exchange is unlocked.]]></comment>
 			</column>
 			<column name="MAX_STAMINA_TS" type="number" length="10" jt="2" mandatory="y" >
-				<defo>-1</defo>
+				<defo><![CDATA[-1]]></defo>
 				<comment><![CDATA[time in second left until stamina is fully recover.]]></comment>
 			</column>
 			<column name="MAX_STAMINA_NOTIFICATION" type="char" length="1" jt="1" />
@@ -299,19 +299,19 @@
 			<column name="FAVORITE_PARTNER" type="number" length="2" jt="2" />
 			<column name="RECENT_SCORE_DATE" type="number" length="10" jt="2" />
 			<column name="MAX_FRIEND" type="number" length="2" jt="2" mandatory="y" >
-				<defo>10</defo>
+				<defo><![CDATA[10]]></defo>
 			</column>
 			<column name="RATING" type="number" length="8" jt="2" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="JOIN_DATE" type="number" length="13" jt="2" mandatory="y" >
-				<defo>1491868801000</defo>
+				<defo><![CDATA[1491868801000]]></defo>
 			</column>
 			<column name="SCORE_TOKEN" type="varchar2" length="64" jt="12" />
-			<index name="IDX_USER_FRIEND_CODE" unique="UNIQUE" >
+			<index name="IDX_USER_FRIEND_CODE" unique="UNIQUE_KEY" >
 				<column name="USER_CODE" />
 			</index>
-			<index name="IDX_USER_EMAIL" unique="UNIQUE" >
+			<index name="IDX_USER_EMAIL" unique="UNIQUE_KEY" >
 				<column name="EMAIL" />
 			</index>
 			<index name="PK_PLAYER_USER_ID" unique="PRIMARY_KEY" >
@@ -356,7 +356,7 @@
 		<table name="SCORE" >
 			<column name="USER_ID" type="number" length="9" jt="2" mandatory="y" />
 			<column name="PLAYED_DATE" type="number" length="10" jt="2" mandatory="y" >
-				<defo>1491868801</defo>
+				<defo><![CDATA[1491868801]]></defo>
 			</column>
 			<column name="SONG_ID" type="varchar2" length="30" jt="12" mandatory="y" />
 			<column name="DIFFICULTY" type="number" length="1" jt="2" mandatory="y" />
@@ -380,7 +380,7 @@
 				<column name="USER_ID" />
 				<column name="PLAYED_DATE" />
 			</index>
-			<index name="UNQ_SCORE_PLAYED_DATE" unique="UNIQUE" >
+			<index name="UNQ_SCORE_PLAYED_DATE" unique="UNIQUE_KEY" >
 				<column name="PLAYED_DATE" />
 			</index>
 			<fk name="FK_PLAY_RECORD_SONG" to_schema="ARCAEA" to_table="SONG" >
@@ -418,29 +418,29 @@
 			<column name="TITLE_LOCAL_ZH_HANS" type="varchar2" length="50" jt="12" />
 			<column name="ARTIST" type="varchar2" length="50" jt="12" mandatory="y" />
 			<column name="BPM" type="varchar2" length="12" jt="12" mandatory="y" >
-				<defo>100</defo>
+				<defo><![CDATA[100]]></defo>
 			</column>
 			<column name="BPM_BASE" type="number" length="3" jt="2" mandatory="y" >
-				<defo>100</defo>
+				<defo><![CDATA[100]]></defo>
 			</column>
 			<column name="PACK_NAME" type="varchar2" length="15" jt="12" mandatory="y" />
 			<column name="PURCHASE" type="varchar2" length="20" jt="12" />
 			<column name="AUDIO_PREVIEW" type="number" length="6" jt="2" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="AUDIO_PREVIEW_END" type="number" length="6" jt="2" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="SIDE" type="number" length="1" jt="2" mandatory="y" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="WORLD_UNLOCK" type="char" length="1" jt="1" />
 			<column name="BG" type="varchar2" length="30" jt="12" />
 			<column name="ADD_DATE" type="number" length="13" jt="2" mandatory="y" >
-				<defo>1491868801000</defo>
+				<defo><![CDATA[1491868801000]]></defo>
 			</column>
 			<column name="VERSION" type="varchar2" length="10" jt="12" >
-				<defo>1.0</defo>
+				<defo><![CDATA[1.0]]></defo>
 			</column>
 			<column name="REMOTE_DL" type="char" length="1" jt="1" />
 			<column name="CHECKSUM" type="char" length="32" jt="1" />
@@ -459,13 +459,13 @@
 		</table>
 		<table name="WORLD_MAP" >
 			<column name="AVAILABLE_FROM" type="number" length="13" jt="2" mandatory="y" >
-				<defo>-1</defo>
+				<defo><![CDATA[-1]]></defo>
 			</column>
 			<column name="AVAILABLE_TO" type="number" length="13" jt="2" mandatory="y" >
-				<defo>2106124800000</defo>
+				<defo><![CDATA[2106124800000]]></defo>
 			</column>
 			<column name="BEYOND_HEALTH" type="number" length="3" jt="2" mandatory="y" >
-				<defo>100</defo>
+				<defo><![CDATA[100]]></defo>
 			</column>
 			<column name="CHAPTER" type="number" length="9" jt="2" mandatory="y" />
 			<column name="COORDINATE" type="varchar2" length="15" jt="12" mandatory="y" />
@@ -477,7 +477,7 @@
 			<column name="REQUIRE_ID" type="varchar2" length="50" jt="12" />
 			<column name="REQUIRE_TYPE" type="varchar2" length="15" jt="12" />
 			<column name="REQUIRE_VALUE" type="number" length="3" jt="2" >
-				<defo>0</defo>
+				<defo><![CDATA[0]]></defo>
 			</column>
 			<column name="STAMINA_COST" type="number" length="1" jt="2" mandatory="y" />
 			<column name="STEP_COUNT" type="number" length="3" jt="2" mandatory="y" />

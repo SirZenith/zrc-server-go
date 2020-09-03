@@ -66,16 +66,17 @@ func getUserInfo(userID int, _ *http.Request) (ToJSON, error) {
 		joinDate              int64
 	)
 	err := db.QueryRow(`select
-			user_name, user_code, display_name, ticket, NVL(partner, 0),
-			is_locked_name_duplicated, is_skill_sealed,
-			curr_map, prog_boost, stamina,
+			user_name, user_code, ifnull(display_name, ''), ticket,
+			ifnull(partner, 0), ifnull(is_locked_name_duplicated, ''),
+			ifnull(is_skill_sealed, ''), ifnull(curr_map, ''), prog_boost, stamina,
 			next_fragstam_ts, max_stamina_ts,
-			max_stamina_notification, is_hide_rating, NVL(favorite_partner, 0),
+			ifnull(max_stamina_notification, ''), ifnull(is_hide_rating, ''), 
+			ifnull(favorite_partner, 0),
 			recent_score_date, max_friend, rating, join_date
 		from
 			player
 		where
-			user_id = :1`, userID).Scan(
+			user_id = ?`, userID).Scan(
 		&userName, &userCode, &displayName, &ticket, &partID,
 		&isLockedNameDuplicate, &isSkillSealed,
 		&currMap, &progBoost, &stamina,
@@ -128,7 +129,7 @@ func getUserInfo(userID int, _ *http.Request) (ToJSON, error) {
 		displayName = userName
 	}
 	var isAprilFools string
-	err = db.QueryRow(`select is_aprilfools from game_info`).Scan(&isAprilFools)
+	err = db.QueryRow(`select ifnull(is_aprilfools, '') from game_info`).Scan(&isAprilFools)
 	if err != nil {
 		log.Println("Error occured while reading April Fools info.")
 		return nil, err
@@ -173,7 +174,7 @@ func getCoreInfo(userID int) ([]CoreInfo, error) {
 		from
 			core_possess_info p, core c
 		where
-			user_id = :1
+			user_id = ?
 		and 
 			c.core_id = p.core_id`, userID)
 	if err != nil {
@@ -210,10 +211,10 @@ func getRecentScore(userID int) (ScoreRecord, error) {
 		from
 			score s, best_score b, score s2
 		where
-			s.user_id = :1
+			s.user_id = ?1
 			and s.played_date = (select max(played_date) from score)
 			and s.song_id = s2.song_id
-			and b.user_id = :1
+			and b.user_id = ?1
 			and b.played_date = s2.played_date`, userID).Scan(
 		&record.SongID, &record.Difficulty, &record.Score,
 		&record.Shiny, &record.Pure, &record.Far, &record.Lost,
@@ -237,7 +238,7 @@ func getRecentScore(userID int) (ScoreRecord, error) {
 func getItemList(userID int, tableName string, targetName string) ([]string, error) {
 	rows, err := db.Query(
 		fmt.Sprintf(
-			"select %s from %s where user_id = :1", targetName, tableName),
+			"select %s from %s where user_id = ?", targetName, tableName),
 		userID,
 	)
 	if err != nil {

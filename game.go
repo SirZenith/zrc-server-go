@@ -40,9 +40,9 @@ func getGameInfo(_ int, _ *http.Request) (ToJSON, error) {
 		isBydChapterUnlocked string
 	)
 	err := db.QueryRow(`select
-			FLOOR(SYSDATE - to_date('19700101', 'YYYYMMDD')) * 24 * 60 * 60,
+			cast(strftime('%s', 'now') as decimal),
 			max_stamina, stamina_recover_tick, core_exp,
-			world_ranking_enabled, is_byd_chapter_unlocked
+			ifnull(world_ranking_enabled, ''), ifnull(is_byd_chapter_unlocked, '')
 		from game_info`).Scan(&now, &maxStam, &stamRecoverTick, &coreExp, &worldRankingEnabled, &isBydChapterUnlocked)
 	if err != nil {
 		log.Println("Error occured while querying GAME_INFO")

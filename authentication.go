@@ -53,8 +53,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		`select
 			user_id, pwdhash from player
 		where
-			lower(user_name) = lower(:1) or email = :1`,
-		user,
+			lower(user_name) = lower(?) or email = ?`,
+		user, user,
 	).Scan(&userID, &pwdHash)
 	if err == sql.ErrNoRows || hash != pwdHash {
 		http.Error(

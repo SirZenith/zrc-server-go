@@ -58,13 +58,13 @@ func getMyMapInfo(userID int, _ *http.Request) (ToJSON, error) {
 
 	rows, err := db.Query(`select
 			available_from, available_to, beyond_health, chapter, coordinate,
-			custom_bg, is_beyond, is_legacy, is_repeatable,
+			custom_bg, ifnull(is_beyond, ''), ifnull(is_legacy, ''), ifnull(is_repeatable, ''),
 			world_map.map_id,
 			require_id, require_type, require_value, stamina_cost, step_count,
-			curr_capture, curr_position, is_locked
+			curr_capture, curr_position, ifnull(is_locked, '')
 		from world_map, player_map_prog
 		where player_map_prog.map_id = world_map.map_id
-		  and player_map_prog.user_id = :1`, userID)
+		  and player_map_prog.user_id = ?`, userID)
 	if err != nil {
 		log.Println("Error occured while querying table WORLD_MAP.")
 		return nil, err
@@ -119,7 +119,7 @@ func getMyMapInfo(userID int, _ *http.Request) (ToJSON, error) {
 
 	var currMap string
 	err = db.QueryRow(
-		"select curr_map from player where user_id = :1",
+		"select ifnull(curr_map, '') from player where user_id = ?",
 		userID,
 	).Scan(&currMap)
 	if err != nil {
@@ -133,7 +133,7 @@ func getMyMapInfo(userID int, _ *http.Request) (ToJSON, error) {
 func getMapAffinity(mapID string) ([]int8, []float64, error) {
 	partners, multipliers := []int8{}, []float64{}
 	rows, err := db.Query(
-		"select part_id, multiplier from map_affinity where map_id = :1",
+		"select part_id, multiplier from map_affinity where map_id = ?",
 		mapID,
 	)
 	if err != nil {
@@ -162,7 +162,7 @@ func getMapAffinity(mapID string) ([]int8, []float64, error) {
 
 func getRewards(mapID string) ([]Reward, error) {
 	rows, err := db.Query(
-		"select reward_id, item_type, amount, position from map_reward where map_id = :1",
+		"select reward_id, item_type, amount, position from map_reward where map_id = ?",
 		mapID,
 	)
 	if err != nil {

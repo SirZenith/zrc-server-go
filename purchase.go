@@ -57,7 +57,7 @@ func getPackInfo(_ int, _ *http.Request) (ToJSON, error) {
 			from
 				pack_item
 			where
-				pack_name = :1`, name)
+				pack_name = ?`, name)
 		if err != nil {
 			return nil, err
 		}

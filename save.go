@@ -36,7 +36,7 @@ func returnBackup(w http.ResponseWriter, r *http.Request) {
 	}
 	var data string
 	err = db.QueryRow(
-		"select backup_data from data_backup where user_id = :1", userID,
+		"select backup_data from data_backup where user_id = ?", userID,
 	).Scan(&data)
 	if err != nil {
 		log.Println("Error occured while querying table DATA_BACKUP for downloading data")
@@ -88,7 +88,7 @@ func receiveBackup(w http.ResponseWriter, r *http.Request) {
 	}
 	result := strings.Join(results, ",")
 	_, err = db.Exec(
-		"update data_backup set backup_data = :1 where user_id = :2",
+		"update data_backup set backup_data = ?1 where user_id = ?2",
 		result, userID,
 	)
 	if err != nil {
