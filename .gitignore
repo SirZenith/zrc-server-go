@@ -4,6 +4,6 @@ samples/*
 resource/*
 static/songs
 *.pdf
-server
+arc_server
 test.sql
 ArcaeaDB.db

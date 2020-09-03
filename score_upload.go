@@ -308,10 +308,7 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 		noMoreThan10 := diffCount < 10
 		isHardClear := clearType == 5
 		targetInd := 0
-		fmt.Print("\n--------------------------\n")
-		fmt.Println("Diff count:", diffCount)
 		for i, result := range results {
-			fmt.Println(result.playedDate, result.repeatTimes)
 			if (isEx || isHardClear) && i < 10 && newRating < result.rating {
 				continue
 			} else if noMoreThan10 {
