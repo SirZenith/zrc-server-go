@@ -9,10 +9,10 @@ import (
 
 func init() {
 	R.Handle(
-		path.Join(APIRoot, APIVer, "purchase/bundle/pack"),
+		path.Join(APIRoot, "purchase/bundle/pack"),
 		http.HandlerFunc(packInfoHandler),
 	)
-	InsideHandler[path.Join(APIRoot, APIVer, "purchase/bundle/pack")] = getPackInfo
+	InsideHandler[path.Join(APIRoot, "purchase/bundle/pack")] = getPackInfo
 }
 
 func packInfoHandler(w http.ResponseWriter, r *http.Request) {

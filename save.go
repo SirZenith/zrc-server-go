@@ -15,10 +15,10 @@ import (
 var DataAndChecksumKeys []string
 
 func init() {
-	R.Path(path.Join(APIRoot, APIVer, "user/me/save")).Methods("GET").Handler(
+	R.Path(path.Join(APIRoot, "user/me/save")).Methods("GET").Handler(
 		http.HandlerFunc(returnBackup),
 	)
-	R.Path(path.Join(APIRoot, APIVer, "user/me/save")).Methods("POST").Handler(
+	R.Path(path.Join(APIRoot, "user/me/save")).Methods("POST").Handler(
 		http.HandlerFunc(receiveBackup),
 	)
 	DataAndChecksumKeys = []string{

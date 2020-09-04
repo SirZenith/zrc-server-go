@@ -39,10 +39,10 @@ func init() {
 	LastDlListCheck = time.Now()
 
 	R.Handle(
-		path.Join(APIRoot, APIVer, "serve/download/me/song"),
+		path.Join(APIRoot, "serve/download/me/song"),
 		http.HandlerFunc(songDownloadHandler),
 	)
-	InsideHandler[path.Join(APIRoot, APIVer, "serve/download/me/song")] = getDownloadList
+	InsideHandler[path.Join(APIRoot, "serve/download/me/song")] = getDownloadList
 	R.PathPrefix("/static/songs").Handler(
 		fileServerWithAuth(
 			http.StripPrefix("/static/songs", http.FileServer(http.Dir("./static/songs"))),

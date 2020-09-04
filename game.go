@@ -9,10 +9,10 @@ import (
 
 func init() {
 	R.Handle(
-		path.Join(APIRoot, APIVer, "game/info"),
+		path.Join(APIRoot, "game/info"),
 		http.HandlerFunc(gameInfoHandler),
 	)
-	InsideHandler[path.Join(APIRoot, APIVer, "game/info")] = getGameInfo
+	InsideHandler[path.Join(APIRoot, "game/info")] = getGameInfo
 }
 
 func gameInfoHandler(w http.ResponseWriter, r *http.Request) {

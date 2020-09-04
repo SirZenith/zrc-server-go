@@ -15,13 +15,13 @@ var SettingMap = map[string]string{}
 
 func init() {
 	R.Handle(
-		path.Join(APIRoot, APIVer, "user/me"),
+		path.Join(APIRoot, "user/me"),
 		http.HandlerFunc(userInfoHandler),
 	)
-	R.PathPrefix(path.Join(APIRoot, APIVer, "user/me/setting")).Methods("POST").Handler(
+	R.PathPrefix(path.Join(APIRoot, "user/me/setting")).Methods("POST").Handler(
 		http.HandlerFunc(userSettingHandler),
 	)
-	InsideHandler[path.Join(APIRoot, APIVer, "user/me")] = getUserInfo
+	InsideHandler[path.Join(APIRoot, "user/me")] = getUserInfo
 
 	SettingMap["is_hide_rating"] = "is_hide_rating"
 	SettingMap["max_stamina_notification_enabled"] = "max_stamina_notification"

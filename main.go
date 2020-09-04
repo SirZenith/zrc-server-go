@@ -20,25 +20,19 @@ var Port string
 var HostName string
 
 // APIRoot is leading path of all request URL
-var APIRoot string
-
-// APIVer is version number appear in all request URL
-var APIVer string
+var APIRoot = "/coffee/1"
 
 // R router used globally
 var R = mux.NewRouter()
 
 func init() {
 	port := flag.Int("p", 8080, "Port number for server")
-	hostFlag := flag.String("h", "127.0.0.1", "Host name for server")
-	apiRoot := flag.String("r", "coffee", "Root path for API")
-	apiVer := flag.Int("v", 1, "API version for current server")
+	hostFlag := flag.String("h", "127.0.0.1:8080", "Host name for server")
 	flag.Parse()
 
 	Port = fmt.Sprintf("%d", *port)
 	HostName = "http://" + *hostFlag
-	APIRoot = *apiRoot
-	APIVer = fmt.Sprintf("%d", *apiVer)
+	fmt.Printf("%s%s\n", HostName, APIRoot)
 }
 
 // InsideHandler recording internal func inside info getting purpose handler

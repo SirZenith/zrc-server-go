@@ -12,8 +12,9 @@ import (
 )
 
 func init() {
+	fmt.Println(path.Join(APIRoot, "compose/aggregate"))
 	R.Handle(
-		path.Join(APIRoot, APIVer, "compose/aggregate"),
+		path.Join(APIRoot, "compose/aggregate"),
 		http.HandlerFunc(aggregateHandler),
 	)
 }
@@ -46,7 +47,7 @@ func aggregateHandler(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal([]byte(data.Get("calls")), &calls)
 	for _, call := range calls {
 		handler, ok := InsideHandler[path.Join(
-			APIRoot, APIVer, strings.Split(call.EndPoint, "?")[0])]
+			APIRoot, strings.Split(call.EndPoint, "?")[0])]
 		if !ok {
 			log.Println("Unknow request endpoint ", call.EndPoint)
 			results = append(results, AggResult{call.ID, &EmptyList{}})

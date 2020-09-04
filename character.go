@@ -11,10 +11,10 @@ import (
 )
 
 func init() {
-	R.Path(path.Join(APIRoot, APIVer, "user/me/character")).Handler(
+	R.Path(path.Join(APIRoot, "user/me/character")).Handler(
 		http.HandlerFunc(changeCharacter),
 	)
-	R.PathPrefix(path.Join(APIRoot, APIVer, "user/me/characters/{partID}/toggle_uncap")).Methods("POST").Handler(
+	R.PathPrefix(path.Join(APIRoot, "user/me/characters/{partID}/toggle_uncap")).Methods("POST").Handler(
 		http.HandlerFunc(toggleUncap),
 	)
 }

@@ -32,7 +32,7 @@ func init() {
 	ExpiresTime = int64(duration.Seconds())
 
 	R.Handle(
-		path.Join(APIRoot, APIVer, "auth/login"),
+		path.Join(APIRoot, "auth/login"),
 		http.HandlerFunc(loginHandler),
 	)
 }

@@ -10,10 +10,10 @@ import (
 
 func init() {
 	R.Handle(
-		path.Join(APIRoot, APIVer, "world/map/me"),
+		path.Join(APIRoot, "world/map/me"),
 		http.HandlerFunc(myMapInfoHandler),
 	)
-	InsideHandler[path.Join(APIRoot, APIVer, "world/map/me")] = getMyMapInfo
+	InsideHandler[path.Join(APIRoot, "world/map/me")] = getMyMapInfo
 }
 
 func myMapInfoHandler(w http.ResponseWriter, r *http.Request) {

@@ -23,10 +23,10 @@ var ScoreKeys = []string{
 var errorZeroRating = errors.New("Rating for this chart is 0")
 
 func init() {
-	R.Path(path.Join(APIRoot, APIVer, "score", "token")).Handler(
+	R.Path(path.Join(APIRoot, "score", "token")).Handler(
 		http.HandlerFunc(scoreTokenHandler),
 	)
-	R.Path(path.Join(APIRoot, APIVer, "score", "song")).Handler(
+	R.Path(path.Join(APIRoot, "score", "song")).Handler(
 		http.HandlerFunc(scoreUploadHandler),
 	)
 }
