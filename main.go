@@ -30,15 +30,15 @@ var R = mux.NewRouter()
 
 func init() {
 	port := flag.Int("p", 8080, "Port number for server")
-	hostFlag := flag.String("h", "0.0.0.0", "Host name for server")
+	hostFlag := flag.String("h", "127.0.0.1", "Host name for server")
 	apiRoot := flag.String("r", "coffee", "Root path for API")
 	apiVer := flag.Int("v", 1, "API version for current server")
 	flag.Parse()
 
-	Port = string(*port)
+	Port = fmt.Sprintf("%d", *port)
 	HostName = "http://" + *hostFlag
 	APIRoot = *apiRoot
-	APIVer = string(*apiVer)
+	APIVer = fmt.Sprintf("%d", *apiVer)
 }
 
 // InsideHandler recording internal func inside info getting purpose handler
