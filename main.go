@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,17 +13,33 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// Port is port number used by server
+var Port string
+
 // HostName is server address
 var HostName = "http://192.168.124.2:8080"
 
 // APIRoot is leading path of all request URL
-var APIRoot = "/coffee"
+var APIRoot string
 
 // APIVer is version number appear in all request URL
-var APIVer = "12"
+var APIVer string
 
 // R router used globally
 var R = mux.NewRouter()
+
+func init() {
+	port := flag.Int("p", 8080, "Port number for server")
+	hostFlag := flag.String("h", "0.0.0.0", "Host name for server")
+	apiRoot := flag.String("r", "coffee", "Root path for API")
+	apiVer := flag.Int("v", 1, "API version for current server")
+	flag.Parse()
+
+	Port = string(*port)
+	HostName = "http://" + *hostFlag
+	APIRoot = *apiRoot
+	APIVer = string(*apiVer)
+}
 
 // InsideHandler recording internal func inside info getting purpose handler
 var InsideHandler = map[string]func(userID int, r *http.Request) (ToJSON, error){}
@@ -44,8 +61,8 @@ func init() {
 
 func main() {
 	defer db.Close()
-	fmt.Println("Starting a server at port 8080")
-	if err := http.ListenAndServe(":8080", R); err != nil {
+	fmt.Println("Starting a server at port", Port)
+	if err := http.ListenAndServe(":"+Port, R); err != nil {
 		log.Fatal(err)
 	}
 }
