@@ -17,7 +17,7 @@ import (
 var Port string
 
 // HostName is server address
-var HostName = "http://192.168.124.2:8080"
+var HostName string
 
 // APIRoot is leading path of all request URL
 var APIRoot string
