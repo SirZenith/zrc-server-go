@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"path"
-	"strconv"
 	"strings"
 	"time"
 
@@ -169,14 +168,14 @@ func getPurchasedDL(userID int, purchaseTable string, condition string, containe
 						userID, songID, requestTime,
 					)
 					tempMap["url"] = path.Join(HostName, "/static/songs", songID, query)
-					_, err := db.Exec(
-						`insert into dl_request(user_id, song_id, request_time) values(?, ?, ?)`,
-						userID, songID, requestTime,
-					)
-					if err != nil {
-						log.Println("Error occured while inserting into table DL_REQUEST")
-						return err
-					}
+					// _, err := db.Exec(
+					// 	`insert into dl_request(user_id, song_id, request_time) values(?1, ?2, ?3)`,
+					// 	userID, songID, requestTime,
+					// )
+					// if err != nil {
+					// 	log.Println("Error occured while inserting into table DL_REQUEST")
+					// 	return err
+					// }
 				}
 			}
 			checksum = &Checksum{
@@ -195,14 +194,14 @@ func getPurchasedDL(userID int, purchaseTable string, condition string, containe
 				"checksum": chartChecksum,
 				"url":      path.Join(HostName, "/static/songs", songID, query),
 			}
-			_, err := db.Exec(
-				`insert into dl_request(user_id, song_id, request_time)  values(?, ?, ?)`,
-				userID, songID, requestTime,
-			)
-			if err != nil {
-				log.Println("Error occured while inserting into table DL_REQUEST")
-				return err
-			}
+			// _, err := db.Exec(
+			// 	`insert into dl_request(user_id, song_id, request_time)  values(?1, ?2, ?3)`,
+			// 	userID, songID, requestTime,
+			// )
+			// if err != nil {
+			// 	log.Println("Error occured while inserting into table DL_REQUEST")
+			// 	return err
+			// }
 		} else {
 			checksum.Chart[difficulty] = map[string]string{
 				"checksum": chartChecksum,
@@ -222,67 +221,67 @@ func fileServerWithAuth(fileServer http.Handler) http.Handler {
 }
 
 func authenAndClean(w http.ResponseWriter, r *http.Request) bool {
-	var now time.Time
-	if now = time.Now(); now.Sub(LastDlListCheck).Seconds() > DlExpiresTime {
-		_, err := db.Exec(
-			`delete from dl_request where request_time < ?`,
-			now.Unix()-int64(DlExpiresTime),
-		)
-		if err != nil {
-			log.Println("Error occured while cleaning download request")
-			log.Println(err)
-			return false
-		}
-		LastDlListCheck = now
-	}
-	data, err := forms.Parse(r)
-	if err != nil {
-		log.Println(err)
-		return false
-	}
-	val := data.Validator()
-	val.Require("user_id")
-	val.Require("song_id")
-	val.Require("time")
-	if val.HasErrors() {
-		log.Println("form passed lacks of necessary key")
-		for k, v := range val.ErrorMap() {
-			fmt.Printf("%s: %s\n", k, v)
-		}
-		return false
-	}
-	userID := data.GetInt("user_id")
-	songID := data.Get("song_id")
-	requestTime, err := strconv.ParseInt(data.Get("time"), 10, 64)
-	if err != nil {
-		log.Println("Invalid time in request form")
-		return false
-	} else if now.Unix()-requestTime > int64(DlExpiresTime) {
-		return false
-	}
-	err = db.QueryRow(`select
-			user_id
-		from
-			dl_request
-		where
-			user_id = ?1 and song_id = ?2 and request_time = ?3`,
-		userID, songID, requestTime,
-	).Scan(&userID)
-	if err != nil {
-		log.Println("Erorr occured while looking up request in table DL_REQUEST")
-		log.Println(err)
-		return false
-	}
+	// var now time.Time
+	// if now = time.Now(); now.Sub(LastDlListCheck).Seconds() > DlExpiresTime {
+	// 	_, err := db.Exec(
+	// 		`delete from dl_request where request_time < ?`,
+	// 		now.Unix()-int64(DlExpiresTime),
+	// 	)
+	// 	if err != nil {
+	// 		log.Println("Error occured while cleaning download request")
+	// 		log.Println(err)
+	// 		return false
+	// 	}
+	// 	LastDlListCheck = now
+	// }
+	// data, err := forms.Parse(r)
+	// if err != nil {
+	// 	log.Println(err)
+	// 	return false
+	// }
+	// val := data.Validator()
+	// val.Require("user_id")
+	// val.Require("song_id")
+	// val.Require("time")
+	// if val.HasErrors() {
+	// 	log.Println("form passed lacks of necessary key")
+	// 	for k, v := range val.ErrorMap() {
+	// 		fmt.Printf("%s: %s\n", k, v)
+	// 	}
+	// 	return false
+	// }
+	// userID := data.GetInt("user_id")
+	// songID := data.Get("song_id")
+	// requestTime, err := strconv.ParseInt(data.Get("time"), 10, 64)
+	// if err != nil {
+	// 	log.Println("Invalid time in request form")
+	// 	return false
+	// } else if now.Unix()-requestTime > int64(DlExpiresTime) {
+	// 	return false
+	// }
+	// err = db.QueryRow(`select
+	// 		user_id
+	// 	from
+	// 		dl_request
+	// 	where
+	// 		user_id = ?1 and song_id = ?2 and request_time = ?3`,
+	// 	userID, songID, requestTime,
+	// ).Scan(&userID)
+	// if err != nil {
+	// 	log.Println("Erorr occured while looking up request in table DL_REQUEST")
+	// 	log.Println(err)
+	// 	return false
+	// }
 
-	_, err = db.Exec(`delete from dl_request
-		where
-			user_id = ?1 and song_id = ?2 and request_time = ?3`,
-		userID, songID, requestTime,
-	)
-	if err != nil {
-		log.Println("Erorr occured while deleting request in table DL_REQUEST")
-		log.Println(err)
-		return false
-	}
+	// _, err = db.Exec(`delete from dl_request
+	// 	where
+	// 		user_id = ?1 and song_id = ?2 and request_time = ?3`,
+	// 	userID, songID, requestTime,
+	// )
+	// if err != nil {
+	// 	log.Println("Erorr occured while deleting request in table DL_REQUEST")
+	// 	log.Println(err)
+	// 	return false
+	// }
 	return true
 }
