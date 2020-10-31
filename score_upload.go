@@ -291,10 +291,10 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 			from
 				recent_score r, score s
 			where
-				r.user_id = ?
+				r.user_id = ?1
 				and r.user_id = s.user_id
 				and r.played_date = s.played_date
-		),
+		)
 	select
 		played_date, rating, iden, is_recent_10
 	from

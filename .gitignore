@@ -1,4 +1,5 @@
 .DS_Store
+.vscode
 static/songs/*
 arc_server
 test.sql
