@@ -213,25 +213,81 @@ func updateRating(tx *sql.Tx, userID int, newPlayedDate int64, newRating float64
 
 // RecentScoreItem is used for picking score record when updating rating
 type RecentScoreItem struct {
-	playedDate  int64
-	repeatTimes int
-	rating      float64
-	songIden    string
+	playedDate int64
+	rating     float64
 }
 
-func contains(items []RecentScoreItem, songIden string) int {
-	for i, item := range items {
-		if item.songIden == songIden {
-			return i
+type recentScoreInserter struct {
+	count       int
+	r10         map[string]*RecentScoreItem
+	normalItems []*RecentScoreItem
+}
+
+func (inserter *recentScoreInserter) insert(tx *sql.Tx, userID int, score int, clearType int, targetIden string, target *RecentScoreItem) error {
+	item, ok := inserter.r10[targetIden]
+	var replacement *RecentScoreItem = nil
+	isR10 := "t"
+	if !ok {
+		isEx := score >= 9_800_000
+		isHardClear := clearType == 5
+		for _, item := range inserter.r10 {
+			if (isEx || isHardClear) && target.rating < item.rating {
+				continue
+			} else if replacement == nil {
+				replacement = item
+			} else if item.playedDate < replacement.playedDate {
+				replacement = item
+			}
+		}
+	} else if item.rating <= target.rating {
+		if _, err := tx.Exec(
+			`update recent_score set played_date = ?1 where user_id = ?2 and played_date = ?3`,
+			target.playedDate, userID, replacement.playedDate,
+		); err != nil {
+			log.Println("Error occured while replacing record in RECENT_PLAYED for R10")
+			return err
+		}
+		target = item
+		replacement = item
+		isR10 = ""
+	}
+
+	// if replacement == nil, then len(inserter.normalItems) should be 0,
+	// this loop won't be executed.s
+	for _, item := range inserter.normalItems {
+		if item.playedDate < replacement.playedDate {
+			replacement = item
+			isR10 = ""
 		}
 	}
-	return -1
+
+	if replacement == nil {
+		if _, err := tx.Exec(
+			`insert into recent_score(user_id, played_date, is_recent_10)
+			values(?1, ?2, ?3)`,
+			userID, target.playedDate, isR10,
+		); err != nil {
+			log.Println("Error occured while insterting into empty R30")
+			return err
+		}
+	} else if replacement != target {
+		if _, err := tx.Exec(
+			`update recent_score set played_date = ?1, is_r10 = ?2
+			where user_id = ?3 and played_date = ?4`,
+			target.playedDate, isR10, userID, replacement.playedDate,
+		); err != nil {
+			log.Println("Error occured while replacing record in RECENT_PLAYED R30")
+			return err
+		}
+	}
+
+	return nil
 }
 
 func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, newRating float64, clearType int, songIden string) error {
 	rows, err := tx.Query(`
 	with
-		r30 as (select s.played_date, (s.song_id || s.difficulty) iden, s.rating
+		r30 as (select s.played_date, (s.song_id || s.difficulty) iden, s.rating, r.is_recent_10
 			from
 				recent_score r, score s
 			where
@@ -239,13 +295,10 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 				and r.user_id = s.user_id
 				and r.played_date = s.played_date
 		),
-		repeat_table as (select iden, count(*) as repeat_count from r30 group by iden)
 	select
-		played_date, repeat_count, rating, iden, (select count(*) as diff_count from repeat_table)
+		played_date, rating, iden, is_recent_10
 	from
-		r30, repeat_table
-	where
-		r30.iden = repeat_table.iden
+		r30
 	order by
 		rating desc`, userID)
 	if err == sql.ErrNoRows {
@@ -255,7 +308,7 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 			userID, newPlayedDate,
 		)
 		if err != nil {
-			log.Println("Error occured while insterting into RECENT_SCORE")
+			log.Println("Error occured while insterting into empty RECENT_SCORE")
 		}
 	} else if err != nil {
 		log.Println("Error occured while querying table RECENT_SCORE")
@@ -263,17 +316,22 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 	}
 	defer rows.Close()
 
+	target := &RecentScoreItem{newPlayedDate, newRating}
+	inserter := recentScoreInserter{0, map[string]*RecentScoreItem{}, []*RecentScoreItem{}}
 	var (
-		playedDate  int64
-		repeatTimes int
-		rating      float64
-		iden        string
-		diffCount   int
+		playedDate int64
+		rating     float64
+		iden       string
+		isR10      string
 	)
-	results := []RecentScoreItem{}
 	for rows.Next() {
-		rows.Scan(&playedDate, &repeatTimes, &rating, &iden, &diffCount)
-		results = append(results, RecentScoreItem{playedDate, repeatTimes, rating, iden})
+		rows.Scan(&playedDate, &rating, &iden, &isR10)
+		item := &RecentScoreItem{playedDate, rating}
+		if isR10 == "t" {
+			inserter.r10[iden] = item
+		} else {
+			inserter.normalItems = append(inserter.normalItems, item)
+		}
 	}
 
 	if err = rows.Err(); err != nil {
@@ -281,109 +339,7 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 		return err
 	}
 
-	if len(results) < 10 {
-		err := insertIntoRecent10(tx, userID, newPlayedDate, newRating, songIden, results[:10])
-		return err
-	} else if len(results) < 30 {
-		fmt.Println(len(results))
-		if newRating > results[9].rating {
-			err := insertIntoRecent10(tx, userID, newPlayedDate, newRating, songIden, results[:10])
-			return err
-		}
-		_, err := tx.Exec(
-			`insert into recent_score(user_id, played_date, is_recent_10)
-			values(?1, ?2, '')`,
-			userID, newPlayedDate,
-		)
-		if err != nil {
-			log.Println("Error occured while insterting into RECENT_PLAYED")
-			return err
-		}
-	} else {
-		isEx := score >= 9_800_000
-		noMoreThan10 := diffCount < 10
-		isHardClear := clearType == 5
-		alreadyContains := contains(results[:10], songIden) != -1
-		targetInd := -1
-		for i, result := range results {
-			if (alreadyContains && result.songIden != songIden) || (isEx || isHardClear) && i < 10 && newRating < result.rating {
-				continue
-			} else if noMoreThan10 && result.repeatTimes == 1 && result.songIden != songIden {
-				continue
-			} else if targetInd == -1 {
-				targetInd = i
-			} else if result.playedDate < results[targetInd].playedDate {
-				targetInd = i
-			}
-		}
-
-		_, err = tx.Exec(
-			`update recent_score
-			set played_date = ?2, is_recent_10 = ''
-			where user_id = ?1 and played_date = ?3`,
-			userID, newPlayedDate, results[targetInd].playedDate,
-		)
-		if err != nil {
-			log.Println("Error occured while replacing record in RECENT_SCORE")
-			return err
-		}
-
-		if targetInd < 10 {
-			var replacement int64 = 0
-			if newRating > results[10].rating {
-				replacement = newPlayedDate
-			} else {
-				replacement = results[10].playedDate
-			}
-			_, err = tx.Exec(
-				`update recent_score set is_recent_10 = 't'
-				where user_id = ?1 and played_date = ?2`,
-				userID, replacement,
-			)
-			if err != nil {
-				log.Println("Error occured while doing replacement RECENT_10")
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func insertIntoRecent10(tx *sql.Tx, userID int, newPlayedDate int64, newRating float64, songIden string, results []RecentScoreItem) error {
-	inR10 := ""
-	ind := -1
-	if ind = contains(results, songIden); ind == -1 {
-		inR10 = "t"
-		if len(results) == 10 {
-			ind = 9
-		}
-	} else if results[ind].rating < newRating {
-		inR10 = "t"
-	}
-	_, err := tx.Exec(
-		`insert into recent_score(user_id, played_date, is_recent_10)
-		values(?1, ?2, ?3)`,
-		userID, newPlayedDate, inR10,
-	)
-	if err != nil {
-		log.Println("Error occured while insterting into RECENT_SCORE")
-		return err
-	}
-
-	if inR10 != "t" || ind == -1 {
-		return nil
-	}
-	_, err = tx.Exec(
-		`update recent_score set is_recent_10 = ''
-		where user_id = ?1 and played_date = ?2`,
-		userID, results[ind].playedDate,
-	)
-	if err != nil {
-		log.Println("Error occured while modifying RECENT_10")
-		return err
-	}
-	return nil
+	return inserter.insert(tx, userID, score, clearType, songIden, target)
 }
 
 func updateBestScore(tx *sql.Tx, userID int, newPlayedDate int64, songID string, newScore int, difficulty int) error {
