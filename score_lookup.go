@@ -16,8 +16,8 @@ import (
 )
 
 var clearTypes = []string{
-	"track-lost", "easy-clear", "full-recall",
-	"pure-memory", "normal-clear", "hard-clear",
+	"track-lost", "normal-clear", "full-recall",
+	"pure-memory", "easy-clear", "hard-clear",
 }
 
 var diffs = []string{"PST", "PRS", "FTR", "BYD"}

@@ -226,7 +226,17 @@ func (inserter *recentScoreInserter) insert(tx *sql.Tx, userID int, score int, c
 	item, ok := inserter.r10[targetIden]
 	var replacement *RecentScoreItem = nil
 	isR10 := "t"
-	if !ok {
+	if !ok && len(inserter.r10) < 10 {
+		if _, err := tx.Exec(
+			`insert into recent_score(user_id, played_date, is_recent_10)
+			values(?1, ?2, ?3)`,
+			userID, target.playedDate, isR10,
+		); err != nil {
+			log.Println("Error occured while insterting into not-full R10")
+			return err
+		}
+		return nil
+	} else if !ok {
 		isEx := score >= 9_800_000
 		isHardClear := clearType == 5
 		for _, item := range inserter.r10 {
@@ -247,6 +257,8 @@ func (inserter *recentScoreInserter) insert(tx *sql.Tx, userID int, score int, c
 			return err
 		}
 		target = item
+		isR10 = ""
+	} else {
 		isR10 = ""
 	}
 
