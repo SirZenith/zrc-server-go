@@ -223,30 +223,62 @@ type recentScoreInserter struct {
 }
 
 func (inserter *recentScoreInserter) insert(tx *sql.Tx, userID int, score int, clearType int, targetIden string, target *RecentScoreItem) error {
+	target, replacement, needNewR10, isR10, err := inserter.insertR10Item(tx, userID, score, clearType, targetIden, target)
+	if err != nil {
+		return err
+	} else if isR10 == "t" && !needNewR10 {
+		return nil
+	}
+
+	err = inserter.insertNormalItem(tx, userID, target, replacement, needNewR10, isR10)
+	return err
+}
+
+func (inserter *recentScoreInserter) insertR10Item(tx *sql.Tx, userID int, score int, clearType int, targetIden string, target *RecentScoreItem) (*RecentScoreItem, *RecentScoreItem, bool, string, error) {
 	item, ok := inserter.r10[targetIden]
 	var replacement *RecentScoreItem = nil
-	isR10 := "t"
+	isR10 := ""
+	needNewR10 := false
 	if !ok && len(inserter.r10) < 10 {
+		isR10 = "t"
 		if _, err := tx.Exec(
 			`insert into recent_score(user_id, played_date, is_recent_10)
-			values(?1, ?2, ?3)`,
-			userID, target.playedDate, isR10,
+			values(?1, ?2, 't')`,
+			userID, target.playedDate,
 		); err != nil {
 			log.Println("Error occured while insterting into not-full R10")
-			return err
+			return nil, nil, needNewR10, isR10, err
 		}
-		return nil
+		return nil, nil, needNewR10, isR10, nil
 	} else if !ok {
 		isEx := score >= 9_800_000
 		isHardClear := clearType == 5
 		for _, item := range inserter.r10 {
 			if (isEx || isHardClear) && target.rating < item.rating {
 				continue
-			} else if replacement == nil {
+			}
+			if item.rating < target.rating {
+				isR10 = "t"
+			}
+			if replacement == nil {
 				replacement = item
 			} else if item.playedDate < replacement.playedDate {
 				replacement = item
 			}
+		}
+		if isR10 == "t" {
+			if _, err := tx.Exec(
+				`update recent_score set played_date = ?1 where user_id = ?2 and played_date = ?3`,
+				target.playedDate, userID, replacement.playedDate,
+			); err != nil {
+				log.Println("Error occured while replacing record in RECENT_PLAYED for R10")
+				return nil, nil, needNewR10, isR10, err
+			}
+			target = replacement
+			replacement = nil
+			isR10 = ""
+		} else {
+			needNewR10 = true
 		}
 	} else if item.rating <= target.rating {
 		if _, err := tx.Exec(
@@ -254,49 +286,57 @@ func (inserter *recentScoreInserter) insert(tx *sql.Tx, userID int, score int, c
 			target.playedDate, userID, item.playedDate,
 		); err != nil {
 			log.Println("Error occured while replacing record in RECENT_PLAYED for R10")
-			return err
+			return nil, nil, needNewR10, isR10, err
 		}
 		target = item
 		isR10 = ""
-	} else {
-		isR10 = ""
 	}
+	return target, replacement, needNewR10, isR10, nil
+}
 
+func (inserter *recentScoreInserter) insertNormalItem(tx *sql.Tx, userID int, target *RecentScoreItem, replacement *RecentScoreItem, needNewR10 bool, isR10 string) error {
+	// if replacement is nil, you don't need to worried about r10 operation
 	if replacement != nil {
-	} else if len(inserter.normalItems) != 0 {
+	} else if len(inserter.normalItems) >= 30 {
 		replacement = inserter.normalItems[0]
-		for _, item := range inserter.normalItems {
-			if item.playedDate < replacement.playedDate {
-				replacement = item
-				isR10 = ""
-			}
-		}
 	} else {
 		if _, err := tx.Exec(
 			`insert into recent_score(user_id, played_date, is_recent_10)
-			values(?1, ?2, ?3)`,
+				values(?1, ?2, ?3)`,
 			userID, target.playedDate, isR10,
 		); err != nil {
 			log.Println("Error occured while insterting into empty R30")
 			return err
 		}
-
 		return nil
 	}
 
+	for _, item := range inserter.normalItems {
+		if item.playedDate < replacement.playedDate {
+			replacement = item
+			needNewR10 = false
+		}
+	}
 	if _, err := tx.Exec(
 		`update recent_score set played_date = ?1, is_recent_10 = ?2
-			where user_id = ?3 and played_date = ?4`,
+				where user_id = ?3 and played_date = ?4`,
 		target.playedDate, isR10, userID, replacement.playedDate,
 	); err != nil {
 		log.Println("Error occured while replacing record in RECENT_PLAYED R30")
 		return err
 	}
 
-	return nil
-}
+	if needNewR10 {
+		if _, err := tx.Exec(
+			`update recent_score set is_recent_10 = 't'
+					where user_id = ?1 and played_date = ?2`,
+			userID, inserter.normalItems[0].playedDate,
+		); err != nil {
+			log.Println("Error occured while picking R10 item from R30")
+			return err
+		}
+	}
 
-func (inserter *recentScoreInserter) insertNormalItem(target *RecentScoreItem, replacement *RecentScoreItem) error {
 	return nil
 }
 

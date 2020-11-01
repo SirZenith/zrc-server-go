@@ -136,6 +136,7 @@ func (info *UserInfo) toJSON() string {
 
 // CharacterStats store status of a partner
 type CharacterStats struct {
+	Voice              []int    `json:"voice,omitempty"`
 	IsUncappedOverride bool     `json:"is_uncapped_override"`
 	IsUncapped         bool     `json:"is_uncapped"`
 	UncapCores         []string `json:"uncap_cores"`

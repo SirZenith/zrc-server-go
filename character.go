@@ -10,6 +10,8 @@ import (
 	"github.com/albrow/forms"
 )
 
+var voiceList = []int{0, 1, 2, 3, 100, 1001, 1002}
+
 func init() {
 	R.Path(path.Join(APIRoot, "user/me/character")).Handler(
 		http.HandlerFunc(changeCharacter),
@@ -43,6 +45,7 @@ func getCharacterStats(userID int) ([]CharacterStats, error) {
 		prog20             float64
 		overdrive1         float64
 		overdrive20        float64
+		hasVoice           int
 	)
 	rows, err := db.Query(`select
 			part_id,
@@ -67,9 +70,10 @@ func getCharacterStats(userID int) ([]CharacterStats, error) {
 	stmtStr := `select 
 			ifnull(skill_id, ''), ifnull(skill_id_uncap, ''), char_type, 
 			ifnull(skill_requires_uncap, ''), skill_unlock_level, part_name,
-			frag_1, frag_20, prog_1, prog_20, overdrive_1, overdrive_20
-		from partner
-		where part_id = ?`
+			frag_1, frag_20, prog_1, prog_20, overdrive_1, overdrive_20,
+			ifnull(v.part_id, -1)
+		from partner p left outer join part_voice v on p.part_id = v.part_id 
+		where p.part_id = ?`
 	stmt, err := db.Prepare(stmtStr)
 	if err != nil {
 		log.Println("Error occured while preparing statement ", stmtStr)
@@ -88,6 +92,7 @@ func getCharacterStats(userID int) ([]CharacterStats, error) {
 			&skillID, &skillIDUncap, &charType,
 			&skillRequiresUncap, &skillUnlockLevel, &partName,
 			&frag1, &frag20, &prog1, &prog20, &overdrive1, &overdrive20,
+			&hasVoice,
 		)
 		if err != nil {
 			log.Println("Error occured while using prepared statement ", stmtStr)
@@ -95,6 +100,7 @@ func getCharacterStats(userID int) ([]CharacterStats, error) {
 		}
 
 		stats := CharacterStats{
+			nil,
 			isUncappedOverride == "t",
 			isUncapped == "t",
 			[]string{},
@@ -112,6 +118,9 @@ func getCharacterStats(userID int) ([]CharacterStats, error) {
 			partName,
 			partID,
 			progTempest,
+		}
+		if hasVoice != -1 {
+			stats.Voice = voiceList
 		}
 		statses = append(statses, stats)
 	}
@@ -178,6 +187,7 @@ func getSingleCharacterStats(userID int, partID int8) (*CharacterStats, error) {
 	}
 
 	stats := CharacterStats{
+		nil,
 		isUncappedOverride == "t",
 		isUncapped == "t",
 		[]string{},
