@@ -7,47 +7,52 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path"
+	"path/filepath"
 
 	"github.com/gorilla/mux"
-	"github.com/kardianos/osext"
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// Port is port number used by server
-var Port string
-
-// HostName is server address
-var HostName string
-
-// APIRoot is leading path of all request URL
-var APIRoot = "/glad-you-came"
-
-// R router used globally
-var R = mux.NewRouter()
+var (
+	// Port is port number used by server
+	Port string
+	// HostName is server address
+	HostName string
+	// APIRoot is leading path of all request URL
+	APIRoot = "/glad-you-came"
+	// R router used globally
+	R = mux.NewRouter()
+	// InsideHandler recording internal func inside info getting purpose handler
+	InsideHandler = map[string]func(userID int, r *http.Request) (ToJSON, error){}
+	db            *sql.DB
+)
 
 func init() {
-	port := flag.Int("p", 8080, "Port number for server")
-	hostFlag := flag.String("h", "127.0.0.1:8080", "Host name for server")
-	docuemntRoot := flag.String("r", "", "Root path of server documents.")
+	port := flag.Int("port", 8080, "Port number for server")
+	hostFlag := flag.String("host", "127.0.0.1:8080", "Host name for server")
+	docuemntRoot := flag.String("root", "", "Root path of server documents.")
+	dbFile := flag.String("db", "", "sqlite DB file to use.")
 	flag.Parse()
+
+	connectToDB(*dbFile)
 
 	Port = fmt.Sprintf("%d", *port)
 	HostName = "http://" + *hostFlag
+	fmt.Printf("%s%s\n", HostName, APIRoot)
+
 	if *docuemntRoot != "" {
+		fmt.Println("Document Root:", *docuemntRoot)
 		os.Chdir(*docuemntRoot)
 	}
-	fmt.Printf("%s%s\n", HostName, APIRoot)
 }
 
-// InsideHandler recording internal func inside info getting purpose handler
-var InsideHandler = map[string]func(userID int, r *http.Request) (ToJSON, error){}
-var db *sql.DB
+func connectToDB(dbFile string) {
+	dbFile, err := filepath.Abs(dbFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-func init() {
-	var err error
-	exePath, _ := osext.ExecutableFolder()
-	db, err = sql.Open("sqlite3", path.Join(exePath, "ArcaeaDB.db"))
+	db, err = sql.Open("sqlite3", dbFile)
 	if err != nil {
 		log.Fatal(err)
 	}
