@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"path"
 
 	"github.com/gorilla/mux"
@@ -20,7 +21,7 @@ var Port string
 var HostName string
 
 // APIRoot is leading path of all request URL
-var APIRoot = "/coffee/1"
+var APIRoot = "/glad-you-came"
 
 // R router used globally
 var R = mux.NewRouter()
@@ -28,10 +29,14 @@ var R = mux.NewRouter()
 func init() {
 	port := flag.Int("p", 8080, "Port number for server")
 	hostFlag := flag.String("h", "127.0.0.1:8080", "Host name for server")
+	docuemntRoot := flag.String("r", "", "Root path of server documents.")
 	flag.Parse()
 
 	Port = fmt.Sprintf("%d", *port)
 	HostName = "http://" + *hostFlag
+	if *docuemntRoot != "" {
+		os.Chdir(*docuemntRoot)
+	}
 	fmt.Printf("%s%s\n", HostName, APIRoot)
 }
 

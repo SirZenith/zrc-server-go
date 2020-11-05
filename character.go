@@ -10,7 +10,7 @@ import (
 	"github.com/albrow/forms"
 )
 
-var voiceList = []int{0, 1, 2, 3, 100, 1001, 1002}
+var voiceList = []int{0, 1, 2, 3, 100, 1000, 1001}
 
 func init() {
 	R.Path(path.Join(APIRoot, "user/me/character")).Handler(
