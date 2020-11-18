@@ -5,19 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"path"
 	"strings"
 
 	"github.com/albrow/forms"
 )
-
-func init() {
-	fmt.Println(path.Join(APIRoot, "compose/aggregate"))
-	R.Handle(
-		path.Join(APIRoot, "compose/aggregate"),
-		http.HandlerFunc(aggregateHandler),
-	)
-}
 
 func aggregateHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
@@ -46,8 +37,8 @@ func aggregateHandler(w http.ResponseWriter, r *http.Request) {
 	results := []AggResult{}
 	json.Unmarshal([]byte(data.Get("calls")), &calls)
 	for _, call := range calls {
-		handler, ok := InsideHandler[path.Join(
-			APIRoot, strings.Split(call.EndPoint, "?")[0])]
+		endPoint := strings.Split(call.EndPoint, "?")[0]
+		handler, ok := InsideHandler[endPoint]
 		if !ok {
 			log.Println("Unknow request endpoint ", call.EndPoint)
 			results = append(results, AggResult{call.ID, &EmptyList{}})

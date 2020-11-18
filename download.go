@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -36,17 +35,6 @@ func init() {
 	duration, _ := time.ParseDuration("15m")
 	DlExpiresTime = duration.Seconds()
 	LastDlListCheck = time.Now()
-
-	R.Handle(
-		path.Join(APIRoot, "serve/download/me/song"),
-		http.HandlerFunc(songDownloadHandler),
-	)
-	InsideHandler[path.Join(APIRoot, "serve/download/me/song")] = getDownloadList
-	R.PathPrefix("/static/songs").Handler(
-		fileServerWithAuth(
-			http.StripPrefix("/static/songs", http.FileServer(http.Dir("./static/songs"))),
-		),
-	)
 }
 
 func songDownloadHandler(w http.ResponseWriter, r *http.Request) {
@@ -73,145 +61,101 @@ func getDownloadList(userID int, r *http.Request) (ToJSON, error) {
 		log.Println("Error occured while parsing form(s) fot getting download list")
 		return nil, err
 	}
-	getURL := data.GetBool("url")
+	needURL := data.GetBool("url")
 	songs := []string{}
 	if data.KeyExists("sid") {
 		songs = data.Values["sid"]
 	}
-	container := map[string]*Checksum{}
-	err = getPurchaseDL(userID, container, getURL, songs)
+	checksums, err := getPurchaseDL(userID, songs, needURL)
 	if err != nil {
 		return nil, err
 	}
-	return (*CheckSumContainer)(&container), nil
+	return (*CheckSumContainer)(&checksums), nil
 }
 
-func getPurchaseDL(userID int, container map[string]*Checksum, getURL bool, songs []string) error {
-	if len(songs) > 10 {
-		log.Println("To much sid request for getting download list")
-		return errors.New("Too musch request at a time")
-	} else if len(songs) > 0 {
+func getPurchaseDL(userID int, songs []string, needURL bool) (map[string]*Checksum, error) {
+	songIDCondition := ""
+	checksums := map[string]*Checksum{}
+	if len(songs) > 0 {
 		for i := range songs {
 			songs[i] = "'" + songs[i] + "'"
 		}
+		songIDCondition = fmt.Sprintf("and song.song_id in (%s)", strings.Join(songs, ", "))
 	}
-	err := getPurchasedDL(
+	if err := getPurchaseFromTable(
 		userID, "pack_purchase_info pur", "pur.pack_name = song.pack_name",
-		container, getURL, songs,
-	)
-	if err != nil {
-		return err
+		checksums, songIDCondition, needURL,
+	); err != nil {
+		return nil, err
 	}
-	err = getPurchasedDL(
+	if err := getPurchaseFromTable(
 		userID, "single_purchase_info pur", "pur.song_id = song.song_id",
-		container, getURL, songs,
-	)
-	if err != nil {
-		return err
+		checksums, songIDCondition, needURL,
+	); err != nil {
+		return nil, err
 	}
-	return nil
+
+	return checksums, nil
 }
 
-func getPurchasedDL(userID int, purchaseTable string, condition string, container map[string]*Checksum, getURL bool, songs []string) error {
-	stmt := fmt.Sprintf(`select
-		song.song_id,
-		song.checksum as "Audio Checksum",
-		ifnull(song.remote_dl, '') as "Song DL",
-		cast(difficulty as text),
-		chart_info.checksum as "Chart Checksum",
-		ifnull(chart_info.remote_dl, '') as "Chart DL"
-	from
-		%s, song, chart_info
-	where
-		pur.user_id = ?
-		and %s
-		and song.song_id = chart_info.song_id
-		and (song.remote_dl = 't' or chart_info.remote_dl = 't')`, purchaseTable, condition)
-	if len(songs) > 0 {
-		stmt += fmt.Sprintf("\nand song.song_id in (%s)", strings.Join(songs, ", "))
-	}
+type dlInfo struct {
+	songID        string
+	audioChecksum string
+	songDL        string
+	difficulty    string
+	chartChecksum string
+	chartDL       string
+}
+
+func getPurchaseFromTable(userID int, tableName string, condition string, checksums map[string]*Checksum, songIDCondition string, needURL bool) error {
+	stmt := fmt.Sprintf(sqlStmtQueryDLInfo, tableName, condition, songIDCondition)
 	rows, err := db.Query(stmt, userID)
 	if err != nil {
-		log.Printf(
-			"Error occured while querying table `%s` for download list.\n",
-			purchaseTable,
+		return fmt.Errorf(
+			"Error occured while querying table %v for download list: %w",
+			tableName, err,
 		)
-		return err
 	}
 	defer rows.Close()
 
-	var (
-		songID        string
-		audioChecksum string
-		isSongDL      string
-		difficulty    string
-		chartChecksum string
-		isChartDL     string
-	)
+	info := new(dlInfo)
 	for rows.Next() {
 		rows.Scan(
-			&songID, &audioChecksum, &isSongDL,
-			&difficulty, &chartChecksum, &isChartDL,
+			&info.songID, &info.audioChecksum, &info.songDL,
+			&info.difficulty, &info.chartChecksum, &info.chartDL,
 		)
-		if isChartDL != "t" {
-			continue
+		if info.songDL == "t" {
+			var item *Checksum = nil
+			if item = checksums[info.songID]; item == nil {
+				item = new(Checksum)
+			}
+			item.Audio = map[string]string{"checksum": info.audioChecksum}
+			if needURL {
+				item.Audio["url"] = path.Join(HostName, fileServerPrefix, info.songID, "base.ogg")
+			}
+			checksums[info.songID] = item
 		}
-		checksum, ok := container[songID]
-		if !ok {
-			tempMap := map[string]string{}
-			if isSongDL == "t" {
-				tempMap["checksum"] = audioChecksum
-				if getURL {
-					requestTime := time.Now().Unix()
-					query := fmt.Sprintf(
-						"base.ogg?user_id=%d&song_id=%s&time=%d",
-						userID, songID, requestTime,
-					)
-					tempMap["url"] = path.Join(HostName, "/static/songs", songID, query)
-					// _, err := db.Exec(
-					// 	`insert into dl_request(user_id, song_id, request_time) values(?1, ?2, ?3)`,
-					// 	userID, songID, requestTime,
-					// )
-					// if err != nil {
-					// 	log.Println("Error occured while inserting into table DL_REQUEST")
-					// 	return err
-					// }
-				}
+		if info.chartDL == "t" {
+			var item *Checksum = nil
+			if item = checksums[info.songID]; item == nil {
+				item = new(Checksum)
 			}
-			checksum = &Checksum{
-				Audio: tempMap,
-				Chart: map[string]map[string]string{},
+			item.Chart = map[string]map[string]string{
+				info.difficulty: {"checksum": info.chartChecksum},
 			}
-			container[songID] = checksum
-		}
-		if getURL {
-			requestTime := time.Now().Unix()
-			query := fmt.Sprintf(
-				"%s.aff?user_id=%d&song_id=%s&time=%d",
-				difficulty, userID, songID, requestTime,
-			)
-			checksum.Chart[difficulty] = map[string]string{
-				"checksum": chartChecksum,
-				"url":      path.Join(HostName, "/static/songs", songID, query),
+			if needURL {
+				filename := info.difficulty + ".aff"
+				item.Chart[info.difficulty]["url"] = path.Join(HostName, fileServerPrefix, info.songID, filename)
 			}
-			// _, err := db.Exec(
-			// 	`insert into dl_request(user_id, song_id, request_time)  values(?1, ?2, ?3)`,
-			// 	userID, songID, requestTime,
-			// )
-			// if err != nil {
-			// 	log.Println("Error occured while inserting into table DL_REQUEST")
-			// 	return err
-			// }
-		} else {
-			checksum.Chart[difficulty] = map[string]string{
-				"checksum": chartChecksum,
-			}
+			checksums[info.songID] = item
 		}
 	}
 
 	if err = rows.Err(); err != nil {
-		log.Println("Error occured while reading quiried rows from WORLD_SONG_UNLOCK for download list.")
-		return err
+		return fmt.Errorf(
+			"Error occured while reading quiried dl info rows from %v: %w",
+			tableName, err,
+		)
 	}
 	return nil
 }

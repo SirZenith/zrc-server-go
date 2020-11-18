@@ -1,7 +1,7 @@
 .DS_Store
 .vscode
-static/songs/*
-arc_server
-test.sql
-db/*
-ArcaeaDB.db
+
+theos_code/packages
+theos_code/.theos
+
+*_test.go

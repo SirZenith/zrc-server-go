@@ -4,16 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"path"
 )
-
-func init() {
-	R.Handle(
-		path.Join(APIRoot, "game/info"),
-		http.HandlerFunc(gameInfoHandler),
-	)
-	InsideHandler[path.Join(APIRoot, "game/info")] = getGameInfo
-}
 
 func gameInfoHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
@@ -32,49 +23,42 @@ func gameInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 func getGameInfo(_ int, _ *http.Request) (ToJSON, error) {
 	var (
-		now                  int64
-		maxStam              int8
-		stamRecoverTick      int
-		coreExp              int
 		worldRankingEnabled  string
 		isBydChapterUnlocked string
 	)
-	err := db.QueryRow(`select
-			cast(strftime('%s', 'now') as decimal),
-			max_stamina, stamina_recover_tick, core_exp,
-			ifnull(world_ranking_enabled, ''), ifnull(is_byd_chapter_unlocked, '')
-		from game_info`).Scan(&now, &maxStam, &stamRecoverTick, &coreExp, &worldRankingEnabled, &isBydChapterUnlocked)
+	info := new(GameInfo)
+	err := db.QueryRow(slqStmtGameInfo).Scan(
+		&info.Now,
+		&info.MaxStam,
+		&info.StaminaRecoverTick,
+		&info.CoreExp,
+		&worldRankingEnabled,
+		&isBydChapterUnlocked,
+	)
 	if err != nil {
 		log.Println("Error occured while querying GAME_INFO")
 		return nil, err
 	}
-	levelsteps := []map[string]int{}
-	rows, err := db.Query("select lv, exp_val from level_exp")
+	levelsteps := []levelStep{}
+	rows, err := db.Query(sqlStmtLevelStep)
 	if err != nil {
-		log.Println("Error occured while querying table LEVEL_EXP")
-		return nil, err
+		return nil, fmt.Errorf("Error occured while querying table LEVEL_EXP: %w", err)
 	}
 	defer rows.Close()
 
-	var (
-		lv  int
-		exp int
-	)
+	step := new(levelStep)
 	for rows.Next() {
-		rows.Scan(&lv, &exp)
-		levelsteps = append(levelsteps, map[string]int{
-			"level": lv, "level_exp": exp,
-		})
+		rows.Scan(&step.Lv, &step.Exp)
+		levelsteps = append(levelsteps, *step)
 	}
 	if err := rows.Err(); err != nil {
 		log.Println("Error occured while reading rows from LEVEL_EXP")
 		return nil, err
 	}
 
-	info := GameInfo{
-		maxStam, stamRecoverTick, coreExp, now, levelsteps,
-		worldRankingEnabled == "t", isBydChapterUnlocked == "t",
-	}
+	info.WorldRankingEnabled = worldRankingEnabled == "t"
+	info.BydUnlocked = isBydChapterUnlocked == "t"
+	info.LevelSteps = levelsteps
 
-	return &info, nil
+	return info, nil
 }

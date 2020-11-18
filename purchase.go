@@ -4,16 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"path"
 )
-
-func init() {
-	R.Handle(
-		path.Join(APIRoot, "purchase/bundle/pack"),
-		http.HandlerFunc(packInfoHandler),
-	)
-	InsideHandler[path.Join(APIRoot, "purchase/bundle/pack")] = getPackInfo
-}
 
 func packInfoHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
@@ -31,52 +22,39 @@ func packInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 func getPackInfo(_ int, _ *http.Request) (ToJSON, error) {
 	container := []PackInfo{}
-	var (
-		name         string
-		price        int
-		origPrice    int
-		disCountFrom int64
-		disCountTo   int64
-		itemID       string
-		itemType     string
-		isAvailable  bool
-	)
-	rows, err := db.Query(`select
-			pack_name, price, orig_price, discount_from, discount_to
-		from pack`)
+	info := new(PackInfo)
+	item := new(PackItem)
+	rows, err := db.Query(sqlStmtPackInfo)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		rows.Scan(&name, &price, &origPrice, &disCountFrom, &disCountTo)
+		rows.Scan(
+			&info.Name,
+			&info.Price,
+			&info.OrigPrice,
+			&info.DiscountFrom,
+			&info.DiscountTo,
+		)
 		items := []PackItem{}
-		itemRows, err := db.Query(`select 
-				item_id, item_type, is_available
-			from
-				pack_item
-			where
-				pack_name = ?`, name)
+		itemRows, err := db.Query(sqlStmtPackItem, info.Name)
 		if err != nil {
 			return nil, err
 		}
 		defer itemRows.Close()
 
 		for itemRows.Next() {
-			itemRows.Scan(&itemID, &itemType, &isAvailable)
-			items = append(items, PackItem{
-				itemID, itemType, isAvailable,
-			})
+			itemRows.Scan(&item.ID, &item.ItemType, &item.IsAvailable)
+			items = append(items, *item)
 		}
 
 		if err := itemRows.Err(); err != nil {
 			return nil, err
 		}
 
-		container = append(container, PackInfo{
-			name, items, price, origPrice, disCountFrom, disCountTo,
-		})
+		container = append(container, *info)
 	}
 
 	if err := rows.Err(); err != nil {

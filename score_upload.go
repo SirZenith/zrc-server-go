@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"path"
 	"time"
 
 	"github.com/albrow/forms"
@@ -23,12 +22,7 @@ var ScoreKeys = []string{
 var errorZeroRating = errors.New("Rating for this chart is 0")
 
 func init() {
-	R.Path(path.Join(APIRoot, "score", "token")).Handler(
-		http.HandlerFunc(scoreTokenHandler),
-	)
-	R.Path(path.Join(APIRoot, "score", "song")).Handler(
-		http.HandlerFunc(scoreUploadHandler),
-	)
+
 }
 
 func scoreTokenHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,339 +44,145 @@ func scoreUploadHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, c.toJSON(), http.StatusUnauthorized)
 		return
 	}
-	data, err := forms.Parse(r)
+	record, err := makeRecord(r)
+	tx, err := db.Begin()
 	if err != nil {
-		log.Println(r.URL.Path, ": Error occured while parsing forms")
+		log.Printf("%s: Can't make transacation object: %s", r.URL.Path, err)
+		return
+	}
+
+	inserter, err := newInserter(tx, userID)
+	if err != nil {
+		tx.Rollback()
 		log.Println(err)
 		return
+	}
+
+	targets := []func(*sql.Tx, int, *ScoreRecord) (int, error){
+		insertScoreRecord,
+		updateBestScore,
+		inserter.insert,
+		updatePlayerRating,
+	}
+
+	var rating int
+	for _, target := range targets {
+		if rating, err = target(tx, userID, record); err != nil {
+			tx.Rollback()
+			log.Println(err)
+			http.Error(w, "Server side error", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	result.Value["user_rating"] = rating
+
+	tx.Commit()
+
+	res, err := json.Marshal(result)
+	if err != nil {
+		log.Printf("%s: Error occured while generating output content: %s\n", r.URL.Path, err)
+		return
+	}
+	fmt.Fprint(w, string(res))
+}
+
+func makeRecord(r *http.Request) (*ScoreRecord, error) {
+	data, err := forms.Parse(r)
+	if err != nil {
+		return nil, fmt.Errorf("error occured while parsing forms: %s", err)
 	}
 	val := data.Validator()
 	for _, key := range ScoreKeys {
 		val.Require(key)
 	}
 	if val.HasErrors() {
-		log.Println(r.URL.Path, ": Score record received lacks of necessary filed(s) in form")
 		for k, v := range val.ErrorMap() {
 			log.Printf(r.URL.Path, ": %s - %s\n", k, v)
 		}
-		return
+		return nil, fmt.Errorf("score record received lacks of necessary filed(s) in form")
 	}
-	rating, err := scoreToRating(
-		data.Get("song_id"), data.GetInt("difficulty"),
-		data.GetFloat("score"),
-	)
+	record := scoreRecordFromForm(data)
+	record.TimePlayed = time.Now().Unix()
+	err = record.scoreToRating()
 	if err != nil {
-		log.Println(err)
-		return
+		return nil, err
 	}
-	playedDate := time.Now().Unix()
-	tx, err := db.Begin()
-	if err != nil {
-		log.Printf("%s: Can't make transacation object", r.URL.Path)
-		log.Println(err)
-		return
-	}
-	_, err = tx.Exec(`insert into score (
-		user_id, played_date, song_id, difficulty, score,
-		shiny_pure, pure, far, lost, rating,
-		health, clear_type
-		) values(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)`,
-		userID, playedDate, data.Get("song_id"),
-		data.GetInt("difficulty"), data.GetInt("score"),
-		data.GetInt("shiny_perfect_count"), data.GetInt("perfect_count"),
-		data.GetInt("near_count"), data.GetInt("miss_count"), rating,
-		data.GetInt("health"), data.GetInt("clear_type"),
-	)
-	if err != nil {
-		tx.Rollback()
-		log.Printf("%s: Error occured while inserting to SCORE", r.URL.Path)
-		log.Println(err)
-		return
-	}
-
-	userRating, err := updateRating(
-		tx, userID, playedDate, rating,
-		data.GetInt("score"), data.Get("song_id"), data.GetInt("clear_type"), data.GetInt("difficulty"),
-	)
-	if err != nil {
-		tx.Rollback()
-		log.Println(err)
-		return
-	}
-	tx.Commit()
-	result.Value["user_rating"] = userRating
-
-	res, err := json.Marshal(result)
-	if err != nil {
-		log.Printf("%s: Error occured while generating output content\n", r.URL.Path)
-		log.Println(err)
-		return
-	}
-	fmt.Fprint(w, string(res))
+	return record, nil
 }
 
-func scoreToRating(songID string, difficulty int, score float64) (float64, error) {
-	var baseRating float64
-	err := db.QueryRow(
-		"select rating from chart_info where song_id = ?1 and difficulty = ?2",
-		songID, difficulty,
-	).Scan(&baseRating)
-	if err != nil {
-		log.Printf("Error while querying base rating for `%s`\n", songID)
-		return 0, err
-	} else if baseRating == 0 {
-		log.Printf("Zero Rating for `%s %d`\n", songID, difficulty)
-		return 0, errorZeroRating
-	}
-
-	rating := 0.0
-	if score >= 10_000_000 {
-		rating = baseRating + 2
-	} else if score >= 9_800_000 {
-		rating = baseRating + 1 + (score-9_800_000)/200_000
-	} else if rating = baseRating + (score-9_500_000)/300_000; rating < 0 {
-		rating = 0
-	}
-	return rating, nil
-}
-
-func updateRating(tx *sql.Tx, userID int, newPlayedDate int64, newRating float64, score int, songID string, clearType int, difficulty int) (int, error) {
-	var rating int = 0
-	err := tx.QueryRow(
-		"select rating from player where user_id = ?",
+func insertScoreRecord(tx *sql.Tx, userID int, record *ScoreRecord) (int, error) {
+	_, err := tx.Exec(sqlStmtInsertScore,
 		userID,
-	).Scan(&rating)
-	if err != nil {
-		log.Println(
-			"Error occured when querying user rating during updating rating with userID =",
-			userID,
-		)
-		return rating, err
-	}
-	songIden := fmt.Sprintf("%s%d", songID, difficulty)
-	err = updateRatingRecent(tx, userID, newPlayedDate, score, newRating, clearType, songIden)
-	if err != nil {
-		return rating, err
-	} else if err := updateBestScore(tx, userID, newPlayedDate, songID, score, difficulty); err != nil {
-		return rating, err
-	}
-	err = tx.QueryRow(`
-	with
-    best as (
-		select ROW_NUMBER () OVER ( 
-			order by rating desc
-		) row_num,
-		  rating
-		from  best_score b, score s
-		where b.user_id = ?1
-			and b.user_id = s.user_id
-			and b.played_date = s.played_date
-	),
-	recent as (
-		select rating
-		from  recent_score r, score s
-		where r.user_id = ?1
-			and r.is_recent_10 = 't'
-			and r.user_id = s.user_id
-			and r.played_date = s.played_date
-	)
-	select round((b30 + r10) / (b30_count + r10_count) * 100)
-	from (
-		select sum(rating) b30, count(rating) b30_count
-		from best
-		where row_num <= 30
-	), (
-		select sum(rating) r10, count(rating) r10_count
-		from recent
-	)`, userID).Scan(&rating)
-	if err != nil {
-		log.Println("Error occured while compute user rating")
-		return rating, err
-	}
-
-	_, err = tx.Exec(
-		"update player set rating = ?1 where user_id = ?2",
-		rating, userID,
+		record.TimePlayed,
+		record.SongID,
+		record.Difficulty,
+		record.Score,
+		record.Shiny,
+		record.Pure,
+		record.Far,
+		record.Lost,
+		record.Rating,
+		record.Health,
+		record.ClearType,
 	)
 	if err != nil {
-		log.Println("Error occured while modifying rating of user:", userID)
-		return rating, err
+		return 0, fmt.Errorf("error occured while inserting new score record: %w", err)
 	}
-	return rating, nil
+	return 0, nil
 }
 
-// RecentScoreItem is used for picking score record when updating rating
-type RecentScoreItem struct {
+func updateBestScore(tx *sql.Tx, userID int, record *ScoreRecord) (int, error) {
+	var (
+		score      int
+		playedDate int64
+	)
+	err := tx.QueryRow(
+		sqlStmtLookupBestScore, userID, record.SongID, record.Difficulty,
+	).Scan(&score, &playedDate)
+	if err == sql.ErrNoRows {
+		_, err = tx.Exec(sqlStmtInsertBestScore, userID, record.TimePlayed)
+		if err != nil {
+			return 0, fmt.Errorf("error occured while insert new best score: %w", err)
+		}
+	} else if err != nil {
+		return 0, fmt.Errorf("error occured while looking up best score: %w", err)
+	} else if record.Score > score {
+		_, err = tx.Exec(sqlStmtReplaceBestScore, record.TimePlayed, playedDate)
+		if err != nil {
+			return 0, fmt.Errorf("error occured while replacing best score: %w", err)
+		}
+	}
+	return 0, nil
+}
+
+type recentScoreItem struct {
 	playedDate int64
 	rating     float64
 }
 
 type recentScoreInserter struct {
-	r10         map[string]*RecentScoreItem
-	normalItems []*RecentScoreItem
+	r10         map[string]*recentScoreItem
+	normalItems []*recentScoreItem
 }
 
-func (inserter *recentScoreInserter) insert(tx *sql.Tx, userID int, score int, clearType int, targetIden string, target *RecentScoreItem) error {
-	target, replacement, needNewR10, isR10, err := inserter.insertR10Item(tx, userID, score, clearType, targetIden, target)
+func newInserter(tx *sql.Tx, userID int) (*recentScoreInserter, error) {
+	rows, err := tx.Query(sqlStmtLookupRecentScore, userID)
 	if err != nil {
-		return err
-	} else if isR10 == "t" && !needNewR10 {
-		return nil
-	}
-
-	err = inserter.insertNormalItem(tx, userID, target, replacement, needNewR10, isR10)
-	return err
-}
-
-func (inserter *recentScoreInserter) insertR10Item(tx *sql.Tx, userID int, score int, clearType int, targetIden string, target *RecentScoreItem) (*RecentScoreItem, *RecentScoreItem, bool, string, error) {
-	item, ok := inserter.r10[targetIden]
-	var replacement *RecentScoreItem = nil
-	isR10 := ""
-	needNewR10 := false
-	if !ok && len(inserter.r10) < 10 {
-		isR10 = "t"
-		if _, err := tx.Exec(
-			`insert into recent_score(user_id, played_date, is_recent_10)
-			values(?1, ?2, 't')`,
-			userID, target.playedDate,
-		); err != nil {
-			log.Println("Error occured while insterting into not-full R10")
-			return nil, nil, needNewR10, isR10, err
-		}
-		return nil, nil, needNewR10, isR10, nil
-	} else if !ok {
-		isEx := score >= 9_800_000
-		isHardClear := clearType == 5
-		for _, item := range inserter.r10 {
-			if (isEx || isHardClear) && target.rating < item.rating {
-				continue
-			}
-			if item.rating < target.rating {
-				isR10 = "t"
-			}
-			if replacement == nil {
-				replacement = item
-			} else if item.playedDate < replacement.playedDate {
-				replacement = item
-			}
-		}
-		if isR10 == "t" {
-			if _, err := tx.Exec(
-				`update recent_score set played_date = ?1 where user_id = ?2 and played_date = ?3`,
-				target.playedDate, userID, replacement.playedDate,
-			); err != nil {
-				log.Println("Error occured while replacing record in RECENT_PLAYED for R10")
-				return nil, nil, needNewR10, isR10, err
-			}
-			target = replacement
-			replacement = nil
-			isR10 = ""
-		} else {
-			needNewR10 = true
-		}
-	} else if item.rating <= target.rating {
-		if _, err := tx.Exec(
-			`update recent_score set played_date = ?1 where user_id = ?2 and played_date = ?3`,
-			target.playedDate, userID, item.playedDate,
-		); err != nil {
-			log.Println("Error occured while replacing record in RECENT_PLAYED for R10")
-			return nil, nil, needNewR10, isR10, err
-		}
-		target = item
-		isR10 = ""
-	}
-	return target, replacement, needNewR10, isR10, nil
-}
-
-func (inserter *recentScoreInserter) insertNormalItem(tx *sql.Tx, userID int, target *RecentScoreItem, replacement *RecentScoreItem, needNewR10 bool, isR10 string) error {
-	// if replacement is nil, you don't need to worried about r10 operation
-	if replacement != nil {
-	} else if len(inserter.normalItems) >= 30 {
-		replacement = inserter.normalItems[0]
-	} else {
-		if _, err := tx.Exec(
-			`insert into recent_score(user_id, played_date, is_recent_10)
-				values(?1, ?2, ?3)`,
-			userID, target.playedDate, isR10,
-		); err != nil {
-			log.Println("Error occured while insterting into empty R30")
-			return err
-		}
-		return nil
-	}
-
-	for _, item := range inserter.normalItems {
-		if item.playedDate < replacement.playedDate {
-			replacement = item
-			needNewR10 = false
-		}
-	}
-	if _, err := tx.Exec(
-		`update recent_score set played_date = ?1, is_recent_10 = ?2
-				where user_id = ?3 and played_date = ?4`,
-		target.playedDate, isR10, userID, replacement.playedDate,
-	); err != nil {
-		log.Println("Error occured while replacing record in RECENT_PLAYED R30")
-		return err
-	}
-
-	if needNewR10 {
-		if _, err := tx.Exec(
-			`update recent_score set is_recent_10 = 't'
-					where user_id = ?1 and played_date = ?2`,
-			userID, inserter.normalItems[0].playedDate,
-		); err != nil {
-			log.Println("Error occured while picking R10 item from R30")
-			return err
-		}
-	}
-
-	return nil
-}
-
-func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, newRating float64, clearType int, songIden string) error {
-	rows, err := tx.Query(`
-	with
-		r30 as (select s.played_date, (s.song_id || s.difficulty) iden, s.rating, r.is_recent_10
-			from
-				recent_score r, score s
-			where
-				r.user_id = ?1
-				and r.user_id = s.user_id
-				and r.played_date = s.played_date
-		)
-	select
-		played_date, rating, iden, is_recent_10
-	from
-		r30
-	order by
-		rating desc`, userID)
-	if err == sql.ErrNoRows {
-		_, err := tx.Exec(
-			`insert into recent_score(user_id, played_date, is_recent_10)
-			values(?1, ?2, 't')`,
-			userID, newPlayedDate,
-		)
-		if err != nil {
-			log.Println("Error occured while insterting into empty RECENT_SCORE")
-		}
-	} else if err != nil {
-		log.Println("Error occured while querying table RECENT_SCORE")
-		return err
+		return nil, err
 	}
 	defer rows.Close()
 
-	target := &RecentScoreItem{newPlayedDate, newRating}
-	inserter := recentScoreInserter{map[string]*RecentScoreItem{}, []*RecentScoreItem{}}
-	var (
-		playedDate int64
-		rating     float64
-		iden       string
-		isR10      string
-	)
+	inserter := &recentScoreInserter{
+		r10:         map[string]*recentScoreItem{},
+		normalItems: []*recentScoreItem{},
+	}
+
+	iden := ""
+	isR10 := ""
 	for rows.Next() {
-		rows.Scan(&playedDate, &rating, &iden, &isR10)
-		item := &RecentScoreItem{playedDate, rating}
+		item := new(recentScoreItem)
+		rows.Scan(&item.rating, &item.playedDate, &iden, &isR10)
 		if isR10 == "t" {
 			inserter.r10[iden] = item
 		} else {
@@ -390,51 +190,152 @@ func updateRatingRecent(tx *sql.Tx, userID int, newPlayedDate int64, score int, 
 		}
 	}
 
-	if err = rows.Err(); err != nil {
-		log.Println("Error occured while reading rows queried from RECENT_SCORE")
-		return err
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
-	return inserter.insert(tx, userID, score, clearType, songIden, target)
+	return inserter, nil
 }
 
-func updateBestScore(tx *sql.Tx, userID int, newPlayedDate int64, songID string, newScore int, difficulty int) error {
-	var (
-		score      int
-		playedDate int64
-	)
-	err := tx.QueryRow(`select
-			s.score, s.played_date
-		from
-			best_score b, score s
-		where
-			b.user_id = ?1
-			and b.user_id = s.user_id
-			and b.played_date = s.played_date
-			and s.song_id = ?2
-			and s.difficulty = ?3`,
-		userID, songID, difficulty).Scan(&score, &playedDate)
-	if err == sql.ErrNoRows {
-		_, err = tx.Exec(
-			"insert into best_score(user_id, played_date) values(?1, ?2)",
-			userID, newPlayedDate,
-		)
-		if err != nil {
-			log.Println("Error occured while insert into BEST_SCORE")
+func (inserter *recentScoreInserter) insert(tx *sql.Tx, userID int, record *ScoreRecord) (int, error) {
+	// (newItem recentScoreItem, newIdentifier string, score int, clearType int8)
+	target := &recentScoreItem{
+		rating:     record.Rating,
+		playedDate: record.TimePlayed,
+	}
+	newIdentifier := fmt.Sprintf("%s%d", record.SongID, record.Difficulty)
+	if target, replacement, isR10, needNewR10, err := inserter.insertIntoR10(tx, userID, newIdentifier, target, record.Score, record.ClearType); err != nil {
+		return 0, err
+	} else if err = inserter.insertIntoNormalItem(tx, userID, target, replacement, isR10, needNewR10); err != nil {
+		return 0, err
+	}
+	return 0, nil
+}
+
+func (inserter *recentScoreInserter) insertIntoR10(tx *sql.Tx, userID int, identifier string, target *recentScoreItem, score int, clearType int8) (*recentScoreItem, *recentScoreItem, bool, bool, error) {
+	// target may change during trying to insert it into r10, ret_target is
+	// the final target in this process, and the starting target for next
+	// process (insert into normat item).
+	var retTarget *recentScoreItem = nil
+	// candidate record that current target will possiblely replace.
+	var replacement *recentScoreItem = nil
+	// wheather current target record should be marked as an r10.
+	isR10 := false
+	// need_new_r10, if true, record with highest rating among normal item
+	// will become a new r10 item.
+	needNewR10 := false
+	if record, ok := inserter.r10[identifier]; ok {
+		if record.rating <= target.rating {
+			if _, err := tx.Exec(sqlStmtReplaceRecnetScore, target.playedDate, "t", userID, record.playedDate); err != nil {
+				return retTarget, replacement, isR10, needNewR10, err
+			}
+			retTarget = record
+		} else {
+			retTarget = target
+		}
+	} else {
+		if len(inserter.r10) < 10 {
+			if len(inserter.r10)+len(inserter.normalItems) < 30 {
+				if _, err := tx.Exec(sqlStmtInsertRecentScore, userID, target.playedDate, "t"); err != nil {
+					return retTarget, replacement, isR10, needNewR10, err
+				}
+				// no need for further process, no target any more
+				retTarget = nil
+			} else {
+				needNewR10 = true
+			}
+		} else if len(inserter.r10)+len(inserter.normalItems) < 30 {
+			// just inserte record into normal item list, do nothing with r10
+		} else {
+			isEx := score >= 9_800_000
+			isHardClear := clearType == 5
+			for _, item := range inserter.r10 {
+				if (isEx || isHardClear) && target.rating < item.rating {
+					continue
+				}
+				if item.rating <= target.rating {
+					isR10 = true
+				}
+				if replacement == nil {
+					replacement = item
+				} else if item.playedDate < replacement.playedDate {
+					replacement = item
+				}
+			}
+			if isR10 {
+				if _, err := tx.Exec(sqlStmtReplaceRecnetScore, target.playedDate, "t", userID, replacement.playedDate); err != nil {
+					return retTarget, replacement, isR10, needNewR10, err
+				}
+				retTarget = replacement
+				isR10 = false
+				replacement = nil
+			} else {
+				needNewR10 = true
+			}
+		}
+	}
+
+	return retTarget, replacement, isR10, needNewR10, nil
+	// Possible return values:
+	// None, None, false, false. When both r10 and r30 is not full.
+	// Some, None,  true, false. When r10 is not full but r30 is full.
+	// Some, Some, false,  true. When new record can't be insert into r10.
+	// Some, None, false, false. When new record's identifier collides, or
+	//                           new record insert into r10 and take a old
+	//                           record out of r10 group
+}
+
+func (inserter *recentScoreInserter) insertIntoNormalItem(tx *sql.Tx, userID int, target *recentScoreItem, replacement *recentScoreItem, isR10 bool, needNewR10 bool) error {
+	if target == nil {
+		return nil
+	}
+	if isR10 {
+		// is_r10 will be true only when r10 is not full but r30 is.
+		if _, err := tx.Exec(sqlStmtReplaceRecnetScore, target.playedDate, "t", userID, inserter.normalItems[0].playedDate); err != nil {
 			return err
 		}
-	} else if err != nil {
-		log.Println("Error occured while querying table BEST_SCORE")
-		return err
-	} else if newScore > score {
-		_, err = tx.Exec(
-			`update best_score set played_date = ?1 where played_date = ?2`,
-			newPlayedDate, playedDate,
-		)
-		if err != nil {
-			log.Println("Error occured while modifying table BEST_SCORE")
+		target = inserter.normalItems[0]
+	}
+	if len(inserter.r10)+len(inserter.normalItems) < 30 {
+		if _, err := tx.Exec(sqlStmtInsertRecentScore, userID, target.playedDate, ""); err != nil {
+			return err
+		}
+		return nil
+	}
+	for _, item := range inserter.normalItems {
+		if replacement == nil {
+			replacement = item
+		} else if item.playedDate < replacement.playedDate {
+			replacement = item
+			needNewR10 = false
+		}
+	}
+	if replacement.playedDate != target.playedDate {
+		if _, err := tx.Exec(sqlStmtReplaceRecnetScore, target.playedDate, "", userID, replacement.playedDate); err != nil {
+			return err
+		}
+	}
+	if needNewR10 {
+		// if need_new_r10 is true, record being replaced is in r10, so it's
+		// safe to directly take highest rating record from normal item group
+		// as new a r10 record.
+		newR10 := inserter.normalItems[0].playedDate
+		if _, err := tx.Exec(sqlStmtInsertRecentScore, newR10, "t", userID, newR10); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func updatePlayerRating(tx *sql.Tx, userID int, _ *ScoreRecord) (int, error) {
+	var rating int
+	err := tx.QueryRow(sqlStmtComputeRating, userID).Scan(&rating)
+	if err != nil {
+		return rating, fmt.Errorf("error occured while compute user rating: %w", err)
+	}
+
+	if _, err := tx.Exec(sqlStmtUpdateRating, rating, userID); err != nil {
+		return rating, fmt.Errorf("error occured while modifying rating of user: %d: %w", userID, err)
+	}
+	return rating, nil
 }

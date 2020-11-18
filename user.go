@@ -14,18 +14,28 @@ import (
 var SettingMap = map[string]string{}
 
 func init() {
-	R.Handle(
-		path.Join(APIRoot, "user/me"),
-		http.HandlerFunc(userInfoHandler),
-	)
-	R.PathPrefix(path.Join(APIRoot, "user/me/setting")).Methods("POST").Handler(
-		http.HandlerFunc(userSettingHandler),
-	)
-	InsideHandler[path.Join(APIRoot, "user/me")] = getUserInfo
-
 	SettingMap["is_hide_rating"] = "is_hide_rating"
 	SettingMap["max_stamina_notification_enabled"] = "max_stamina_notification"
 	SettingMap["favorite_character"] = "favorite_partner"
+}
+
+func presentMeHandler(w http.ResponseWriter, r *http.Request) {
+	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
+	if err != nil {
+		c := Container{false, nil, 203}
+		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+		return
+	}
+	tojson, err := presentMe(userID, r)
+	if err != nil {
+		log.Println(err)
+	} else {
+		fmt.Fprint(w, tojson.toJSON())
+	}
+}
+
+func presentMe(_ int, _ *http.Request) (ToJSON, error) {
+	return &EmptyList{}, nil
 }
 
 func userInfoHandler(w http.ResponseWriter, r *http.Request) {
@@ -45,138 +55,108 @@ func userInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 func getUserInfo(userID int, _ *http.Request) (ToJSON, error) {
 	var (
-		userName              string
-		displayName           string
 		userCode              int64
-		ticket                int
-		partID                int8
 		isLockedNameDuplicate string
 		isSkillSealed         string
-		currMap               string
-		progBoost             int8
-		stamina               int8
-		nextFragstamTs        int64
-		maxStaminaTs          int64
 		staminaNotification   string
 		hideRating            string
-		favoriteCharacter     int8
 		recentScoreDate       sql.NullInt64
-		maxFriend             int8
-		rating                int
-		joinDate              int64
 	)
-	err := db.QueryRow(`select
-			user_name, user_code, ifnull(display_name, ''), ticket,
-			ifnull(partner, 0), ifnull(is_locked_name_duplicated, ''),
-			ifnull(is_skill_sealed, ''), ifnull(curr_map, ''), prog_boost, stamina,
-			next_fragstam_ts, max_stamina_ts,
-			ifnull(max_stamina_notification, ''), ifnull(is_hide_rating, ''), 
-			ifnull(favorite_partner, 0),
-			recent_score_date, max_friend, rating, join_date
-		from
-			player
-		where
-			user_id = ?`, userID).Scan(
-		&userName, &userCode, &displayName, &ticket, &partID,
-		&isLockedNameDuplicate, &isSkillSealed,
-		&currMap, &progBoost, &stamina,
-		&nextFragstamTs, &maxStaminaTs,
-		&staminaNotification, &hideRating, &favoriteCharacter,
-		&recentScoreDate, &maxFriend, &rating, &joinDate,
+	info := new(UserInfo)
+	err := db.QueryRow(sqlStmtUserInfo, userID).Scan(
+		&info.Name,
+		&userCode,
+		&info.DisplaName,
+		&info.Ticket,
+		&info.PartID,
+		&isLockedNameDuplicate,
+		&isSkillSealed,
+		&info.CurrentMap,
+		&info.ProgBoost,
+		&info.Stamina,
+		&info.NextFragstamTs,
+		&info.MaxStaminaTs,
+		&staminaNotification,
+		&hideRating,
+		&info.Settings.FavoriteCharacter,
+		&recentScoreDate,
+		&info.MaxFriend,
+		&info.Rating,
+		&info.JoinDate,
 	)
 	if err != nil {
 		log.Println("Error occured while querying table PLAYER with USER_ID:", userID)
 		return nil, err
 	}
-	charStatuses, err := getCharacterStats(userID)
-	if err != nil {
+
+	info.CurrAvailableMaps = []string{}
+	info.Friends = []string{}
+	info.Settings.StaminaNotification = staminaNotification == "t"
+	info.Settings.HideRating = hideRating == "t"
+	info.UserCode = fmt.Sprintf("%09d", userCode)
+	info.IsLockedNameDuplicate = isLockedNameDuplicate == "t"
+	info.IsSkillSealed = isSkillSealed == "t"
+
+	var charStatses []CharacterStats
+	if charStatses, err = getCharacterStats(userID, -1); err != nil {
 		return nil, err
 	}
+	info.CharacterStats = charStatses
+
 	characters := []int8{}
-	for _, status := range charStatuses {
+	for _, status := range charStatses {
 		characters = append(characters, status.PartID)
 	}
-	worldUnlocks, err := getItemList(userID, "world_unlock", "item_name")
-	if err != nil {
+	info.Characters = characters
+
+	var worldUnlocks []string
+	if worldUnlocks, err = getItemList(userID, "world_unlock", "item_name"); err != nil {
 		return nil, err
 	}
-	worldSongUnlocks, err := getItemList(userID, "world_song_unlock", "item_name")
-	if err != nil {
+	info.WorldUnlocks = worldUnlocks
+
+	var worldSongUnlocks []string
+	if worldSongUnlocks, err = getItemList(userID, "world_song_unlock", "item_name"); err != nil {
 		return nil, err
 	}
-	packs, err := getItemList(userID, "pack_purchase_info", "pack_name")
-	if err != nil {
+	info.WorldSongs = worldSongUnlocks
+
+	var packs []string
+	if packs, err = getItemList(userID, "pack_purchase_info", "pack_name"); err != nil {
 		return nil, err
 	}
-	singles, err := getItemList(userID, "single_purchase_info", "song_id")
-	if err != nil {
+	info.Packs = packs
+
+	var singles []string
+	if singles, err = getItemList(userID, "single_purchase_info", "song_id"); err != nil {
 		return nil, err
 	}
-	coreInfoes, err := getCoreInfo(userID)
-	if err != nil {
+	info.Singles = singles
+
+	var coreInfoes []CoreInfo
+	if coreInfoes, err = getCoreInfo(userID); err != nil {
 		return nil, err
 	}
-	recentScore, err := getRecentScore(userID)
-	if err != nil {
+	info.Cores = coreInfoes
+
+	var recentScore ScoreRecord
+	if recentScore, err = getMostRecentScore(userID); err != nil {
 		return nil, err
 	}
-	settings := Setting{
-		staminaNotification == "t",
-		hideRating == "t",
-		favoriteCharacter,
-	}
-	if displayName == "" {
-		displayName = userName
-	}
+	info.RecentScore = []ScoreRecord{recentScore}
+
 	var isAprilFools string
-	err = db.QueryRow(`select ifnull(is_aprilfools, '') from game_info`).Scan(&isAprilFools)
-	if err != nil {
+	if err := db.QueryRow(sqlStmtAprilfools).Scan(&isAprilFools); err != nil {
 		log.Println("Error occured while reading April Fools info.")
 		return nil, err
 	}
-	info := UserInfo{
-		isAprilFools == "t",
-		[]string{},
-		charStatuses,
-		[]string{},
-		settings,
-		userID,
-		userName,
-		displayName,
-		fmt.Sprintf("%09d", userCode),
-		ticket,
-		partID,
-		isLockedNameDuplicate == "y",
-		isSkillSealed == "t",
-		currMap,
-		progBoost,
-		nextFragstamTs,
-		maxStaminaTs,
-		stamina,
-		worldUnlocks,
-		worldSongUnlocks,
-		singles,
-		packs,
-		characters,
-		coreInfoes,
-		[]ScoreRecord{recentScore},
-		maxFriend,
-		rating,
-		joinDate,
-	}
+	info.IsAprilFools = isAprilFools == "t"
 
-	return &info, nil
+	return info, nil
 }
 
 func getCoreInfo(userID int) ([]CoreInfo, error) {
-	rows, err := db.Query(`select
-			c.internal_id, c.core_name, amount
-		from
-			core_possess_info p, core c
-		where
-			user_id = ?
-		and 
-			c.core_id = p.core_id`, userID)
+	rows, err := db.Query(sqlStmtCoreInfo, userID)
 	if err != nil {
 		log.Println("Error occured while querying table CORE_POSSESS_INFO")
 		return nil, err
@@ -194,36 +174,22 @@ func getCoreInfo(userID int) ([]CoreInfo, error) {
 		coreInfoes = append(coreInfoes, CoreInfo{coreName, amount, internalID})
 	}
 	if err = rows.Err(); err != nil {
-		log.Println("Error occured while reading rows queried from CORE_POESS_INFO")
-		return nil, err
+		return nil, fmt.Errorf("error occured while querying core info: %w", err)
 	}
 	return coreInfoes, nil
 }
 
-func getRecentScore(userID int) (ScoreRecord, error) {
+func getMostRecentScore(userID int) (ScoreRecord, error) {
 	record := ScoreRecord{}
 	var modifier sql.NullInt32
-	err := db.QueryRow(`select
-			s.song_id, s.difficulty, s.score,
-			s.shiny_pure, s.pure, s.far, s.lost,
-			s.health, s.modifier,
-			s.clear_type, s2.clear_type "best clear type"
-		from
-			score s, best_score b, score s2
-		where
-			s.user_id = ?1
-			and s.played_date = (select max(played_date) from score)
-			and s.song_id = s2.song_id
-			and b.user_id = ?1
-			and b.played_date = s2.played_date`, userID).Scan(
+	err := db.QueryRow(sqlStmtMostRecentScore, userID).Scan(
 		&record.SongID, &record.Difficulty, &record.Score,
 		&record.Shiny, &record.Pure, &record.Far, &record.Lost,
 		&record.Health, &modifier,
 		&record.ClearType, &record.BestClearType,
 	)
 	if err != nil {
-		log.Println("Error occured while querying most recent score from SCORE")
-		return record, err
+		return record, fmt.Errorf("error occured while querying most recent score: %w", err)
 	}
 
 	if modifier.Valid {
@@ -318,16 +284,13 @@ func changeSetting(userID int, target string, isOn bool) error {
 	} else {
 		value = ""
 	}
-	_, err := db.Exec(
-		fmt.Sprintf("update player set %s = '%s' where user_id = %d",
-			target, value, userID,
-		))
-	if err != nil {
-		log.Printf(
-			"Error occured while modifying PLAYER for setting `%s` to `%v` with userID = %d",
-			target, value, userID,
+	if _, err := db.Exec(
+		fmt.Sprintf(sqlStmtUserSetting, target, value, userID),
+	); err != nil {
+		return fmt.Errorf(
+			"Error occured while modifying PLAYER for setting `%s` to `%v` with userID = %d: %w",
+			target, value, userID, err,
 		)
-		return err
 	}
 
 	return nil
@@ -335,15 +298,13 @@ func changeSetting(userID int, target string, isOn bool) error {
 
 func changeFavouritePartner(userID int, partID int) error {
 	_, err := db.Exec(
-		fmt.Sprintf("update player set favorite_partner = '%d' where user_id = %d",
-			partID, userID,
-		))
+		fmt.Sprintf(sqlStmtFavouritePartner, partID, userID),
+	)
 	if err != nil {
-		log.Printf(
-			"Error occured while modifying PLAYER for setting `favorite_partner` to `%v` with userID = %d",
-			partID, userID,
+		return fmt.Errorf(
+			"Error occured while modifying PLAYER for setting `favorite_partner` to `%v` with userID = %d: %w",
+			partID, userID, err,
 		)
-		return err
 	}
 
 	return nil

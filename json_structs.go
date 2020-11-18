@@ -2,7 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
+
+	"github.com/albrow/forms"
+	"github.com/dgrijalva/jwt-go"
 )
 
 // ToJSON interface for json info purpose structs
@@ -55,6 +59,11 @@ func (c *Container) toJSON() string {
 
 // Section: Login
 // ============================================================================
+
+type userClaims struct {
+	UserID int `json:"name"`
+	jwt.StandardClaims
+}
 
 // LoginToken contain token for login
 type LoginToken struct {
@@ -158,8 +167,8 @@ type CharacterStats struct {
 
 // ToggleResult is result return when request passed to /user/me/toggle/character
 type ToggleResult struct {
-	UserID    int               `json:"user_id"`
-	Character []*CharacterStats `json:"character"`
+	UserID    int              `json:"user_id"`
+	Character []CharacterStats `json:"character"`
 }
 
 func (r *ToggleResult) toJSON() string {
@@ -207,15 +216,15 @@ type PackInfo struct {
 	Name         string     `json:"name"`
 	Items        []PackItem `json:"items"`
 	Price        int        `json:"price"`
-	origPrice    int        `josn:"price"`
-	DisCountFrom int64      `json:"discount_from"`
-	DicCountTo   int64      `json:"discount_to"`
+	OrigPrice    int        `josn:"price"`
+	DiscountFrom int64      `json:"discount_from"`
+	DiscountTo   int64      `json:"discount_to"`
 }
 
 // PackItem represent a pack item in pack
 type PackItem struct {
 	ID          string `json:"id"`
-	Type        string `json:"type"`
+	ItemType    string `json:"type"`
 	IsAvailable bool   `json:"is_available"`
 }
 
@@ -246,13 +255,18 @@ type Checksum struct {
 
 // GameInfo recording current game info from server
 type GameInfo struct {
-	MaxStam             int8             `json:"max_stamina"`
-	StaminaRecoverTick  int              `json:"stamina_recover_tick"`
-	CoreExp             int              `json:"core_exp"`
-	Now                 int64            `json:"curr_ts"`
-	LevelSteps          []map[string]int `json:"level_steps"`
-	WorldRankingEnabled bool             `json:"world_ranking_enabled"`
-	BydUnlocked         bool             `json:"is_byd_chapter_unlocked"`
+	MaxStam             int8        `json:"max_stamina"`
+	StaminaRecoverTick  int         `json:"stamina_recover_tick"`
+	CoreExp             int         `json:"core_exp"`
+	Now                 int64       `json:"curr_ts"`
+	LevelSteps          []levelStep `json:"level_steps"`
+	WorldRankingEnabled bool        `json:"world_ranking_enabled"`
+	BydUnlocked         bool        `json:"is_byd_chapter_unlocked"`
+}
+
+type levelStep struct {
+	Lv  int `json:"level"`
+	Exp int `json:"level_exp"`
 }
 
 func (i *GameInfo) toJSON() string {
@@ -357,6 +371,41 @@ type ScoreRecord struct {
 	BeyondGague   int8    `json:"beyond_gague,omitempty"`
 	ClearType     int8    `json:"clear_type"`
 	BestClearType int8    `json:"best_clear_type,omitempty"`
+}
+
+func scoreRecordFromForm(data *forms.Data) *ScoreRecord {
+	return &ScoreRecord{
+		SongID:     data.Get("song_id"),
+		Difficulty: int8(data.GetInt("difficulty")),
+		Score:      data.GetInt("score"),
+		Shiny:      data.GetInt("shiny_perfect_count"),
+		Pure:       data.GetInt("perfect_count"),
+		Far:        data.GetInt("near_count"),
+		Lost:       data.GetInt("miss_count"),
+		Health:     int8(data.GetInt("health")),
+		ClearType:  int8(data.GetInt("clear_type")),
+	}
+}
+
+func (r *ScoreRecord) scoreToRating() error {
+	r.Rating = 0.0
+	score := float64(r.Score)
+	var baseRating float64
+	err := db.QueryRow(sqlStmtBaseRating, r.SongID, r.Difficulty).Scan(&baseRating)
+	if err != nil {
+		return fmt.Errorf("error while querying base rating for `%s`: %w", r.SongID, err)
+	} else if baseRating == 0 {
+		return errorZeroRating
+	}
+
+	if r.Score >= 10_000_000 {
+		r.Rating = baseRating + 2
+	} else if r.Score >= 9_800_000 {
+		r.Rating = baseRating + 1 + (score-9_800_000)/200_000
+	} else if r.Rating = baseRating + (score-9_500_000)/300_000; r.Rating < 0 {
+		r.Rating = 0
+	}
+	return nil
 }
 
 // ScoreUploadResult is resut return from server

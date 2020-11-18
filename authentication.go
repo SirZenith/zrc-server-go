@@ -9,17 +9,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"path"
 	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
-
-type userClaims struct {
-	UserID int `json:"name"`
-	jwt.StandardClaims
-}
 
 // ExpiresTime of JWT token
 var ExpiresTime int64
@@ -30,11 +24,6 @@ var SigningKey = "Welcome to my personal arcserver"
 func init() {
 	duration, _ := time.ParseDuration("240h")
 	ExpiresTime = int64(duration.Seconds())
-
-	R.Handle(
-		path.Join(APIRoot, "auth/login"),
-		http.HandlerFunc(loginHandler),
-	)
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -49,13 +38,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		userID  int
 		pwdHash string
 	)
-	err = db.QueryRow(
-		`select
-			user_id, pwdhash from player
-		where
-			lower(user_name) = lower(?) or email = ?`,
-		user, user,
-	).Scan(&userID, &pwdHash)
+	err = db.QueryRow(sqlStmtQueryLoginInfo, user).Scan(&userID, &pwdHash)
 	if err == sql.ErrNoRows || hash != pwdHash {
 		http.Error(
 			w, `{"success": false, "error_code": 104}`,
@@ -66,18 +49,14 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	token := LoginToken{
-		genJWT(userID),
-		"Bearer",
-		true,
-		0,
-	}
-	res, err := json.Marshal(token)
-	if err != nil {
+
+	token := LoginToken{genJWT(userID), "Bearer", true, 0}
+	if res, err := json.Marshal(token); err != nil {
 		log.Println("Error occured while generating JSON for login token.")
 		log.Println(err)
+	} else {
+		w.Write(res)
 	}
-	w.Write(res)
 }
 
 func verifyBasicAuth(authToken string) (string, string, error) {

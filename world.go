@@ -5,16 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"path"
 )
-
-func init() {
-	R.Handle(
-		path.Join(APIRoot, "world/map/me"),
-		http.HandlerFunc(myMapInfoHandler),
-	)
-	InsideHandler[path.Join(APIRoot, "world/map/me")] = getMyMapInfo
-}
 
 func myMapInfoHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
@@ -33,98 +24,70 @@ func myMapInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 func getMyMapInfo(userID int, _ *http.Request) (ToJSON, error) {
 	var (
-		affMultiplier []float64
-		availableFrom int64
-		availableTo   int64
-		beyondHealth  int8
-		partAffinity  []int8
-		chapter       int
-		coordinate    string
-		currCapture   int
-		currPosition  int
-		customBG      string
-		isBeyond      string
-		isLegacy      string
-		isLocked      string
-		isRepeatable  string
-		mapID         string
-		requireID     string
-		requireType   string
-		requireValue  int
-		stamCost      int
-		stepCount     int
-		rewards       []Reward
+		isBeyond     string
+		isLegacy     string
+		isLocked     string
+		isRepeatable string
+		mapID        string
+		rewards      []Reward
 	)
 
-	rows, err := db.Query(`select
-			available_from, available_to, beyond_health, chapter, coordinate,
-			custom_bg, ifnull(is_beyond, ''), ifnull(is_legacy, ''), ifnull(is_repeatable, ''),
-			world_map.map_id,
-			require_id, require_type, require_value, stamina_cost, step_count,
-			curr_capture, curr_position, ifnull(is_locked, '')
-		from world_map, player_map_prog
-		where player_map_prog.map_id = world_map.map_id
-		  and player_map_prog.user_id = ?`, userID)
+	rows, err := db.Query(sqlStmtMapInfo, userID)
 	if err != nil {
 		log.Println("Error occured while querying table WORLD_MAP.")
 		return nil, err
 	}
 	defer rows.Close()
 
+	info := new(MapInfo)
 	infoes := []MapInfo{}
 	for rows.Next() {
 		rows.Scan(
-			&availableFrom, &availableTo,
-			&beyondHealth,
-			&chapter,
-			&coordinate,
-			&customBG,
-			&isBeyond, &isLegacy, &isRepeatable,
-			&mapID,
-			&requireID, &requireType, &requireValue,
-			&stamCost, &stepCount,
-			&currCapture, &currPosition, &isLocked,
+			&info.AvailableFrom, &info.AvailableTo,
+			&info.BeyondHealth,
+			&info.Chapter,
+			&info.Coordinate,
+			&info.CustomBG,
+			&isBeyond,
+			&isLegacy,
+			&isRepeatable,
+			&info.MapID,
+			&info.RequireID,
+			&info.RequireType,
+			&info.RequireValue,
+			&info.StamCost,
+			&info.StepCount,
+			&info.CurrCapture,
+			&info.CurrPosition,
+			&isLocked,
 		)
-		partAffinity, affMultiplier, err = getMapAffinity(mapID)
+		info.IsBeyond = isBeyond == "t"
+		info.IsLegacy = isLegacy == "t"
+		info.IsLocked = isLocked == "t"
+		info.IsRepeatable = isRepeatable == "t"
+
+		info.PartAffinity, info.AffMultiplier, err = getMapAffinity(mapID)
 		if err != nil {
 			return nil, err
 		}
+
 		rewards, err = getRewards(mapID)
 		if err != nil {
 			return nil, err
 		}
+		info.Rewards = rewards
 
-		infoes = append(infoes, MapInfo{
-			affMultiplier,
-			availableFrom, availableTo,
-			beyondHealth,
-			partAffinity,
-			chapter,
-			coordinate,
-			currCapture, currPosition,
-			customBG,
-			isBeyond == "t", isLegacy == "t",
-			isLocked == "t", isRepeatable == "t",
-			mapID,
-			requireID, requireType, requireValue,
-			stamCost, stepCount,
-			rewards,
-		})
+		infoes = append(infoes, *info)
 	}
 
 	if err = rows.Err(); err != nil {
-		log.Println("Error occured while reading queried rows from WORLD_MAP.")
-		return nil, err
+		return nil, fmt.Errorf("error occured while reading map info: %w", err)
 	}
 
 	var currMap string
-	err = db.QueryRow(
-		"select ifnull(curr_map, '') from player where user_id = ?",
-		userID,
-	).Scan(&currMap)
+	err = db.QueryRow(sqlStmtCurrentMap, userID).Scan(&currMap)
 	if err != nil {
-		log.Println("Error occur while querying CURR_MAP from PLAYER with USER_ID = ", userID)
-		return nil, err
+		return nil, fmt.Errorf("error occur while querying current map for user = %d: %w", userID, err)
 	}
 
 	return &MapInfoContainer{userID, currMap, infoes}, nil
@@ -132,13 +95,9 @@ func getMyMapInfo(userID int, _ *http.Request) (ToJSON, error) {
 
 func getMapAffinity(mapID string) ([]int8, []float64, error) {
 	partners, multipliers := []int8{}, []float64{}
-	rows, err := db.Query(
-		"select part_id, multiplier from map_affinity where map_id = ?",
-		mapID,
-	)
+	rows, err := db.Query(sqlStmtMapAffinity, mapID)
 	if err != nil {
-		log.Println("Error occured while querying table MAP_AFFINITY with MAP_ID = ", mapID)
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("error occured while querying map affinity for map = %s: %w", mapID, err)
 	}
 	defer rows.Close()
 
@@ -153,46 +112,75 @@ func getMapAffinity(mapID string) ([]int8, []float64, error) {
 	}
 
 	if err = rows.Err(); err != nil {
-		log.Println("Error occured while reading rows queried from MAP_AFFINITY.")
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("Error occured while reading rows queried from MAP_AFFINITY: %w", err)
 	}
 
 	return partners, multipliers, nil
 }
 
 func getRewards(mapID string) ([]Reward, error) {
-	rows, err := db.Query(
-		"select reward_id, item_type, amount, position from map_reward where map_id = ?",
-		mapID,
-	)
+	rows, err := db.Query(sqlStmtRewards, mapID)
 	if err != nil {
-		log.Println("Error occured while querying table MAP_REWARD with MAP_ID = ", mapID)
-		return nil, err
+		return nil, fmt.Errorf("Error occured while querying table MAP_REWARD with MAP_ID = %s: %w", mapID, err)
 	}
 	defer rows.Close()
 
 	rewards := []Reward{}
 	var (
-		rewardID   string
-		rewardType string
-		amount     sql.NullInt32
-		position   int
+		position int
+		amount   sql.NullInt32
 	)
+	item := new(RewardItem)
 	for rows.Next() {
-		rows.Scan(&rewardID, &rewardType, &amount, &position)
+		rows.Scan(&item.ItemID, &item.ItemType, &amount, &position)
+		item.Amount = amount.Int32
 		rewards = append(rewards, Reward{
-			Items: []RewardItem{
-				{rewardType, rewardID, amount.Int32},
-			},
+			Items:    []RewardItem{*item},
 			Position: position,
 		})
 	}
 
 	if err = rows.Err(); err != nil {
-		log.Println(
-			"Error occured while reading rows queried from tabletable MAP_REWARD with MAP_ID = ", mapID)
-		return nil, err
+		return nil, fmt.Errorf(
+			"Error occured while reading rows queried from tabletable MAP_REWARD with MAP_ID = %s: %w", mapID, err)
 	}
 
 	return rewards, nil
 }
+
+// func getRewards(mapID string) ([]Reward, error) {
+// 	rows, err := db.Query(
+// 		"select reward_id, item_type, amount, position from map_reward where map_id = ?",
+// 		mapID,
+// 	)
+// 	if err != nil {
+// 		log.Println("Error occured while querying table MAP_REWARD with MAP_ID = ", mapID)
+// 		return nil, err
+// 	}
+// 	defer rows.Close()
+
+// 	rewards := []Reward{}
+// 	var (
+// 		rewardID   string
+// 		rewardType string
+// 		amount     sql.NullInt32
+// 		position   int
+// 	)
+// 	for rows.Next() {
+// 		rows.Scan(&rewardID, &rewardType, &amount, &position)
+// 		rewards = append(rewards, Reward{
+// 			Items: []RewardItem{
+// 				{rewardType, rewardID, amount.Int32},
+// 			},
+// 			Position: position,
+// 		})
+// 	}
+
+// 	if err = rows.Err(); err != nil {
+// 		log.Println(
+// 			"Error occured while reading rows queried from tabletable MAP_REWARD with MAP_ID = ", mapID)
+// 		return nil, err
+// 	}
+
+// 	return rewards, nil
+// }

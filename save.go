@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"path"
 	"strings"
 
 	"github.com/albrow/forms"
@@ -15,12 +14,7 @@ import (
 var DataAndChecksumKeys []string
 
 func init() {
-	R.Path(path.Join(APIRoot, "user/me/save")).Methods("GET").Handler(
-		http.HandlerFunc(returnBackup),
-	)
-	R.Path(path.Join(APIRoot, "user/me/save")).Methods("POST").Handler(
-		http.HandlerFunc(receiveBackup),
-	)
+
 	DataAndChecksumKeys = []string{
 		"scores", "clearlamps", "clearedsongs", "unlocklist",
 		"installid", "devicemodelname", "story", "version",
@@ -34,13 +28,11 @@ func returnBackup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, c.toJSON(), http.StatusUnauthorized)
 		return
 	}
+
 	var data string
-	err = db.QueryRow(
-		"select backup_data from data_backup where user_id = ?", userID,
-	).Scan(&data)
+	err = db.QueryRow(sqlStmtReadBackupData, userID).Scan(&data)
 	if err != nil {
-		log.Println("Error occured while querying table DATA_BACKUP for downloading data")
-		log.Println(err)
+		log.Printf("%s: Error occured while querying table DATA_BACKUP for downloading data: %s\n", r.URL.Path, err)
 	} else if data == "" {
 		http.Error(w, `{"success":false,"error_code":402}`, http.StatusNotFound)
 	} else {
@@ -57,8 +49,7 @@ func receiveBackup(w http.ResponseWriter, r *http.Request) {
 	}
 	data, err := forms.Parse(r)
 	if err != nil {
-		log.Printf("%s: Error occured while parsing form\n", r.URL.Path)
-		log.Println(err)
+		log.Printf("%s: Error occured while parsing form: %s\n", r.URL.Path, err)
 	}
 	val := data.Validator()
 	for _, key := range DataAndChecksumKeys {
@@ -70,7 +61,6 @@ func receiveBackup(w http.ResponseWriter, r *http.Request) {
 		for k, v := range val.ErrorMap() {
 			log.Printf("%s: %s", k, v)
 		}
-		log.Println(err)
 	}
 	results := []string{}
 	for _, key := range DataAndChecksumKeys {
@@ -78,22 +68,15 @@ func receiveBackup(w http.ResponseWriter, r *http.Request) {
 		checksum := data.Get(key + "_checksum")
 		sum := fmt.Sprintf("%x", md5.Sum([]byte(content)))
 		if string(sum) != checksum {
-			log.Printf(
-				"Checksum check failed for key `%s` with checksum: %s",
-				key, string(sum),
-			)
+			log.Printf("%s: Checksum check failed for key `%s`", r.URL.Path, key)
 			return
 		}
 		results = append(results, fmt.Sprintf(`"%s":%s`, key, content))
 	}
 	result := strings.Join(results, ",")
-	_, err = db.Exec(
-		"update data_backup set backup_data = ?1 where user_id = ?2",
-		result, userID,
-	)
+	_, err = db.Exec(sqlStmtWriteBackupDate, result, userID)
 	if err != nil {
-		log.Println("Error occured while updating table DATA_BACKUP")
-		log.Println(err)
+		log.Printf("%s: Error occured while writing backup data: %s\n", r.URL.Path, err)
 	}
 	fmt.Fprintf(w, `{"success":true,"value":{"user_id":%d}}`, userID)
 }
