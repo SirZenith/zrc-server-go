@@ -8,11 +8,19 @@ import (
 )
 
 func myMapInfoHandler(w http.ResponseWriter, r *http.Request) {
-	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
-	if err != nil {
-		c := Container{false, nil, 203}
-		http.Error(w, c.toJSON(), http.StatusUnauthorized)
-		return
+	var (
+		userID int
+		err    error
+	)
+	if NeedAuth {
+		userID, err = verifyBearerAuth(r.Header.Get("Authorization"))
+		if err != nil {
+			c := Container{false, nil, 203}
+			http.Error(w, c.toJSON(), http.StatusUnauthorized)
+			return
+		}
+	} else {
+		userID = staticUserID
 	}
 	tojson, err := getMyMapInfo(userID, r)
 	if err != nil {
@@ -28,7 +36,6 @@ func getMyMapInfo(userID int, _ *http.Request) (ToJSON, error) {
 		isLegacy     string
 		isLocked     string
 		isRepeatable string
-		mapID        string
 		rewards      []Reward
 	)
 
@@ -39,11 +46,12 @@ func getMyMapInfo(userID int, _ *http.Request) (ToJSON, error) {
 	}
 	defer rows.Close()
 
-	info := new(MapInfo)
 	infoes := []MapInfo{}
 	for rows.Next() {
+		info := new(MapInfo)
 		rows.Scan(
-			&info.AvailableFrom, &info.AvailableTo,
+			&info.AvailableFrom,
+			&info.AvailableTo,
 			&info.BeyondHealth,
 			&info.Chapter,
 			&info.Coordinate,
@@ -66,12 +74,12 @@ func getMyMapInfo(userID int, _ *http.Request) (ToJSON, error) {
 		info.IsLocked = isLocked == "t"
 		info.IsRepeatable = isRepeatable == "t"
 
-		info.PartAffinity, info.AffMultiplier, err = getMapAffinity(mapID)
+		info.PartAffinity, info.AffMultiplier, err = getMapAffinity(info.MapID)
 		if err != nil {
 			return nil, err
 		}
 
-		rewards, err = getRewards(mapID)
+		rewards, err = getRewards(info.MapID)
 		if err != nil {
 			return nil, err
 		}
@@ -130,8 +138,8 @@ func getRewards(mapID string) ([]Reward, error) {
 		position int
 		amount   sql.NullInt32
 	)
-	item := new(RewardItem)
 	for rows.Next() {
+		item := new(RewardItem)
 		rows.Scan(&item.ItemID, &item.ItemType, &amount, &position)
 		item.Amount = amount.Int32
 		rewards = append(rewards, Reward{
@@ -147,40 +155,3 @@ func getRewards(mapID string) ([]Reward, error) {
 
 	return rewards, nil
 }
-
-// func getRewards(mapID string) ([]Reward, error) {
-// 	rows, err := db.Query(
-// 		"select reward_id, item_type, amount, position from map_reward where map_id = ?",
-// 		mapID,
-// 	)
-// 	if err != nil {
-// 		log.Println("Error occured while querying table MAP_REWARD with MAP_ID = ", mapID)
-// 		return nil, err
-// 	}
-// 	defer rows.Close()
-
-// 	rewards := []Reward{}
-// 	var (
-// 		rewardID   string
-// 		rewardType string
-// 		amount     sql.NullInt32
-// 		position   int
-// 	)
-// 	for rows.Next() {
-// 		rows.Scan(&rewardID, &rewardType, &amount, &position)
-// 		rewards = append(rewards, Reward{
-// 			Items: []RewardItem{
-// 				{rewardType, rewardID, amount.Int32},
-// 			},
-// 			Position: position,
-// 		})
-// 	}
-
-// 	if err = rows.Err(); err != nil {
-// 		log.Println(
-// 			"Error occured while reading rows queried from tabletable MAP_REWARD with MAP_ID = ", mapID)
-// 		return nil, err
-// 	}
-
-// 	return rewards, nil
-// }

@@ -26,10 +26,13 @@ func init() {
 }
 
 func scoreTokenHandler(w http.ResponseWriter, r *http.Request) {
-	_, err := verifyBearerAuth(r.Header.Get("Authorization"))
-	if err != nil {
-		c := Container{false, nil, 203}
-		http.Error(w, c.toJSON(), http.StatusUnauthorized)
+	if NeedAuth {
+		_, err := verifyBearerAuth(r.Header.Get("Authorization"))
+		if err != nil {
+			c := Container{false, nil, 203}
+			http.Error(w, c.toJSON(), http.StatusUnauthorized)
+			return
+		}
 	}
 	token := new(ScoreToken)
 	container := Container{true, token, 0}
@@ -38,11 +41,19 @@ func scoreTokenHandler(w http.ResponseWriter, r *http.Request) {
 
 func scoreUploadHandler(w http.ResponseWriter, r *http.Request) {
 	result := ScoreUploadResult{true, map[string]int{"user_rating": 0}}
-	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
-	if err != nil {
-		c := Container{false, nil, 203}
-		http.Error(w, c.toJSON(), http.StatusUnauthorized)
-		return
+	var (
+		userID int
+		err    error
+	)
+	if NeedAuth {
+		userID, err = verifyBearerAuth(r.Header.Get("Authorization"))
+		if err != nil {
+			c := Container{false, nil, 203}
+			http.Error(w, c.toJSON(), http.StatusUnauthorized)
+			return
+		}
+	} else {
+		userID = staticUserID
 	}
 	record, err := makeRecord(r)
 	tx, err := db.Begin()
@@ -234,8 +245,9 @@ func (inserter *recentScoreInserter) insertIntoR10(tx *sql.Tx, userID int, ident
 			retTarget = target
 		}
 	} else {
+		r30NotFull := len(inserter.r10)+len(inserter.normalItems) < 30
 		if len(inserter.r10) < 10 {
-			if len(inserter.r10)+len(inserter.normalItems) < 30 {
+			if r30NotFull {
 				if _, err := tx.Exec(sqlStmtInsertRecentScore, userID, target.playedDate, "t"); err != nil {
 					return retTarget, replacement, isR10, needNewR10, err
 				}
@@ -244,13 +256,11 @@ func (inserter *recentScoreInserter) insertIntoR10(tx *sql.Tx, userID int, ident
 			} else {
 				needNewR10 = true
 			}
-		} else if len(inserter.r10)+len(inserter.normalItems) < 30 {
-			// just inserte record into normal item list, do nothing with r10
 		} else {
 			isEx := score >= 9_800_000
 			isHardClear := clearType == 5
 			for _, item := range inserter.r10 {
-				if (isEx || isHardClear) && target.rating < item.rating {
+				if (isEx || isHardClear || r30NotFull) && target.rating < item.rating {
 					continue
 				}
 				if item.rating <= target.rating {

@@ -114,7 +114,7 @@ type UserInfo struct {
 	UserCode              string           `json:"user_code"`
 	Ticket                int              `json:"ticket"`
 	PartID                int8             `json:"character"`
-	IsLockedNameDuplicate bool             `json:"is_locked_name_duplicated"`
+	IsLockedNameDuplicate bool             `json:"is_locked_name_duplicate"`
 	IsSkillSealed         bool             `json:"is_skill_sealed"`
 	CurrentMap            string           `json:"current_map"`
 	ProgBoost             int8             `json:"prog_boost"`
@@ -214,9 +214,9 @@ func (c *PackInfoContainer) toJSON() string {
 // PackInfo represent a pack
 type PackInfo struct {
 	Name         string     `json:"name"`
-	Items        []PackItem `json:"items"`
+	Items        []PackItem `json:"items,omitempty"`
 	Price        int        `json:"price"`
-	OrigPrice    int        `josn:"price"`
+	OrigPrice    int        `josn:"orig_price"`
 	DiscountFrom int64      `json:"discount_from"`
 	DiscountTo   int64      `json:"discount_to"`
 }

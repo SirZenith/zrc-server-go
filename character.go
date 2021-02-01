@@ -81,11 +81,19 @@ func getCharacterStats(userID int, partID int8) ([]CharacterStats, error) {
 }
 
 func changeCharacter(w http.ResponseWriter, r *http.Request) {
-	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
-	if err != nil {
-		c := Container{false, nil, 203}
-		http.Error(w, c.toJSON(), http.StatusUnauthorized)
-		return
+	var (
+		userID int
+		err    error
+	)
+	if NeedAuth {
+		userID, err = verifyBearerAuth(r.Header.Get("Authorization"))
+		if err != nil {
+			c := Container{false, nil, 203}
+			http.Error(w, c.toJSON(), http.StatusUnauthorized)
+			return
+		}
+	} else {
+		userID = staticUserID
 	}
 	data, err := forms.Parse(r)
 	if err != nil {
@@ -116,11 +124,19 @@ func changeCharacter(w http.ResponseWriter, r *http.Request) {
 }
 
 func toggleUncap(w http.ResponseWriter, r *http.Request) {
-	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
-	if err != nil {
-		c := Container{false, nil, 203}
-		http.Error(w, c.toJSON(), http.StatusUnauthorized)
-		return
+	var (
+		userID int
+		err    error
+	)
+	if NeedAuth {
+		userID, err = verifyBearerAuth(r.Header.Get("Authorization"))
+		if err != nil {
+			c := Container{false, nil, 203}
+			http.Error(w, c.toJSON(), http.StatusUnauthorized)
+			return
+		}
+	} else {
+		userID = staticUserID
 	}
 
 	container := Container{true, nil, 0}
@@ -128,7 +144,7 @@ func toggleUncap(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Error character ID for toggle uncap partID = %d: %s\n", partID, err)
 		container.Success = false
-	} else if _, err = db.Exec(sqlStmtToggleUncap, partID); err != nil {
+	} else if _, err = db.Exec(sqlStmtToggleUncap, userID, partID); err != nil {
 		log.Printf("Error occured while modifying uncap toggle state in table: %s\n", err)
 		container.Success = false
 	} else if stats, err := getCharacterStats(userID, int8(partID)); err != nil {

@@ -38,11 +38,19 @@ func init() {
 }
 
 func songDownloadHandler(w http.ResponseWriter, r *http.Request) {
-	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
-	if err != nil {
-		c := Container{false, nil, 203}
-		http.Error(w, c.toJSON(), http.StatusUnauthorized)
-		return
+	var (
+		userID int
+		err    error
+	)
+	if NeedAuth {
+		userID, err = verifyBearerAuth(r.Header.Get("Authorization"))
+		if err != nil {
+			c := Container{false, nil, 203}
+			http.Error(w, c.toJSON(), http.StatusUnauthorized)
+			return
+		}
+	} else {
+		userID = staticUserID
 	}
 	tojson, err := getDownloadList(userID, r)
 	container := Container{false, nil, 0}
@@ -131,7 +139,7 @@ func getPurchaseFromTable(userID int, tableName string, condition string, checks
 			}
 			item.Audio = map[string]string{"checksum": info.audioChecksum}
 			if needURL {
-				item.Audio["url"] = path.Join(HostName, fileServerPrefix, info.songID, "base.ogg")
+				item.Audio["url"] = "http://" + path.Join(HostName, fileServerPrefix, info.songID, "base.ogg")
 			}
 			checksums[info.songID] = item
 		}
@@ -145,7 +153,7 @@ func getPurchaseFromTable(userID int, tableName string, condition string, checks
 			}
 			if needURL {
 				filename := info.difficulty + ".aff"
-				item.Chart[info.difficulty]["url"] = path.Join(HostName, fileServerPrefix, info.songID, filename)
+				item.Chart[info.difficulty]["url"] = "http://" + path.Join(HostName, fileServerPrefix, info.songID, filename)
 			}
 			checksums[info.songID] = item
 		}

@@ -20,12 +20,15 @@ import (
 import "C"
 
 var (
+	staticUserID = 1
+	// NeedAuth is switch for authentication
+	NeedAuth bool
 	// Port is port number used by server
 	Port string
 	// HostName is server address
 	HostName string
 	// APIRoot is leading path of all request URL
-	APIRoot           = "/glad-you-came"
+	APIRoot           = "/zrcaeasv"
 	scoreCardTemplate string
 	scorePageTemplate string
 	// InsideHandler recording internal func inside info getting purpose handler
@@ -95,6 +98,7 @@ func setRouting(apiroot string) *mux.Router {
 func startUp(args []string) {
 	commandLine := flag.NewFlagSet(args[0], flag.ExitOnError)
 
+	needAuth := commandLine.Bool("auth", false, "Sitch on/off authentication")
 	port := commandLine.Int("port", 8080, "Port number for server.")
 	hostFlag := commandLine.String("host", "127.0.0.1", "Host name for server.")
 	docuemntRoot := commandLine.String("root", "", "Root path of server documents.")
@@ -103,9 +107,9 @@ func startUp(args []string) {
 	commandLine.Parse(args[1:])
 
 	connectToDB(*dbFile)
-
+	NeedAuth = *needAuth
 	Port = fmt.Sprintf("%d", *port)
-	HostName = fmt.Sprintf("http://%s:%s", *hostFlag, Port)
+	HostName = fmt.Sprintf("%s:%s", *hostFlag, Port)
 	fmt.Printf("Root URL: %s%s\n", HostName, APIRoot)
 
 	if *docuemntRoot != "" {
@@ -176,4 +180,13 @@ func ExportMainObjectiveC(argc C.int, argv, envp **C.char) C.int {
 	return 0
 }
 
-func main() {}
+func main() {
+	startUp(os.Args)
+	defer db.Close()
+
+	fmt.Println("Starting a server at port", Port)
+	router := setRouting(APIRoot)
+	if err := http.ListenAndServe(":"+Port, router); err != nil {
+		log.Fatal(err)
+	}
+}

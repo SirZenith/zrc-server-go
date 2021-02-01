@@ -7,11 +7,19 @@ import (
 )
 
 func gameInfoHandler(w http.ResponseWriter, r *http.Request) {
-	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
-	if err != nil {
-		c := Container{false, nil, 203}
-		http.Error(w, c.toJSON(), http.StatusUnauthorized)
-		return
+	var (
+		userID int
+		err    error
+	)
+	if NeedAuth {
+		userID, err = verifyBearerAuth(r.Header.Get("Authorization"))
+		if err != nil {
+			c := Container{false, nil, 203}
+			http.Error(w, c.toJSON(), http.StatusUnauthorized)
+			return
+		}
+	} else {
+		userID = staticUserID
 	}
 	tojson, err := getGameInfo(userID, r)
 	if err != nil {

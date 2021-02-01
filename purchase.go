@@ -7,11 +7,19 @@ import (
 )
 
 func packInfoHandler(w http.ResponseWriter, r *http.Request) {
-	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
-	if err != nil {
-		c := Container{false, nil, 203}
-		http.Error(w, c.toJSON(), http.StatusUnauthorized)
-		return
+	var (
+		userID int
+		err    error
+	)
+	if NeedAuth {
+		userID, err = verifyBearerAuth(r.Header.Get("Authorization"))
+		if err != nil {
+			c := Container{false, nil, 203}
+			http.Error(w, c.toJSON(), http.StatusUnauthorized)
+			return
+		}
+	} else {
+		userID = staticUserID
 	}
 	tojson, err := getPackInfo(userID, r)
 	if err != nil {
@@ -22,8 +30,6 @@ func packInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 func getPackInfo(_ int, _ *http.Request) (ToJSON, error) {
 	container := []PackInfo{}
-	info := new(PackInfo)
-	item := new(PackItem)
 	rows, err := db.Query(sqlStmtPackInfo)
 	if err != nil {
 		return nil, err
@@ -31,6 +37,7 @@ func getPackInfo(_ int, _ *http.Request) (ToJSON, error) {
 	defer rows.Close()
 
 	for rows.Next() {
+		info := new(PackInfo)
 		rows.Scan(
 			&info.Name,
 			&info.Price,
@@ -46,6 +53,7 @@ func getPackInfo(_ int, _ *http.Request) (ToJSON, error) {
 		defer itemRows.Close()
 
 		for itemRows.Next() {
+			item := new(PackItem)
 			itemRows.Scan(&item.ID, &item.ItemType, &item.IsAvailable)
 			items = append(items, *item)
 		}

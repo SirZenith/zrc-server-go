@@ -1,4 +1,4 @@
-module arc_server
+module zrc_server
 
 go 1.14
 

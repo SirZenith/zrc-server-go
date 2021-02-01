@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/albrow/forms"
 )
@@ -22,11 +23,19 @@ func init() {
 }
 
 func returnBackup(w http.ResponseWriter, r *http.Request) {
-	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
-	if err != nil {
-		c := Container{false, nil, 203}
-		http.Error(w, c.toJSON(), http.StatusUnauthorized)
-		return
+	var (
+		userID int
+		err    error
+	)
+	if NeedAuth {
+		userID, err = verifyBearerAuth(r.Header.Get("Authorization"))
+		if err != nil {
+			c := Container{false, nil, 203}
+			http.Error(w, c.toJSON(), http.StatusUnauthorized)
+			return
+		}
+	} else {
+		userID = staticUserID
 	}
 
 	var data string
@@ -41,11 +50,19 @@ func returnBackup(w http.ResponseWriter, r *http.Request) {
 }
 
 func receiveBackup(w http.ResponseWriter, r *http.Request) {
-	userID, err := verifyBearerAuth(r.Header.Get("Authorization"))
-	if err != nil {
-		c := Container{false, nil, 203}
-		http.Error(w, c.toJSON(), http.StatusUnauthorized)
-		return
+	var (
+		userID int
+		err    error
+	)
+	if NeedAuth {
+		userID, err = verifyBearerAuth(r.Header.Get("Authorization"))
+		if err != nil {
+			c := Container{false, nil, 203}
+			http.Error(w, c.toJSON(), http.StatusUnauthorized)
+			return
+		}
+	} else {
+		userID = staticUserID
 	}
 	data, err := forms.Parse(r)
 	if err != nil {
@@ -74,6 +91,7 @@ func receiveBackup(w http.ResponseWriter, r *http.Request) {
 		results = append(results, fmt.Sprintf(`"%s":%s`, key, content))
 	}
 	result := strings.Join(results, ",")
+	result = fmt.Sprintf(`%s,"createdAt":%d`, result, time.Now().Unix())
 	_, err = db.Exec(sqlStmtWriteBackupDate, result, userID)
 	if err != nil {
 		log.Printf("%s: Error occured while writing backup data: %s\n", r.URL.Path, err)

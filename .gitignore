@@ -5,3 +5,6 @@ theos_code/packages
 theos_code/.theos
 
 *_test.go
+.golib/*
+zrc_server
+*.db

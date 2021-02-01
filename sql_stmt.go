@@ -15,7 +15,7 @@ const sqlStmtToggleUncap = `
 	else
 		't'
 	end
-	where part_id = ?
+	where user_id = ?1 and part_id = ?2
 `
 
 const sqlStmtQueryDLInfo = `
@@ -350,39 +350,42 @@ const sqlStmtMapInfo = `
 		beyond_health,
 		chapter,
 		coordinate,
-		custom_bg,
-		ifnull(is_beyond, ''),
-		ifnull(is_legacy, ''),
-		ifnull(is_repeatable, ''),
+		ifnull(custom_bg, '') custom_bg,
+		ifnull(is_beyond, '') is_beyond,
+		ifnull(is_legacy, '') is_legacy,
+		ifnull(is_repeatable, '') is_repeatable,
 		world_map.map_id,
-		require_id,
-		require_type,
-		require_value,
+		ifnull(require_id, '') require_id,
+		ifnull(require_type, '') require_type,
+		ifnull(require_value, 1) require_value,
 		stamina_cost,
 		step_count,
 		curr_capture,
 		curr_position,
-		ifnull(is_locked, '')
+		ifnull(is_locked, '') is_locked
 	from
 		world_map, player_map_prog
 	where
 		player_map_prog.map_id = world_map.map_id
-		and player_map_prog.user_id = ?
+		and player_map_prog.user_id = ?1
 `
 
 const sqlStmtCurrentMap = `
-	select ifnull(curr_map, '') from player where user_id = ?
+	select ifnull(curr_map, '') from player where user_id = ?1
 `
 
 const sqlStmtMapAffinity = `
-	select part_id, multiplier from map_affinity where map_id = ?
+	select part_id, multiplier from map_affinity where map_id = ?1
 `
 
 const sqlStmtRewards = `
 	select
-		reward_id, item_type, amount, position
+		ifnull(reward_id, "") reward_id,
+		item_type,
+		ifnull(amount, 0) amount,
+		position
 	from
 		map_reward
 	where
-		map_id = ?
+		map_id = ?1
 `
